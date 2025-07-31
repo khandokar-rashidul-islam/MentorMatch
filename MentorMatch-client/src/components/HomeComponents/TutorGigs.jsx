@@ -251,7 +251,7 @@ const TutorGigs = () => {
                   </Button>
                   <Button
                     size="sm"
-                    className="flex-1 flex items-center cursor-pointer justify-center gap-2 bg-teal-600 hover:bg-teal-700"
+                    className="flex-1 flex items-center cursor-pointer justify-center gap-2 bg-primary"
                   >
                     <BookOpen className="h-4 w-4" />
                     Book Now

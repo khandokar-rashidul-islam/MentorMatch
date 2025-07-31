@@ -82,14 +82,14 @@ const CategoryKeywords = () => {
         {/* Slider */}
         <div ref={sliderRef} className="keen-slider white flex-1">
           {categories.map((category) => (
-            <div className="keen-slider__slide hover:scale-105" key={category}>
+            <div className="keen-slider__slide" key={category}>
               <Badge
                 onClick={() => handleSelect(category)}
                 variant={selected === category ? "default" : "outline"}
                 className={`cursor-pointer transition-all px-6 py-2 duration-300 ${
                   selected === category
                     ? "bg-primary text-primary-foreground"
-                    : " hover:bg-teal-600 hover:text-primary-foreground"
+                    : "hover:bg-primary hover:text-primary-foreground"
                 }`}
               >
                 {category}
