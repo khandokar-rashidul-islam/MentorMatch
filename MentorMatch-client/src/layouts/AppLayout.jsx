@@ -5,12 +5,16 @@ import Footer from "../components/shared/Footer";
 
 const AppLayout = () => {
   return (
-    <div>
-      <Navbar />
-      <div>
+    <div className="flex flex-col ">
+      <div className="">
+        <Navbar />
+      </div>
+      <div className=" min-h-screen w-11/12 mx-auto sm:p-4">
         <Outlet />
       </div>
-      <Footer />
+      <div className="">
+        <Footer />
+      </div>
     </div>
   );
 };
