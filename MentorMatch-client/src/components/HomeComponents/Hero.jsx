@@ -16,7 +16,7 @@ const Hero = () => {
           <div className="space-y-6">
             <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
               Learn Anything,
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 bg-clip-text text-transparent">
                 {" "}
                 Teach Everything
               </span>
@@ -31,11 +31,15 @@ const Hero = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button variant="default" size="lg" className="text-lg px-8 py-6">
+            <Button
+              variant="default"
+              size="lg"
+              className=" bg-gradient-to-r text-white from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-lg px-8 py-6"
+            >
               <BookOpen className="h-5 w-5 mr-2" />
               Start Learning
             </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-6">
+            <Button variant="outline" size="lg" className="text-lg  px-8 py-6">
               <Play className="h-5 w-5 mr-2" />
               Become a Tutor
             </Button>

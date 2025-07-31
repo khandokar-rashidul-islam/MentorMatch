@@ -85,7 +85,7 @@ const SearchQuery = () => {
                 {/* Search Button */}
                 <Button
                   size="lg"
-                  className="h-12 px-6 sm:px-8 w-full sm:w-auto transition-transform hover:scale-[1.03]"
+                  className="h-12 px-6 sm:px-8 w-full sm:w-auto transition-transform bg-teal-600 hover:bg-teal-700 hover:scale-[1.03]"
                 >
                   <Search className="h-4 w-4 mr-2" />
                   Search

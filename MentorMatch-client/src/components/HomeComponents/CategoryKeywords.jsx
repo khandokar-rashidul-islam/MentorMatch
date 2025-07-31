@@ -89,7 +89,7 @@ const CategoryKeywords = () => {
                 className={`cursor-pointer transition-all px-6 py-2 duration-300 ${
                   selected === category
                     ? "bg-primary text-primary-foreground"
-                    : "hover:bg-primary hover:text-primary-foreground"
+                    : " hover:bg-teal-600 hover:text-primary-foreground"
                 }`}
               >
                 {category}

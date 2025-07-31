@@ -20,7 +20,6 @@ const Home = () => {
       <Benifits/>
       <Stats/>
       <CTA/>
-      <Footer/>
     </div>
   );
 }
