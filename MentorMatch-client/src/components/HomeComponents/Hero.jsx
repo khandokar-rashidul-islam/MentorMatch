@@ -51,7 +51,7 @@ const Hero = () => {
                 {[...Array(4)].map((_, i) => (
                   <div
                     key={i}
-                    className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary border-2 border-background"
+                    className="w-8 h-8 rounded-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 border-2 border-background"
                   />
                 ))}
               </div>
