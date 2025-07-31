@@ -11,7 +11,7 @@ import Footer from '../../components/HomeComponents/Footer'
 
 const Home = () => {
   return (
-    <div className="pt-[72px]">
+    <div className="">
       <Hero />
       <CategoryKeywords />
       <SearchQuery />

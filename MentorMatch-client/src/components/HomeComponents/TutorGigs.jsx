@@ -129,7 +129,7 @@ const TutorGigs = () => {
   ];
 
   return (
-    <section className="py-16 bg-background animate-fade-in">
+    <section className="py-16 bg-background animate-fade-in p-4">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 animate-fade-in [animation-delay:200ms]">
           <Badge variant="outline" className="mb-4">
@@ -164,11 +164,16 @@ const TutorGigs = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap py-2 items-center gap-2">
                         <h4 className="font-semibold">{gig.tutor.name}</h4>
-                        <Badge className="bg-purple-600 text-white text-xs">
+                        <Badge className="bg-green-600 text-white text-xs">
                           Pro
                         </Badge>
+                        {gig.featured && (
+                          <Badge className="bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
+                            Featured
+                          </Badge>
+                        )}
                       </div>
                       <div className="text-sm text-gray-500 flex items-center gap-1">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -179,11 +184,7 @@ const TutorGigs = () => {
                   </div>
 
                   {/* Featured Tag */}
-                  {gig.featured && (
-                    <Badge className="bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
-                      Featured
-                    </Badge>
-                  )}
+                  
                 </div>
 
                 {/* Title */}
@@ -232,7 +233,7 @@ const TutorGigs = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-bold text-black">
+                    <div className="text-lg font-bold text-primary">
                       ${gig.price}
                     </div>
                     <div className="text-xs text-gray-400">per session</div>
@@ -244,14 +245,14 @@ const TutorGigs = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1 flex items-center cursor-pointer justify-center gap-2"
+                    className="flex-1 flex items-center cursor-pointer justify-center gap-2 py-2"
                   >
                     <MessageCircle className="h-4 w-4" />
                     Chat
                   </Button>
                   <Button
                     size="sm"
-                    className="flex-1 flex items-center cursor-pointer justify-center gap-2 bg-primary"
+                    className="flex-1 flex items-center cursor-pointer justify-center gap-2 py-2 bg-primary"
                   >
                     <BookOpen className="h-4 w-4" />
                     Book Now

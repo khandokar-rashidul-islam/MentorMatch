@@ -6,15 +6,15 @@ import { BookOpen, Users, ArrowRight } from "lucide-react";
 const CTA = () => {
   return (
     <div className="py-20">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
+      <div className="w-11/12 mx-auto px-4">
+        <div className=" mx-auto">
           <Card className="overflow-hidden shadow-xl rounded-2xl">
             <CardContent className="p-0">
               {/* CTA Header */}
-              <div className="bg-primary text-white p-12 text-center">
+              <div className="bg-secondary text-primary p-12 text-center">
                 <Badge
                   variant="secondary"
-                  className="mb-6 bg-white/10 text-white border border-white/20"
+                  className="mb-6 bg-primary/10 text-primary border border-primary/20"
                 >
                   Ready to Get Started?
                 </Badge>
@@ -23,7 +23,7 @@ const CTA = () => {
                   Join MentorMatch Today
                 </h2>
 
-                <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+                <p className="text-xl text-primary/90 mb-8 max-w-2xl mx-auto">
                   Whether you want to learn something new or share your
                   expertise, our platform makes it easy to connect and grow
                   together.
@@ -33,7 +33,7 @@ const CTA = () => {
                   <Button
                     variant="secondary"
                     size="lg"
-                    className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 cursor-pointer"
+                    className="bg-primary text-secondary hover:bg-white/90 text-lg px-8 py-6 cursor-pointer"
                   >
                     <BookOpen className="h-5 w-5 mr-2" />
                     Start Learning

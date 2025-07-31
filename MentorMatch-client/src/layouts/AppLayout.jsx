@@ -9,7 +9,7 @@ const AppLayout = () => {
       <div className="">
         <Navbar />
       </div>
-      <div className=" min-h-screen w-11/12 mx-auto sm:p-4">
+      <div className="min-h-screen w-full ">
         <Outlet />
       </div>
       <div className="">

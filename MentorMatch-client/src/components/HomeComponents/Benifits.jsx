@@ -70,7 +70,7 @@ const Benefits = () => {
 
   return (
     <section className="py-20">
-      <div className="container mx-auto px-4">
+      <div className="w-11/12 mx-auto px-4">
         {/* Section Heading */}
         <div className="text-center mb-16">
           <Badge variant="outline" className="mb-4">
@@ -134,7 +134,7 @@ const Benefits = () => {
           <div className="space-y-8">
             <div className="text-center lg:text-left">
               <div className="flex items-center justify-center lg:justify-start space-x-2 mb-4">
-                <Users className="h-8 w-8 text-secondary" />
+                <Users className="h-8 w-8 text-primary" />
                 <h3 className="text-2xl font-bold">For Educators</h3>
               </div>
               <p className="text-muted-foreground">
@@ -150,8 +150,8 @@ const Benefits = () => {
                   <Card key={index} className="border-l-4 border-l-secondary">
                     <CardHeader className="pb-3">
                       <div className="flex items-center space-x-3">
-                        <div className="p-2 rounded-lg bg-secondary/10">
-                          <Icon className="h-5 w-5 text-secondary" />
+                        <div className="p-2 rounded-lg bg-secondary">
+                          <Icon className="h-5 w-5 text-primary" />
                         </div>
                         <CardTitle className="text-lg">
                           {benefit.title}

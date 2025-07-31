@@ -111,8 +111,8 @@ const Features = () => {
               >
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
-                    <div className="p-3 rounded-lg bg-primary ">
-                      <Icon className="h-6 w-6 text-white" />
+                    <div className="p-3 rounded-lg bg-secondary ">
+                      <Icon className="h-6 w-6 text-primary" />
                     </div>
                     <Badge variant="secondary" className="text-xs">
                       {feature.badge}

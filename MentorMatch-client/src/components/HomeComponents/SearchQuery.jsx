@@ -29,8 +29,8 @@ const SearchQuery = () => {
   ];
   return (
     <section className="py-12 bg-muted/30 animate-fade-in">
-      <div className="container px-4 mx-auto">
-        <div className="max-w-5xl mx-auto">
+      <div className="w-11/12 px-4 mx-auto">
+        <div className="mx-auto">
           {/* Heading */}
           <div className="text-center mb-10 animate-fade-in [animation-delay:200ms]">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">

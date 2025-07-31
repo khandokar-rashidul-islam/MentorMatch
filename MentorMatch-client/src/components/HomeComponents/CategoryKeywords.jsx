@@ -66,7 +66,7 @@ const CategoryKeywords = () => {
   };
 
   return (
-    <div className=" container mx-auto  py-10 border-b bg-background">
+    <div className=" w-11/12 mx-auto  py-10 border-b bg-background">
       <div className="flex items-center gap-2">
         {/* Prev Button */}
         <Button
@@ -80,13 +80,13 @@ const CategoryKeywords = () => {
         </Button>
 
         {/* Slider */}
-        <div ref={sliderRef} className="keen-slider white flex-1">
+        <div ref={sliderRef} className="keen-slider ">
           {categories.map((category) => (
-            <div className="keen-slider__slide" key={category}>
+            <div className="" key={category}>
               <Badge
                 onClick={() => handleSelect(category)}
-                variant={selected === category ? "default" : "outline"}
-                className={`cursor-pointer transition-all px-6 py-2 duration-300 ${
+                variant={selected === category ? "ghost" : "default"}
+                className={`keen-slider__slide cursor-pointer px-6 py-2  ${
                   selected === category
                     ? "bg-primary text-primary-foreground"
                     : "hover:bg-primary hover:text-primary-foreground"

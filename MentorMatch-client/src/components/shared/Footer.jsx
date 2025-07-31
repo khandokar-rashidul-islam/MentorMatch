@@ -2,13 +2,13 @@ import { BookOpen, Twitter, Facebook, Instagram, Linkedin } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-foreground text-white">
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4 mb-12">
+    <footer className="bg-secondary text-primary">
+      <div className="w-11/12 mx-auto px-4 py-16">
+        <div className="grid gap-10 grid-cols-2 lg:grid-cols-4 mb-12  justify-items-center ">
           {/* Brand Section */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <BookOpen className="h-8 w-8 text-white" />
+              <BookOpen className="h-8 w-8 text-primary" />
               <span className="text-2xl font-bold">MentorMatch</span>
             </div>
             <p className="text-muted-foreground leading-relaxed">
@@ -24,7 +24,7 @@ const Footer = () => {
           </div>
 
           {/* Platform Links */}
-          <div>
+          <div >
             <h3 className="text-lg font-semibold mb-4">Platform</h3>
             <ul className="space-y-2 text-muted-foreground">
               {["Find Tutors", "Become a Tutor", "How It Works", "Pricing"].map(
