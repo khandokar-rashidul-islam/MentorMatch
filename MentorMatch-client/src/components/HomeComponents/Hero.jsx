@@ -14,7 +14,7 @@ const Hero = () => {
           </Badge>
 
           <div className="space-y-6">
-            <h1 className="text-4xl sm:text-5xl  2xl:text-8xl font-bold leading-tight">
+            <h1 className="text-4xl sm:text-5xl xl:text-6xl 2xl:text-7xl font-bold leading-tight">
               Learn Anything,
               <span className="text-secondary-foreground">
                 Teach Everything
