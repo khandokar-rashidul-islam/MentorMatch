@@ -86,8 +86,8 @@ const Features = () => {
   ];
 
   return (
-    <section id="features" className="w-11/12 mx-auto py-20 bg-muted/30">
-      <div className="container mx-auto px-4">
+    <section id="features" className="py-20 bg-muted/30">
+      <div className="w-11/12 mx-auto px-4">
         <div className="text-center mb-16">
           <Badge variant="outline" className="mb-4">
             Platform Features
