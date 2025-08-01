@@ -129,7 +129,7 @@ const TutorGigs = () => {
   ];
 
   return (
-    <section className="py-16 bg-background animate-fade-in p-4">
+    <section className="w-11/12 mx-auto py-16 bg-background animate-fade-in ">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 animate-fade-in [animation-delay:200ms]">
           <Badge variant="outline" className="mb-4">
