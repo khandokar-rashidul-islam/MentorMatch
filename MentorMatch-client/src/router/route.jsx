@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router";
 import Error404 from "../pages/Error404";
 import AppLayout from "../layouts/AppLayout";
 import Home from "../pages/Home/Home";
+import RegistrationForm from "../pages/Registration/RegistrationForm";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -17,10 +18,14 @@ const router = createBrowserRouter([
         path: "/",
         element:<Home/> ,
       },
+      {
+        path:"/registration",
+        element:<RegistrationForm/>
+      }
 
     ],
   },
-
+  
   {
     path: "/*",
     Component: Error404,
