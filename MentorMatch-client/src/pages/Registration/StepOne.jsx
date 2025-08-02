@@ -11,9 +11,7 @@ const StepOne = ({ onNext, onBack, isLast }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-primary mb-6">
-        Personal Information
-      </h2>
+      <h2 className="text-2xl font-semibold text-primary mb-6">Personal Information</h2>
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-4">
           <Label>Username *</Label>

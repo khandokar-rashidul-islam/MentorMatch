@@ -9,7 +9,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-const StepRole = ({ onNext, onBack, isLast }) => {
+const StepThree = ({ onNext, onBack, isLast })=> {
   const {
     setValue,
     formState: { errors },
@@ -17,26 +17,53 @@ const StepRole = ({ onNext, onBack, isLast }) => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-primary">Select Your Role</h2>
+      <h2 className="text-2xl font-semibold text-primary">
+        Additional Information
+      </h2>
 
       <div className="grid grid-cols-2 gap-6">
-        <div className="col-span-2 flex flex-col gap-4">
-          <Label>Role *</Label>
+        <div className=" flex flex-col gap-4">
+          <Label>Gender *</Label>
           <Select
             onValueChange={(val) =>
-              setValue("role", val, { shouldValidate: true })
+              setValue("gender", val, { shouldValidate: true })
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select your role" />
+              <SelectValue placeholder="Select your gender" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Mentor">Mentor</SelectItem>
-              <SelectItem value="Student">Student</SelectItem>
-              <SelectItem value="Admin">Admin</SelectItem>
+              <SelectItem value="Male">Male</SelectItem>
+              <SelectItem value="Female">Female</SelectItem>
+              <SelectItem value="Other">Other</SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-red-500 text-sm">{errors.role?.message}</p>
+          <p className="text-red-500 text-sm">{errors.gender?.message}</p>
+        </div>
+
+        <div className="col-span-2  flex flex-col gap-4">
+          <Label>Address *</Label>
+          <Input
+            {...register("address", { required: "Address is required" })}
+            placeholder="Your full address"
+          />
+          <p className="text-red-500 text-sm">{errors.address?.message}</p>
+        </div>
+
+        <div className="col-span-2  flex flex-col gap-4">
+          <Label>Profile Image (Optional)</Label>
+          <div className="flex items-center gap-4 border border-dashed border-gray-300 p-4 rounded-md">
+            <UploadCloud className="w-6 h-6 text-gray-500" />
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              onChange={handleImageChange}
+              className="text-sm"
+            />
+            <span className="text-gray-500 text-sm ml-auto">
+              PNG, JPG up to 5MB
+            </span>
+          </div>
         </div>
       </div>
 
@@ -44,7 +71,7 @@ const StepRole = ({ onNext, onBack, isLast }) => {
         <Button variant="outline" onClick={onBack}>
           Previous
         </Button>
-        <Button onClick={onNext}>
+        <Button>
           {isLast ? "Create Account" : "Continue"}
         </Button>
       </div>
