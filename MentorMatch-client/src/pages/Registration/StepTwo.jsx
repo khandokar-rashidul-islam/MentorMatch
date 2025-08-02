@@ -20,7 +20,7 @@ const StepTwo = ({ onNext, onBack, isLast }) => {
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-6 text-primary">Professional Details</h2>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid  md:grid-cols-2 gap-4">
         <div className="flex flex-col gap-4">
           <Label>Profession *</Label>
           <Select
@@ -63,7 +63,7 @@ const StepTwo = ({ onNext, onBack, isLast }) => {
           )}
         </div>
 
-        <div className="col-span-2  flex flex-col gap-4">
+        <div className="md:col-span-2  flex flex-col gap-4">
           <Label>Institute Name *</Label>
           <Input
             {...register("institute", {
@@ -75,7 +75,7 @@ const StepTwo = ({ onNext, onBack, isLast }) => {
           )}
         </div>
 
-        <div className="col-span-2 flex flex-col gap-4">
+        <div className="md:col-span-2 flex flex-col gap-4">
           <Label>Bank Account (Optional)</Label>
           <Input {...register("bank")} />
         </div>

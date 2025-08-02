@@ -26,10 +26,10 @@ export default function RegistrationForm() {
 
   return (
     <FormProvider  {...methods}>
-      <div className="w-11/12 min-h-screen mx-auto flex justify-center items-center p-4">
-        <form onSubmit={onSubmit} className="pt-35 pb-20 flex">
+      <div className="w-11/12  mx-auto flex  justify-center items-center p-4">
+        <form onSubmit={onSubmit} className="pt-35 pb-20 flex flex-col lg:flex-row  ">
           {/* Sidebar */}
-          <div className=" w-1/3 bg-primary text-secondary p-10 flex flex-col justify-between">
+          <div className="w-11/12 lg:w-1/3 mx-auto bg-primary text-secondary p-10 flex flex-col justify-between">
             <div>
               <h2 className="text-2xl font-bold mb-4">
                 Professional Registration
@@ -72,7 +72,7 @@ export default function RegistrationForm() {
           </div>
 
           {/* Form */}
-          <div className="w-2/3 p-10 bg-background border">
+          <div className="w-11/12 mx-auto p-10 bg-background border">
             <CurrentStep
               onNext={nextStep}
               onBack={prevStep}
