@@ -17,10 +17,10 @@ export default function StepRole({ onNext, isLast }) {
 
   return (
     <div className="">
-      <h2 className="text-2xl font-semibold text-blue-800">Select Your Role</h2>
+      <h2 className="text-2xl font-semibold text-primary my-4">Select Your Role</h2>
 
       <div className="grid grid-cols-2 gap-6">
-        <div className="col-span-2">
+        <div className="col-span-2 flex flex-col gap-4">
           <Label>Role *</Label>
           <Select
             onValueChange={(val) =>

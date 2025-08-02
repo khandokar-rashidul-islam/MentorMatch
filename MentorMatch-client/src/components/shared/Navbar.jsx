@@ -77,7 +77,7 @@ const Navbar = () => {
               Sign In
             </Button>
           </Link>
-          <Link to="/">
+          <Link to="/registration">
             <Button
               variant="ghost"
               size="sm"
@@ -134,7 +134,7 @@ const Navbar = () => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link to="/">
+                  <Link to="/registration">
                     <Button
                       variant="default"
                       size="sm"

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { UploadCloud } from "lucide-react";
 
-const StepThree = ({ onNext, onBack, isLast })=> {
+const StepThree = ({ onNext, onBack, isLast }) => {
   const {
     register,
     setValue,
@@ -27,12 +27,12 @@ const StepThree = ({ onNext, onBack, isLast })=> {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-blue-800">
+      <h2 className="text-2xl font-semibold text-primary">
         Additional Information
       </h2>
 
-      <div className="grid grid-cols-2 gap-6">
-        <div>
+      <div className="grid grid-cols-2 ">
+        <div className="flex flex-col gap-4">
           <Label>Gender *</Label>
           <Select
             onValueChange={(val) =>
@@ -51,7 +51,7 @@ const StepThree = ({ onNext, onBack, isLast })=> {
           <p className="text-red-500 text-sm">{errors.gender?.message}</p>
         </div>
 
-        <div className="col-span-2">
+        <div className="col-span-2 flex flex-col gap-4">
           <Label>Address *</Label>
           <Input
             {...register("address", { required: "Address is required" })}
@@ -60,17 +60,20 @@ const StepThree = ({ onNext, onBack, isLast })=> {
           <p className="text-red-500 text-sm">{errors.address?.message}</p>
         </div>
 
-        <div className="col-span-2">
+        <div className="col-span-2 flex flex-col gap-4">
           <Label>Profile Image (Optional)</Label>
-          <div className="flex items-center gap-4 border border-dashed border-gray-300 p-4 rounded-md">
+          <div className="flex flex-col md:flex-row flex-wrap  items-center justify-center gap-4 border border-dashed border-gray-300 p-4 rounded-md">
             <UploadCloud className="w-6 h-6 text-gray-500" />
-            <input
-              type="file"
-              accept="image/png, image/jpeg"
-              onChange={handleImageChange}
-              className="text-sm"
-            />
-            <span className="text-gray-500 text-sm ml-auto">
+            <div className="flex justify-center w-full ">
+              <input
+                type="file"
+                accept="image/png, image/jpeg"
+                onChange={handleImageChange}
+                className="text-sm w-1/3 mx-auto border border-dashed "
+              />
+            </div>
+
+            <span className="text-gray-500 text-sm ">
               PNG, JPG up to 5MB
             </span>
           </div>
@@ -81,7 +84,7 @@ const StepThree = ({ onNext, onBack, isLast })=> {
         <Button variant="outline" onClick={onBack}>
           Previous
         </Button>
-        <Button onClick={onNext}>
+        <Button >
           {isLast ? "Create Account" : "Continue"}
         </Button>
       </div>

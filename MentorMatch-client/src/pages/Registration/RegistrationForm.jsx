@@ -27,10 +27,10 @@ export default function RegistrationForm() {
 
   return (
     <FormProvider {...methods}>
-      <div className="w-11/12 min-h-screen mx-auto flex justify-center items-center p-4">
-        <form onSubmit={onSubmit} className="pt-35 pb-20 flex">
+      <div className="w-11/12 min-h-screen mx-auto flex flex-col justify-center items-center p-4">
+        <form onSubmit={onSubmit} className="pt-35 pb-20 flex flex-col lg:flex-row ">
           {/* Sidebar */}
-          <div className="w-11/12 lg:w-[40%] mx-auto bg-primary text-secondary p-10 flex flex-col justify-between">
+          <div className=" lg:w-[45%] bg-primary text-secondary p-10 flex flex-col justify-between">
             <div>
               <h2 className="text-2xl font-bold mb-4">
                 Professional Registration
@@ -40,7 +40,7 @@ export default function RegistrationForm() {
                 experts
               </p>
 
-              <div className="flex flex-col items-start relative pl-4 space-y-8 mt-4">
+              <div className="flex flex-col items-start relative  space-y-8 mt-4">
                 {[
                   "Selecting Your Role",
                   "Personal Information",
@@ -60,10 +60,10 @@ export default function RegistrationForm() {
                         className={`h-6 w-6 rounded-full flex items-center justify-center border-2  text-xs font-medium
                 ${
                   isCompleted
-                    ? "bg-teal-600 border-teal-600 text-white"
+                          ? "bg-teal-900 border-teal-500 text-teal-500 dark:text-teal-300"
                     : isActive
-                    ? "bg-teal-600 border-teal-600 text-white"
-                    : "bg-white border-red-600 text-muted-foreground"
+                            ? "bg-white border-teal-300 text-teal-800 dark:text-teal-800 dark:border-teal-800"
+                    : "bg-white border-red-600 text-red-500"
                 }`}
                       >
                         {isCompleted ? "✓" : index + 1}
@@ -73,10 +73,10 @@ export default function RegistrationForm() {
                       <div
                         className={`ml-3 text-sm ${
                           isCompleted
-                            ? "text-teal-600"
+                          ? "text-teal-500 dark:text-teal-900"
                             : isActive
                             ? "text-white font-semibold"
-                            : "text-muted-foreground"
+                            : "text-gray-400 dark:text-gray-600 font-semibold"
                         }`}
                       >
                         {label}
@@ -99,7 +99,7 @@ export default function RegistrationForm() {
           </div>
 
           {/* Form */}
-          <div className="w-2/3 p-10 bg-background border">
+          <div className="w-full mx-auto p-10 bg-background border">
             <CurrentStep
               onNext={nextStep}
               onBack={prevStep}

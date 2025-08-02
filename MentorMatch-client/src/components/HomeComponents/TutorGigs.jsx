@@ -146,7 +146,7 @@ const TutorGigs = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 ">
           {gigs.map((gig) => (
-            <Card className="flex flex-col justify-between h-full rounded-xl border border-blue-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]">
+            <Card key={gig.id} className="flex flex-col justify-between h-full rounded-xl border border-blue-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]">
               <CardHeader className="pb-0">
                 <div className="flex items-start justify-between">
                   {/* Tutor Info */}

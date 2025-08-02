@@ -14,7 +14,7 @@ const StepOne = ({ onNext, onBack, isLast }) => {
       <h2 className="text-2xl font-semibold text-primary mb-6">
         Personal Information
       </h2>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col gap-4">
           <Label>Username *</Label>
           <Input
@@ -69,7 +69,7 @@ const StepOne = ({ onNext, onBack, isLast }) => {
           )}
         </div>
       </div>
-      <div className="flex justify-between items-center">
+      <div className="flex pt-6 justify-between items-center">
         <Button variant="outline" onClick={onBack}>
           Previous
         </Button>
