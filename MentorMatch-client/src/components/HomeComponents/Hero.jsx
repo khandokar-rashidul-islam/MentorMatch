@@ -86,7 +86,7 @@ const Hero = () => {
 
           <div className="absolute -bottom-10 -right-4 bg-card p-4 rounded-xl shadow-md border transition-transform hover:scale-105 duration-300">
             <div className="flex items-center space-x-2">
-              <BookOpen className="h-5 w-5 text-secondary" />
+              <BookOpen className="h-5 w-5 text-primary" />
               <span className="text-sm font-medium">1,200+ Subjects</span>
             </div>
           </div>
