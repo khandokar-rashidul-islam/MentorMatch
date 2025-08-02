@@ -67,7 +67,7 @@ const Navbar = () => {
         {/* Desktop Actions */}
         <div className="hidden md:flex  items-center space-x-2">
           <ModeToggle />
-          <Link to="/">
+          <Link to="/signin">
             <Button
               variant="ghost"
               size="sm"
@@ -122,7 +122,7 @@ const Navbar = () => {
               <DropdownMenuSeparator />
               <DropdownMenuGroup className="flex">
                 <DropdownMenuItem>
-                  <Link to="/">
+                  <Link to="/signin">
                     <Button
                       variant=""
                       size="sm"
