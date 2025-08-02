@@ -3,8 +3,9 @@ import { useState } from "react";
 import StepOne from "./StepOne";
 import StepTwo from "./StepTwo";
 import StepThree from "./StepThree";
+import StepRole from "./StepRole";
 
-const steps = [StepOne, StepTwo, StepThree]; // Add more as needed
+const steps = [StepRole, StepOne, StepTwo, StepThree]; // Add more as needed
 
 export default function RegistrationForm() {
   const methods = useForm({ mode: "onTouched" });
@@ -25,7 +26,7 @@ export default function RegistrationForm() {
   });
 
   return (
-    <FormProvider  {...methods}>
+    <FormProvider {...methods}>
       <div className="w-11/12 min-h-screen mx-auto flex justify-center items-center p-4">
         <form onSubmit={onSubmit} className="pt-35 pb-20 flex">
           {/* Sidebar */}
@@ -35,29 +36,55 @@ export default function RegistrationForm() {
                 Professional Registration
               </h2>
               <p className="text-sm mb-6">
-                Create your professional profile and join our community of experts
+                Create your professional profile and join our community of
+                experts
               </p>
 
-              <ol className="space-y-4 text-base font-medium">
-                <li
-                  className={`${step === 0 ? "text-secondary font-bold" : "text-secondary/70"
-                    }`}
-                >
-                  1. Personal Information
-                </li>
-                <li
-                  className={`${step === 1 ? "text-secondary font-bold" : "text-secondary/70"
-                    }`}
-                >
-                  2. Professional Details
-                </li>
-                <li
-                  className={`${step === 2 ? "text-secondary font-bold" : "text-secondary/70"
-                    }`}
-                >
-                  3. Additional Information
-                </li>
-              </ol>
+              <div className="flex flex-col items-start relative pl-4 space-y-8 mt-4">
+                {[
+                  "Selecting Your Role",
+                  "Personal Information",
+                  "Professional Details",
+                  "Additional Information",
+                ].map((label, index) => {
+                  const isCompleted = step > index;
+                  const isActive = step === index;
+
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center z-10 relative"
+                    >
+                      {/* Step circle */}
+                      <div
+                        className={`h-6 w-6 rounded-full flex items-center justify-center border-2  text-xs font-medium
+                ${
+                  isCompleted
+                    ? "bg-teal-600 border-teal-600 text-white"
+                    : isActive
+                    ? "bg-teal-600 border-teal-600 text-white"
+                    : "bg-white border-red-600 text-muted-foreground"
+                }`}
+                      >
+                        {isCompleted ? "✓" : index + 1}
+                      </div>
+
+                      {/* Step label */}
+                      <div
+                        className={`ml-3 text-sm ${
+                          isCompleted
+                            ? "text-teal-600"
+                            : isActive
+                            ? "text-white font-semibold"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        {label}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="mt-10">
