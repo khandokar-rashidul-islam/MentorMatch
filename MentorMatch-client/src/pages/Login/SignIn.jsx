@@ -16,10 +16,10 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-200">
-      <Card className="w-full max-w-md shadow-lg border-none">
+    <div className="min-h-screen flex items-center justify-center ">
+      <Card className="w-full max-w-md shadow-lg border ">
         <CardContent className="p-6">
-          <h2 className="text-2xl font-bold text-center mb-2">Welcome Back</h2>
+          <h2 className="text-2xl font-bold text-center mb-2 text-primary">Welcome Back</h2>
           <p className="text-sm text-center text-muted-foreground mb-6">
             Sign in to access your professional dashboard
           </p>
@@ -40,7 +40,7 @@ const SignIn = () => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
+            <div className="flex flex-col gap-4">
               <Label htmlFor="email">Email Address</Label>
               <Input
                 id="email"
@@ -50,7 +50,7 @@ const SignIn = () => {
               />
             </div>
 
-            <div className="relative">
+            <div className="relative flex flex-col gap-4">
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
@@ -72,18 +72,18 @@ const SignIn = () => {
                 <input
                   type="checkbox"
                   id="remember"
-                  className="accent-indigo-500"
+                  className="accent-primary"
                 />
                 <label htmlFor="remember">Remember me</label>
               </div>
-              <a href="#" className="text-indigo-500 hover:underline">
+              <a href="#" className="text-primary hover:underline">
                 Forgot password?
               </a>
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-indigo-600 hover:bg-indigo-700"
+              className="w-full bg-primary hover:bg-primary"
             >
               Sign In
             </Button>
@@ -91,7 +91,7 @@ const SignIn = () => {
 
           <p className="text-center text-sm mt-4">
             Don’t have an account?{" "}
-            <a href="#" className="text-indigo-500 hover:underline">
+            <a href="#" className="text-primary hover:underline">
               Sign up here
             </a>
           </p>
