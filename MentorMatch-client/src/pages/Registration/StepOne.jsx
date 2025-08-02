@@ -2,13 +2,15 @@ import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 const StepOne = ({ onNext, onBack, isLast }) => {
   const {
     register,
     formState: { errors },
   } = useFormContext();
-
+ const [showPassword, setShowPassword] = useState(false);
   return (
     <div>
       <h2 className="text-2xl font-semibold text-primary mb-6">
@@ -51,12 +53,19 @@ const StepOne = ({ onNext, onBack, isLast }) => {
             <p className="text-red-500 text-sm">{errors.birthDate.message}</p>
           )}
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="relative flex flex-col gap-4">
           <Label>Password *</Label>
           <Input
-            type="password"
+            type={showPassword ? "text" : "password"}
             {...register("password", { required: "Password is required" })}
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute right-3 top-[38px] text-muted-foreground"
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
           {errors.password && (
             <p className="text-red-500 text-sm">{errors.password.message}</p>
           )}
