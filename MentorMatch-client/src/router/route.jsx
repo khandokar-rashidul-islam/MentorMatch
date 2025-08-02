@@ -3,6 +3,8 @@ import Error404 from "../pages/Error404";
 import AppLayout from "../layouts/AppLayout";
 import Home from "../pages/Home/Home";
 import RegistrationForm from "../pages/Registration/RegistrationForm";
+import SignIn from "../pages/Login/SignIn";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -16,16 +18,19 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element:<Home/> ,
+        element: <Home />,
       },
       {
-        path:"/registration",
-        element:<RegistrationForm/>
-      }
-
+        path: "/registration",
+        element: <RegistrationForm />,
+      },
+      {
+        path: "/signin",
+        element: <SignIn/>
+      },
     ],
   },
-  
+
   {
     path: "/*",
     Component: Error404,
