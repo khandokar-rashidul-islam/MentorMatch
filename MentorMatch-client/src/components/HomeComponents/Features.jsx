@@ -89,7 +89,7 @@ const Features = () => {
     <section id="features" className="py-20 bg-muted/30">
       <div className="w-11/12 mx-auto px-4">
         <div className="text-center mb-16">
-          <Badge variant="outline" className="mb-4">
+          <Badge variant="outline" className="mb-4 bg-primary/10 text-primary border border-primary/20">
             Platform Features
           </Badge>
           <h2 className="text-4xl font-bold mb-4">

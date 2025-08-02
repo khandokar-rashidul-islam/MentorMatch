@@ -31,7 +31,7 @@ const stats = [
 
 const Stats = () => {
   return (
-    <section className="relative py-20 bg-muted/30 text-primary overflow-hidden">
+    <section className="relative py-20 bg-muted/30 overflow-hidden">
       <div className="relative container mx-auto px-4">
         <div className="text-center mb-16">
           <Badge
@@ -43,7 +43,7 @@ const Stats = () => {
           <h2 className="text-4xl font-bold tracking-tight mb-4">
             Trusted by Thousands
           </h2>
-          <p className="text-xl text-primary/90 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Join our growing community of learners and educators making
             knowledge accessible to everyone, everywhere.
           </p>
@@ -58,7 +58,7 @@ const Stats = () => {
               </div>
               <div className="text-4xl font-bold mb-2">{value}</div>
               <div className="text-lg font-semibold mb-1">{label}</div>
-              <p className="text-white/80 text-sm">{description}</p>
+              <p className="text-muted-foreground/80 text-sm">{description}</p>
             </div>
           ))}
         </div>

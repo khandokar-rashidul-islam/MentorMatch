@@ -25,63 +25,62 @@ export default function RegistrationForm() {
   });
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={onSubmit} className=" py-20 flex ">
-        {/* Sidebar */}
-        <div className=" w-1/3 bg-primary text-white p-10 flex flex-col justify-between">
-          <div>
-            <h2 className="text-2xl font-bold mb-4">
-              Professional Registration
-            </h2>
-            <p className="text-sm mb-6">
-              Create your professional profile and join our community of experts
-            </p>
+    <FormProvider  {...methods}>
+      <div className="w-11/12 min-h-screen mx-auto flex justify-center items-center p-4">
+        <form onSubmit={onSubmit} className="pt-35 pb-20 flex">
+          {/* Sidebar */}
+          <div className=" w-1/3 bg-primary text-secondary p-10 flex flex-col justify-between">
+            <div>
+              <h2 className="text-2xl font-bold mb-4">
+                Professional Registration
+              </h2>
+              <p className="text-sm mb-6">
+                Create your professional profile and join our community of experts
+              </p>
 
-            <ol className="space-y-4 text-base font-medium">
-              <li
-                className={`${
-                  step === 0 ? "text-white font-bold" : "text-white/70"
-                }`}
-              >
-                1. Personal Information
-              </li>
-              <li
-                className={`${
-                  step === 1 ? "text-white font-bold" : "text-white/70"
-                }`}
-              >
-                2. Professional Details
-              </li>
-              <li
-                className={`${
-                  step === 2 ? "text-white font-bold" : "text-white/70"
-                }`}
-              >
-                3. Additional Information
-              </li>
-            </ol>
-          </div>
-
-          <div className="mt-10">
-            <div className="h-2 bg-white/30 rounded-full w-full overflow-hidden">
-              <div
-                className="h-2 bg-white rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
+              <ol className="space-y-4 text-base font-medium">
+                <li
+                  className={`${step === 0 ? "text-secondary font-bold" : "text-secondary/70"
+                    }`}
+                >
+                  1. Personal Information
+                </li>
+                <li
+                  className={`${step === 1 ? "text-secondary font-bold" : "text-secondary/70"
+                    }`}
+                >
+                  2. Professional Details
+                </li>
+                <li
+                  className={`${step === 2 ? "text-secondary font-bold" : "text-secondary/70"
+                    }`}
+                >
+                  3. Additional Information
+                </li>
+              </ol>
             </div>
-            <p className="text-sm mt-1">{Math.round(progress)}%</p>
-          </div>
-        </div>
 
-        {/* Form */}
-        <div className="w-2/3 p-10 bg-gray-100">
-          <CurrentStep
-            onNext={nextStep}
-            onBack={prevStep}
-            isLast={step === steps.length - 1}
-          />
-        </div>
-      </form>
+            <div className="mt-10">
+              <div className="h-2 bg-secondary/50 rounded-full w-full overflow-hidden">
+                <div
+                  className="h-2 bg-secondary rounded-full transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <p className="text-sm mt-1">{Math.round(progress)}%</p>
+            </div>
+          </div>
+
+          {/* Form */}
+          <div className="w-2/3 p-10 bg-background border">
+            <CurrentStep
+              onNext={nextStep}
+              onBack={prevStep}
+              isLast={step === steps.length - 1}
+            />
+          </div>
+        </form>
+      </div>
     </FormProvider>
   );
 }

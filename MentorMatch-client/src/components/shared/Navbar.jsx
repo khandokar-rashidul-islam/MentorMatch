@@ -30,7 +30,7 @@ const Navbar = () => {
         >
           <div className="flex items-end gap-2">
             <BookOpen className="h-6 w-6 text-primary" />
-          <span className="text-xl lg:text-2xl font-bold text-foreground">
+          <span className="text-xl lg:text-2xl font-bold text-primary">
             MentorMatch
           </span>
           </div>
@@ -71,7 +71,7 @@ const Navbar = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="hover-scale transition-all duration-300 cursor-pointer hover:border"
+              className="hover-scale transition-all duration-300 cursor-pointer hover:border hover:text-primary text-primary"
             >
               <User className="h-4 w-4 mr-2" />
               Sign In
@@ -81,7 +81,7 @@ const Navbar = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="hover-scale transition-all duration-300 cursor-pointer hover:border"
+              className="hover-scale transition-all duration-300 cursor-pointer hover:border text-primary hover:text-primary "
             >
               Get Started
             </Button>

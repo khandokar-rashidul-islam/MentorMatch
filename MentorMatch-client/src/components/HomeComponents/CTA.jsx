@@ -11,10 +11,10 @@ const CTA = () => {
           <Card className="overflow-hidden shadow-xl rounded-2xl">
             <CardContent className="p-0">
               {/* CTA Header */}
-              <div className="bg-secondary text-primary p-12 text-center">
+              <div className="bg-secondary p-12 text-center">
                 <Badge
                   variant="secondary"
-                  className="mb-6 bg-primary/10 text-primary border border-primary/20"
+                  className="mb-4 bg-primary/10 text-primary border border-primary/20"
                 >
                   Ready to Get Started?
                 </Badge>
@@ -23,7 +23,7 @@ const CTA = () => {
                   Join MentorMatch Today
                 </h2>
 
-                <p className="text-xl text-primary/90 mb-8 max-w-2xl mx-auto">
+                <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
                   Whether you want to learn something new or share your
                   expertise, our platform makes it easy to connect and grow
                   together.

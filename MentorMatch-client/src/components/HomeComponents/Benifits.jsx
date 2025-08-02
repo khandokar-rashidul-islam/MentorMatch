@@ -73,7 +73,7 @@ const Benefits = () => {
       <div className="w-11/12 mx-auto px-4">
         {/* Section Heading */}
         <div className="text-center mb-16">
-          <Badge variant="outline" className="mb-4">
+          <Badge variant="outline" className="mb-4 bg-primary/10 text-primary border border-primary/20">
             Benefits
           </Badge>
           <h2 className="text-4xl font-bold mb-4">Win-Win for Everyone</h2>
@@ -124,7 +124,7 @@ const Benefits = () => {
               })}
             </div>
 
-            <Button variant="default" size="lg" className="w-full lg:w-auto">
+            <Button variant="default" size="lg" className="w-full lg:w-auto text-white">
               <BookOpen className="h-5 w-5 mr-2" />
               Start Learning Today
             </Button>
@@ -168,8 +168,8 @@ const Benefits = () => {
               })}
             </div>
 
-            <Button variant="secondary" size="lg" className="w-full lg:w-auto">
-              <Users className="h-5 w-5 mr-2" />
+            <Button variant="secondary" size="lg" className="w-full lg:w-auto text-primary">
+              <Users className="h-5 w-5 mr-2 " />
               Become a Tutor
             </Button>
           </div>
