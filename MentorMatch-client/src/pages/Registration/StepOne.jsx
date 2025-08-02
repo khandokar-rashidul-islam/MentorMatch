@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
-const StepOne = ({ onNext, onBack, isLast }) => {
+const StepOne = ({ onNext }) => {
   const {
     register,
     formState: { errors },
@@ -67,14 +67,9 @@ const StepOne = ({ onNext, onBack, isLast }) => {
           )}
         </div>
       </div>
-      <div className="mt-6 flex gap-4">
-        <Button variant="outline" type="button" onClick={onBack}>
-          Previous
-        </Button>
-        <Button type={isLast ? "submit" : "button"} onClick={onNext}>
-          {isLast ? "Submit" : "Continue"}
-        </Button>
-      </div>
+      <Button className="mt-6" onClick={onNext}>
+        Continue
+      </Button>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { useFormContext } from "react-hook-form";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectTrigger,
@@ -8,21 +9,30 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { UploadCloud } from "lucide-react";
 
 const StepThree = ({ onNext, onBack, isLast })=> {
   const {
+    register,
     setValue,
     formState: { errors },
   } = useFormContext();
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setValue("profileImage", file);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-primary">
+      <h2 className="text-2xl font-semibold text-blue-800">
         Additional Information
       </h2>
 
       <div className="grid grid-cols-2 gap-6">
-        <div className=" flex flex-col gap-4">
+        <div>
           <Label>Gender *</Label>
           <Select
             onValueChange={(val) =>
@@ -41,7 +51,7 @@ const StepThree = ({ onNext, onBack, isLast })=> {
           <p className="text-red-500 text-sm">{errors.gender?.message}</p>
         </div>
 
-        <div className="col-span-2  flex flex-col gap-4">
+        <div className="col-span-2">
           <Label>Address *</Label>
           <Input
             {...register("address", { required: "Address is required" })}
@@ -50,7 +60,7 @@ const StepThree = ({ onNext, onBack, isLast })=> {
           <p className="text-red-500 text-sm">{errors.address?.message}</p>
         </div>
 
-        <div className="col-span-2  flex flex-col gap-4">
+        <div className="col-span-2">
           <Label>Profile Image (Optional)</Label>
           <div className="flex items-center gap-4 border border-dashed border-gray-300 p-4 rounded-md">
             <UploadCloud className="w-6 h-6 text-gray-500" />
@@ -71,12 +81,11 @@ const StepThree = ({ onNext, onBack, isLast })=> {
         <Button variant="outline" onClick={onBack}>
           Previous
         </Button>
-        <Button>
+        <Button onClick={onNext}>
           {isLast ? "Create Account" : "Continue"}
         </Button>
       </div>
     </div>
   );
-};
-
-export default StepRole;
+}
+export default StepThree;
