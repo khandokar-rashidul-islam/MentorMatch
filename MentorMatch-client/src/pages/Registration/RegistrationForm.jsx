@@ -29,7 +29,7 @@ export default function RegistrationForm() {
       <div className="w-11/12  mx-auto flex  justify-center items-center p-4">
         <form onSubmit={onSubmit} className="pt-35 pb-20 flex flex-col lg:flex-row  ">
           {/* Sidebar */}
-          <div className="w-11/12 lg:w-1/3 mx-auto bg-primary text-secondary p-10 flex flex-col justify-between">
+          <div className="w-11/12 lg:w-[40%] mx-auto bg-primary text-secondary p-10 flex flex-col justify-between">
             <div>
               <h2 className="text-2xl font-bold mb-4">
                 Professional Registration

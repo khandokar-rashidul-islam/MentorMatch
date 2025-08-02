@@ -4,9 +4,9 @@ const Footer = () => {
   return (
     <footer className="w-full bg-secondary text-primary">
       <div className="w-11/12 mx-auto px-4 py-16">
-        <div className="w-full grid gap-10 grid-cols-2 lg:grid-cols-4 mb-12 justify-items-center  ">
+        <div className="w-full grid gap-10 grid-cols-2 lg:grid-cols-4 mb-12 lg:justify-items-center   ">
           {/* Brand Section */}
-          <div className="space-y-4 col-span-2 lg:col-span-1">
+          <div className="space-y-4 col-span-2 sm:col-span-1 ">
             <div className="flex items-center gap-2">
               <BookOpen className="h-8 w-8 text-primary" />
               <span className="text-2xl font-bold">MentorMatch</span>
