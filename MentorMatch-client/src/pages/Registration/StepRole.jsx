@@ -1,12 +1,5 @@
 import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
@@ -19,42 +12,60 @@ export default function StepRole({ onNext, isLast }) {
 
   const [selectedRole, setSelectedRole] = useState("");
 
-  const handleChange = (val) => {
-    setSelectedRole(val);
-    setValue("role", val, { shouldValidate: true });
+  const handleSelect = (role) => {
+    setSelectedRole(role);
+    setValue("role", role, { shouldValidate: true });
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-semibold text-primary my-4">
-        Select Your Role
-      </h2>
+    <div className="h-full w-full flex flex-col items-center justify-center gap-10 px-4 py-6">
+      <div className="w-full max-w-xl">
+        <h2 className="text-3xl font-bold text-primary text-center mb-8">
+          How Would You Like to Join?
+        </h2>
 
-      <div className="grid grid-cols-2 gap-6">
-        <div className="col-span-2 flex flex-col gap-4">
-          <Label>Role *</Label>
-          <Select onValueChange={handleChange} value={selectedRole}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select your role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Student">Learner</SelectItem>
-              <SelectItem value="Mentor">Mentor</SelectItem>
-            </SelectContent>
-          </Select>
-          {/* Registering the value manually via hidden input */}
-          <input
-            type="hidden"
-            value={selectedRole}
-            {...register("role", { required: "Role is required" })}
-          />
-          {errors.role && (
-            <p className="text-red-500 text-sm">{errors.role.message}</p>
-          )}
+        <div className="flex flex-col md:flex-row justify-center items-center gap-6">
+          {/* Learner */}
+          <div
+            onClick={() => handleSelect("Student")}
+            className={`w-full md:w-1/2 text-center px-6 py-4 border rounded-xl font-medium cursor-pointer transition-colors duration-200
+              ${
+                selectedRole === "Student"
+                  ? "bg-primary text-white border-primary"
+                  : "bg-white text-gray-700 border-gray-300 hover:border-primary hover:text-primary"
+              }`}
+          >
+            Learner
+          </div>
+
+          {/* Mentor */}
+          <div
+            onClick={() => handleSelect("Mentor")}
+            className={`w-full md:w-1/2 text-center px-6 py-4 border rounded-xl font-medium cursor-pointer transition-colors duration-200
+              ${
+                selectedRole === "Mentor"
+                  ? "bg-primary text-white border-primary"
+                  : "bg-white text-gray-700 border-gray-300 hover:border-primary hover:text-primary"
+              }`}
+          >
+            Mentor
+          </div>
         </div>
+
+        {/* Hidden input to register with react-hook-form */}
+        <input
+          type="hidden"
+          value={selectedRole}
+          {...register("role", { required: "Role is required" })}
+        />
+        {errors.role && (
+          <p className="text-red-500 text-sm mt-2 text-center">
+            {errors.role.message}
+          </p>
+        )}
       </div>
 
-      <div className="flex justify-between items-center mt-4">
+      <div className="w-full max-w-xl flex justify-end mt-8">
         <Button onClick={onNext}>
           {isLast ? "Create Account" : "Continue"}
         </Button>
