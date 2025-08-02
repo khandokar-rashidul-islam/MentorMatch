@@ -19,7 +19,9 @@ const StepTwo = ({ onNext, onBack, isLast }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6 text-primary">Professional Details</h2>
+      <h2 className="text-2xl font-semibold mb-6 text-primary">
+        Professional Details
+      </h2>
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-4">
           <Label>Profession *</Label>
@@ -80,12 +82,12 @@ const StepTwo = ({ onNext, onBack, isLast }) => {
           <Input {...register("bank")} />
         </div>
       </div>
-      <div className="mt-6 flex gap-4">
-        <Button variant="outline" type="button" onClick={onBack}>
+      <div className="flex justify-between items-center">
+        <Button variant="outline" onClick={onBack}>
           Previous
         </Button>
-        <Button type={isLast ? "submit" : "button"} onClick={onNext}>
-          {isLast ? "Submit" : "Continue"}
+        <Button onClick={onNext}>
+          {isLast ? "Create Account" : "Continue"}
         </Button>
       </div>
     </div>
