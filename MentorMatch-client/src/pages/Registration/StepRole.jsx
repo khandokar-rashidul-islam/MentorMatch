@@ -27,10 +27,10 @@ export default function StepRole({ onNext, isLast }) {
         <div className="flex flex-col md:flex-row justify-center items-center gap-6">
           {/* Learner */}
           <div
-            onClick={() => handleSelect("Student")}
+            onClick={() => handleSelect("learner")}
             className={`w-full md:w-1/2 text-center px-6 py-4 border rounded-xl font-medium cursor-pointer transition-colors duration-200
               ${
-                selectedRole === "Student"
+                selectedRole === "learner"
                   ? "bg-primary text-white border-primary"
                   : "bg-white text-gray-700 border-gray-300 hover:border-primary hover:text-primary"
               }`}
@@ -40,10 +40,10 @@ export default function StepRole({ onNext, isLast }) {
 
           {/* Mentor */}
           <div
-            onClick={() => handleSelect("Mentor")}
+            onClick={() => handleSelect("mentor")}
             className={`w-full md:w-1/2 text-center px-6 py-4 border rounded-xl font-medium cursor-pointer transition-colors duration-200
               ${
-                selectedRole === "Mentor"
+                selectedRole === "mentor"
                   ? "bg-primary text-white border-primary"
                   : "bg-white text-gray-700 border-gray-300 hover:border-primary hover:text-primary"
               }`}
