@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { UploadCloud } from "lucide-react";
 
+// eslint-disable-next-line no-unused-vars
 const StepThree = ({ onNext, onBack, isLast }) => {
   const {
     register,
