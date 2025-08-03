@@ -17,7 +17,7 @@ const SignIn = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center ">
-      <Card className="w-full max-w-md shadow-lg border ">
+      <Card className="w-full max-w-md shadow-lg border mt-35 mb-20 ">
         <CardContent className="p-6">
           <h2 className="text-2xl font-bold text-center mb-2 text-primary">Welcome Back</h2>
           <p className="text-sm text-center text-muted-foreground mb-6">
