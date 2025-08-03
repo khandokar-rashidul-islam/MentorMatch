@@ -4,6 +4,7 @@ import AppLayout from "../layouts/AppLayout";
 import Home from "../pages/Home/Home";
 import RegistrationForm from "../pages/Registration/RegistrationForm";
 import SignIn from "../pages/Login/SignIn";
+import TutorDetails from "../pages/Tutor/TutorDetails";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
         path: "/signin",
         element: <SignIn/>
       },
+      {
+        path:"/tutor/details",
+        element:<TutorDetails/>
+      }
     ],
   },
 

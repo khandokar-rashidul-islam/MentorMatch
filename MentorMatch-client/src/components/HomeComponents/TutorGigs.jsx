@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, Clock, Users, BookOpen, MessageCircle } from "lucide-react";
+import { Link } from "react-router";
 
 const TutorGigs = () => {
   const gigs = [
@@ -184,7 +185,7 @@ const TutorGigs = () => {
                   </div>
 
                   {/* Featured Tag */}
-                  
+
                 </div>
 
                 {/* Title */}
@@ -250,13 +251,15 @@ const TutorGigs = () => {
                     <MessageCircle className="h-4 w-4" />
                     Chat
                   </Button>
-                  <Button
-                    size="sm"
-                    className="flex-1 flex items-center cursor-pointer justify-center gap-2 py-2 bg-primary"
-                  >
-                    <BookOpen className="h-4 w-4" />
-                    Book Now
-                  </Button>
+                  <Link to="/tutor/details">
+                    <Button
+                      size="sm"
+                      className="flex-1 flex items-center cursor-pointer justify-center gap-2 py-2 bg-primary"
+                    >
+                      <BookOpen className="h-4 w-4" />
+                      Book Now
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
