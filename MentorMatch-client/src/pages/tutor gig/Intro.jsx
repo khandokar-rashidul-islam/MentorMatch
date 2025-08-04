@@ -39,7 +39,7 @@ const Intro = () => {
     ];
 
     return (
-        <Card className="overflow-hidden border-none shadow-none">
+        <Card className="overflow-hidden border-none shadow-none pb-0 ">
             <CardContent >
                 {/* Header with avatar and basic info */}
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
@@ -49,7 +49,7 @@ const Intro = () => {
                             alt="Dr. Sarah Johnson"
                             className="w-24 h-24  rounded-full object-cover border-4 border-primary/20"
                         />
-                        <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 bg-success rounded-full p-0.5 sm:p-1">
+                        <div className="absolute right-1 bottom-5 bg-success rounded-full ">
                             <CheckCircle className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
                         </div>
                     </div>
@@ -58,30 +58,14 @@ const Intro = () => {
                     <div className="flex-1">
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                             <div className="text-center sm:text-left">
-                                <h1 className="text-xl sm:text-2xl font-bold text-foreground"><Link to={`/tutor/details`}>Dr. Sarah Johnson</Link></h1>
+                                <h1 className="text-xl sm:text-2xl font-bold text-foreground hover:text-primary"><Link to={`/tutor/details`}>Dr. Sarah Johnson</Link></h1>
                                 <p className="text-base sm:text-lg text-muted-foreground mb-3 sm:mb-2">Mathematics & Physics Expert</p>
 
                                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
-                                    <div className="flex items-center justify-center sm:justify-start gap-1">
-                                        <Star className="h-4 w-4 sm:h-5 sm:w-5 fill-warning text-warning" />
-                                        <span className="font-semibold">4.9</span>
-                                        <span className="text-muted-foreground text-sm sm:text-base">(234 reviews)</span>
-                                    </div>
                                     <div className="flex items-center justify-center sm:justify-start gap-1 text-muted-foreground">
                                         <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
                                         <span className="text-sm sm:text-base">New York, NY</span>
                                     </div>
-                                    <div className="flex items-center justify-center sm:justify-start gap-1 text-muted-foreground">
-                                        <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-                                        <span className="text-sm sm:text-base">Usually responds in 2 hours</span>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-wrap gap-2 mb-4">
-                                    <Badge variant="secondary">PhD Mathematics</Badge>
-                                    <Badge variant="secondary">10+ Years Experience</Badge>
-                                    <Badge variant="secondary">500+ Students</Badge>
-                                    <Badge variant="outline">Verified</Badge>
                                 </div>
                             </div>
                         </div>
