@@ -122,16 +122,10 @@ const GigDetails = () => {
                                 </div>
                             </CardContent>
                         </Card>
-
-                        {/* Tutor Profile */}
-
                         {/* Booking Plans */}
                         <div className='mt-8'>
                             <BookingPlans />
                         </div>
-
-                        {/* Reviews Section */}
-                        <ReviewSection />
 
                         {/* FAQ Section */}
                         <FAQSection />

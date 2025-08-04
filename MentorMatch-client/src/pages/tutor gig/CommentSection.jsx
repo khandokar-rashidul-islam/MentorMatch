@@ -69,7 +69,6 @@ const CommentSection = () => {
       <CardContent className="space-y-6">
         {/* Add Comment */}
         <div className="space-y-4">
-          <h4 className="font-medium">Leave a comment or review</h4>
           <Textarea
             placeholder="Share your experience with this tutor..."
             value={newComment}

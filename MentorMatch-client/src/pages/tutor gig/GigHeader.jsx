@@ -100,9 +100,9 @@ const GigHeader = () => {
                         </div>
                     </div>
                 </div>
-                <Link to={`/tutor/details`}>
-                    <Intro />
-                </Link>
+                
+                <Intro />
+                
 
             </CardContent>
         </Card>
