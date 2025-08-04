@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Share2, Flag, Star, Users, Clock, Award } from "lucide-react";
 import { useState } from "react";
+import { Link } from 'react-router';
+import Intro from './Intro';
 
 
 const GigHeader = () => {
@@ -98,6 +100,10 @@ const GigHeader = () => {
                         </div>
                     </div>
                 </div>
+                <Link to={`/tutor/details`}>
+                    <Intro />
+                </Link>
+
             </CardContent>
         </Card>
     )
