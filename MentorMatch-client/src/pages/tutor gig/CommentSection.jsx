@@ -6,11 +6,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Heart, Reply, Flag, Star } from "lucide-react";
 import { useState } from "react";
+import { Separator } from "@/components/ui/separator"
 
 
 const CommentSection = () => {
-     const [newComment, setNewComment] = useState("");
-  
+  const [newComment, setNewComment] = useState("");
+
   const comments = [
     {
       id: 1,
@@ -61,7 +62,7 @@ const CommentSection = () => {
   return (
     <div> <Card>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
+        <CardTitle className="flex items-center flex-wrap gap-3 justify-between">
           <span>Learner Comments & Reviews</span>
           <Badge variant="secondary">{comments.length} reviews</Badge>
         </CardTitle>
@@ -75,7 +76,7 @@ const CommentSection = () => {
             onChange={(e) => setNewComment(e.target.value)}
             className="min-h-[100px]"
           />
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Rate your experience:</span>
               <div className="flex items-center gap-1">
@@ -92,32 +93,39 @@ const CommentSection = () => {
         <div className="space-y-6">
           {comments.map((comment) => (
             <div key={comment.id} className="space-y-3">
-              <div className="flex items-start gap-3">
-                <Avatar className="w-10 h-10">
-                  <AvatarImage src={comment.user.avatar} />
-                  <AvatarFallback>{comment.user.initial}</AvatarFallback>
-                </Avatar>
-                
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center gap-2">
+              <div className=" flex flex-col gap-3">
+                <div className="flex items-center justify-between flex-wrap  gap-2">
+                  {/* user details */}
+                  <div className='flex items-center gap-4'>
+                    <Avatar className="w-10 h-10">
+                      <AvatarImage src={comment.user.avatar} />
+                      <AvatarFallback>{comment.user.initial}</AvatarFallback>
+                    </Avatar>
                     <span className="font-medium">{comment.user.name}</span>
                     {comment.user.verified && (
                       <Badge variant="outline" className="text-xs h-5">Verified</Badge>
                     )}
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`h-3 w-3 ${i < comment.rating ? 'text-yellow-500 fill-current' : 'text-muted-foreground'}`} 
-                        />
-                      ))}
-                    </div>
+                  </div>
+                  {/* stars and dates */}
+                  <div className="w-full sm:w-1/2 flex items-center justify-end gap-2">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-3 w-3 ${i < comment.rating ? 'text-yellow-500 fill-current' : 'text-muted-foreground'}`}
+                      />
+                    ))}
                     <span className="text-sm text-muted-foreground">• {comment.date}</span>
                   </div>
                   
-                  <p className="text-sm">{comment.comment}</p>
-                  
-                  <div className="flex items-center gap-4">
+                </div>
+                <Separator />
+
+
+                <div className="space-y-2">
+
+                  <p className="text-sm px-2">{comment.comment}</p>
+
+                  <div className="flex items-center flex-wrap gap-4">
                     <Button variant="ghost" size="sm" className="text-xs h-7">
                       <Heart className="h-3 w-3 mr-1" />
                       Helpful ({comment.likes})
@@ -131,7 +139,7 @@ const CommentSection = () => {
                       Report
                     </Button>
                   </div>
-                  
+
                   {comment.replies > 0 && (
                     <Button variant="ghost" size="sm" className="text-xs text-primary">
                       View {comment.replies} {comment.replies === 1 ? 'reply' : 'replies'}
