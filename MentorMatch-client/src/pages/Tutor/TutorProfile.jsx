@@ -45,7 +45,7 @@ const TutorProfile = () => {
           
 
           <div className="flex-1">
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-start sm:justify-between gap-4">
               <div className="text-center sm:text-left">
                 <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Dr. Sarah Johnson</h1>
                 <p className="text-lg sm:text-xl text-muted-foreground mb-3 sm:mb-2">Mathematics & Physics Expert</p>
@@ -96,8 +96,8 @@ const TutorProfile = () => {
             </div>
 
             {/* Quick action buttons */}
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4">
-              <Button variant="default" size="sm" className="sm:size-lg flex-1 sm:flex-none">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3 mt-4">
+              <Button variant="default" size="sm" className="sm:size-lg  sm:flex-none">
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Contact Tutor
               </Button>
