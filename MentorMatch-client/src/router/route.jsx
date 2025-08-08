@@ -6,6 +6,12 @@ import RegistrationForm from "../pages/Registration/RegistrationForm";
 import SignIn from "../pages/Login/SignIn";
 import TutorDetails from "../pages/Tutor/TutorDetails";
 import GigDetails from "../pages/tutor gig/GigDetails";
+import UserDashboardLayout from "../pages/UserDashboard/UserDashboardLayout";
+import UserDashboardHome from "../pages/UserDashboard/UserDashboardHome";
+import LearnerProfile from "../pages/UserDashboard/Learner/LearnerProfile";
+import TutorProfile from "../pages/UserDashboard/Tutor/TutorProfile";
+
+
 
 const router = createBrowserRouter([
   {
@@ -28,16 +34,44 @@ const router = createBrowserRouter([
       },
       {
         path: "/signin",
-        element: <SignIn/>
+        element: <SignIn />,
       },
       {
-        path:"/tutor/details",
-        element:<TutorDetails/>
+        path: "/tutor/details",
+        element: <TutorDetails />,
       },
       {
-        path:"/tutor/gig/details",
-        element:<GigDetails/>
-      }
+        path: "/tutor/gig/details",
+        element: <GigDetails />,
+      },
+    ],
+  },
+
+  //Dashboard
+  {
+    path: "/dashboard",
+    element: <UserDashboardLayout />,
+    children: [
+      {
+        index: true,
+        element: <UserDashboardHome />,
+      },
+      {
+        path: "/dashboard/learner-profile",
+        element: <LearnerProfile />,
+      },
+
+
+
+
+      {
+        path: "/dashboard/tutor-profile",
+        element:<TutorProfile/>
+      },
+
+
+
+
     ],
   },
 
