@@ -319,7 +319,7 @@ export default function AllGigs() {
           <div
             className={`mb-8 ${
               showFilters ? "block" : "hidden"
-            } lg:block  lg:w-80 shrink-0`}
+            } lg:block  lg:w-60 shrink-0`}
           >
             <Card className="p-6 h-fit sticky top-4 rounded-md ">
               <div className="flex items-center justify-between mb-4">
@@ -542,7 +542,7 @@ export default function AllGigs() {
               </div>
 
               {/* Middle - Search input (flex-grow to take all remaining space) */}
-              <div className="relative flex-grow w-full sm:max-w-xl">
+              <div className="relative flex-grow w-full ">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
                 <Input
                   placeholder="Search gigs by title, description, or tags..."
