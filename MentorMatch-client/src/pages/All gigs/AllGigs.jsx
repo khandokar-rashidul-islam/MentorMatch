@@ -1,59 +1,124 @@
 import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import GigCard from "./GigCard";
 
 // Mock gigs data
 const gigsData = [
-  {
-    id: 1,
-    title: "Professional Logo Design",
-    category: "Design",
-    price: 50,
-    description: "Unique and modern logos for your brand.",
-    image: "https://via.placeholder.com/300x200.png?text=Logo+Design",
-  },
-  {
-    id: 2,
-    title: "Responsive Website Development",
-    category: "Development",
-    price: 300,
-    description: "Full-stack development with modern frameworks.",
-    image: "https://via.placeholder.com/300x200.png?text=Website+Dev",
-  },
-  {
-    id: 3,
-    title: "SEO Optimization",
-    category: "Marketing",
-    price: 120,
-    description: "Rank higher on search engines with my SEO skills.",
-    image: "https://via.placeholder.com/300x200.png?text=SEO+Service",
-  },
-  {
-    id: 4,
-    title: "UI/UX Mobile App Design",
-    category: "Design",
-    price: 150,
-    description: "User-focused mobile app designs for better engagement.",
-    image: "https://via.placeholder.com/300x200.png?text=UI%2FUX+Design",
-  },
-  {
-    id: 5,
-    title: "Facebook & Instagram Ads",
-    category: "Marketing",
-    price: 100,
-    description: "Highly targeted social media ad campaigns.",
-    image: "https://via.placeholder.com/300x200.png?text=Social+Ads",
-  },
-  {
-    id: 6,
-    title: "E-commerce Store Setup",
-    category: "Development",
-    price: 500,
-    description: "Custom online store with secure payment gateways.",
-    image: "https://via.placeholder.com/300x200.png?text=Ecommerce",
-  },
+{
+      id: 1,
+      tutor: {
+        name: "Sarah Chen",
+        avatar: "/placeholder.svg",
+        rating: 4.9,
+        reviews: 127,
+        badge: "Pro",
+      },
+      title: "Learn Python Programming from Scratch to Advanced",
+      description:
+        "Master Python with hands-on projects, real-world examples, and personalized guidance. Perfect for beginners and intermediate learners.",
+      category: "Programming",
+      price: 45,
+      duration: "1 hour",
+      students: 89,
+      skills: ["Python", "Django", "Flask", "APIs"],
+      featured: true,
+    },
+    {
+      id: 2,
+      tutor: {
+        name: "Michael Rodriguez",
+        avatar: "/placeholder.svg",
+        rating: 4.8,
+        reviews: 203,
+        badge: "Expert",
+      },
+      title: "Conversational Spanish - Native Speaker",
+      description:
+        "Improve your Spanish fluency through natural conversations, cultural insights, and personalized practice sessions.",
+      category: "Languages",
+      price: 35,
+      duration: "1 hour",
+      students: 156,
+      skills: ["Spanish", "Conversation", "Grammar", "Culture"],
+      featured: false,
+    },
+    {
+      id: 3,
+      tutor: {
+        name: "Emma Thompson",
+        avatar: "/placeholder.svg",
+        rating: 5.0,
+        reviews: 78,
+        badge: "Pro",
+      },
+      title: "Guitar Lessons - Acoustic & Electric",
+      description:
+        "Learn guitar from a professional musician. Covers techniques, music theory, and your favorite songs.",
+      category: "Music",
+      price: 50,
+      duration: "1 hour",
+      students: 64,
+      skills: ["Guitar", "Music Theory", "Songwriting", "Performance"],
+      featured: true,
+    },
+    {
+      id: 4,
+      tutor: {
+        name: "Dr. James Wilson",
+        avatar: "/placeholder.svg",
+        rating: 4.9,
+        reviews: 341,
+        badge: "Expert",
+      },
+      title: "Advanced Mathematics & Calculus",
+      description:
+        "PhD in Mathematics offering comprehensive tutoring in calculus, linear algebra, and advanced mathematical concepts.",
+      category: "Mathematics",
+      price: 65,
+      duration: "1 hour",
+      students: 234,
+      skills: ["Calculus", "Linear Algebra", "Statistics", "Discrete Math"],
+      featured: false,
+    },
+    {
+      id: 5,
+      tutor: {
+        name: "Lisa Park",
+        avatar: "/placeholder.svg",
+        rating: 4.7,
+        reviews: 92,
+        badge: "Pro",
+      },
+      title: "UI/UX Design Fundamentals",
+      description:
+        "Learn modern design principles, prototyping, and user research from a senior product designer at tech companies.",
+      category: "Design",
+      price: 55,
+      duration: "1 hour",
+      students: 87,
+      skills: ["Figma", "Prototyping", "User Research", "Design Systems"],
+      featured: false,
+    },
+    {
+      id: 6,
+      tutor: {
+        name: "Ahmed Hassan",
+        avatar: "/placeholder.svg",
+        rating: 4.8,
+        reviews: 156,
+        badge: "Expert",
+      },
+      title: "Data Science & Machine Learning",
+      description:
+        "Master data analysis, visualization, and machine learning algorithms with real-world projects and datasets.",
+      category: "Data Science",
+      price: 70,
+      duration: "1 hour",
+      students: 178,
+      skills: ["Python", "TensorFlow", "Pandas", "Visualization"],
+      featured: true,
+    },
 ];
 
 export default function AllGigs() {
@@ -101,29 +166,7 @@ export default function AllGigs() {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filteredGigs.length > 0 ? (
           filteredGigs.map((gig) => (
-            <Card
-              key={gig.id}
-              className="group overflow-hidden hover:shadow-lg transition-shadow"
-            >
-              <div className="overflow-hidden">
-                <img
-                  src={gig.image}
-                  alt={gig.title}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle className="line-clamp-1">{gig.title}</CardTitle>
-                <p className="text-sm text-muted-foreground">{gig.category}</p>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm mb-4 line-clamp-2">{gig.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-lg">${gig.price}</span>
-                  <Button size="sm">View</Button>
-                </div>
-              </CardContent>
-            </Card>
+            <GigCard gig={gig} key={gig.id}/>
           ))
         ) : (
           <p className="col-span-full text-center text-muted-foreground">

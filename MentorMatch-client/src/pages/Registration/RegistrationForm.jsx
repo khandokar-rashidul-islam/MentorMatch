@@ -30,7 +30,7 @@ export default function RegistrationForm() {
       <div className="w-11/12 min-h-screen mx-auto flex flex-col justify-center items-center p-4">
         <form onSubmit={onSubmit} className="pt-35 pb-20 flex flex-col lg:flex-row ">
           {/* Sidebar */}
-          <div className=" lg:w-[45%] bg-primary text-secondary p-10 flex flex-col justify-between">
+          <div className=" lg:w-[45%] lg:rounded-l-xl bg-primary text-secondary p-10 flex flex-col justify-between">
             <div>
               <h2 className="text-2xl font-bold mb-4">
                 Professional Registration
@@ -99,7 +99,7 @@ export default function RegistrationForm() {
           </div>
 
           {/* Form */}
-          <div className="w-full mx-auto p-10 bg-background border">
+          <div className="w-full mx-auto p-10 bg-background border lg:rounded-r-xl">
             <CurrentStep
               onNext={nextStep}
               onBack={prevStep}
