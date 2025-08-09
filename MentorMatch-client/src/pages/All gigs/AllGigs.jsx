@@ -186,7 +186,6 @@ const categories = [
 export default function AllGigs() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
-  const [scrollable, setScrollable] = useState(false);
 
   const displayedCategories = categories.slice(0, visibleCount);
 
@@ -287,15 +286,8 @@ export default function AllGigs() {
   return (
     <div className="min-h-screen w-11/12 mx-auto bg-gradient-subtle pt-20">
       <main className=" px-4">
-        {/* <div className="mb-2">
-          <h1 className="text-3xl font-bold mb-4">All Gigs</h1>
-          <p className="text-muted-foreground">
-            Discover expert tutoring services across various subjects
-          </p>
-        </div> */}
-
         {/* Search Bar */}
-        <div className="bg-card rounded-lg p-6 mb-3 shadow-elegant">
+        <div className="bg-card rounded-lg p-6 mb-3 shadow-elegant lg:hidden ">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
@@ -489,9 +481,7 @@ export default function AllGigs() {
               <div className="mb-6">
                 <h4 className="font-medium mb-3">Categories</h4>
 
-                <div
-                  className={`space-y-2 transition-all duration-300`}
-                >
+                <div className={`space-y-2 transition-all duration-300`}>
                   {displayedCategories.map((category) => (
                     <div key={category} className="flex items-center space-x-2">
                       <Checkbox
@@ -533,7 +523,7 @@ export default function AllGigs() {
                     onClick={handleLoadless}
                     className=" mt-4 text-primary text-sm hover:underline"
                   >
-                  see less ...
+                    see less ...
                   </button>
                 )}
               </div>
@@ -544,15 +534,26 @@ export default function AllGigs() {
 
           <div className="flex-1 min-w-0 mb-8">
             {/* Results Header */}
-            <Card className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 px-4 rounded-md ">
-              <div className="flex items-center gap-4">
-                <div className=" px-4 py-1 border rounded-md font-semibold text-muted-foreground">
-                  {sortedGigs.length} Gig{sortedGigs.length !== 1 ? "s" : ""}{" "}
-                  found
-                </div>
+            <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 px-4 rounded-md">
+              {/* Left - Gigs count */}
+              <div className="px-4 py-1 border rounded-md font-semibold text-muted-foreground shrink-0">
+                {sortedGigs.length} Gig{sortedGigs.length !== 1 ? "s" : ""}{" "}
+                found
               </div>
 
-              <div className="flex gap-4 items-center">
+              {/* Middle - Search input (flex-grow to take all remaining space) */}
+              <div className="relative flex-grow w-full sm:max-w-xl">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
+                <Input
+                  placeholder="Search gigs by title, description, or tags..."
+                  className="pl-10 w-full"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+
+              {/* Right - View buttons & Sort */}
+              <div className="flex items-center gap-3 shrink-0">
                 <div className="flex items-center gap-2">
                   <Button
                     variant={viewMode === "grid" ? "default" : "outline"}
@@ -570,7 +571,7 @@ export default function AllGigs() {
                   </Button>
                 </div>
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="w-full sm:w-48">
+                  <SelectTrigger className="w-40">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
