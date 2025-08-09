@@ -193,11 +193,9 @@ export default function AllGigs() {
   const handleLoadMore = () => {
     const newCount = Math.min(visibleCount + 10, categories.length);
     setVisibleCount(newCount);
-
-    // Enable scroll mode when loading more
-    if (newCount >= 10) {
-      setScrollable(true);
-    }
+  };
+    const handleLoadless = () => {
+    setVisibleCount(10);
   };
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -492,9 +490,7 @@ export default function AllGigs() {
                 <h4 className="font-medium mb-3">Categories</h4>
 
                 <div
-                  className={`space-y-2 transition-all duration-300 ${
-                    scrollable ? "max-h-60 overflow-y-auto scrollbar-hide" : ""
-                  }`}
+                  className={`space-y-2 transition-all duration-300`}
                 >
                   {displayedCategories.map((category) => (
                     <div key={category} className="flex items-center space-x-2">
@@ -530,6 +526,14 @@ export default function AllGigs() {
                     className=" mt-4 text-primary text-sm hover:underline"
                   >
                     Load more ...
+                  </button>
+                )}
+                {visibleCount == categories.length && (
+                  <button
+                    onClick={handleLoadless}
+                    className=" mt-4 text-primary text-sm hover:underline"
+                  >
+                  see less ...
                   </button>
                 )}
               </div>
