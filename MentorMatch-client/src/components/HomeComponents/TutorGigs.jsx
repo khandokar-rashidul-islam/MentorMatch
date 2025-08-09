@@ -133,7 +133,10 @@ const TutorGigs = () => {
     <section className=" mx-auto py-16 bg-background animate-fade-in ">
       <div className="w-11/12 mx-auto px-4">
         <div className="text-center mb-12 animate-fade-in [animation-delay:200ms]">
-          <Badge variant="outline" className="mb-4 bg-primary/10 text-primary border border-primary/20">
+          <Badge
+            variant="outline"
+            className="mb-4 bg-primary/10 text-primary border border-primary/20"
+          >
             Featured Tutors
           </Badge>
           <h2 className="text-4xl font-bold mb-4">
@@ -147,7 +150,10 @@ const TutorGigs = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 ">
           {gigs.map((gig) => (
-            <Card key={gig.id} className="flex flex-col justify-between h-full rounded-xl border border-blue-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]">
+            <Card
+              key={gig.id}
+              className="flex flex-col justify-between h-full rounded-xl border border-blue-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]"
+            >
               <CardHeader className="pb-0">
                 <div className="flex items-start justify-between">
                   {/* Tutor Info */}
@@ -185,7 +191,6 @@ const TutorGigs = () => {
                   </div>
 
                   {/* Featured Tag */}
-
                 </div>
 
                 {/* Title */}
@@ -267,13 +272,15 @@ const TutorGigs = () => {
         </div>
 
         <div className="text-center mt-12 animate-fade-in [animation-delay:1s]">
-          <Button
-            variant="outline"
-            size="lg"
-            className="hover-scale transition-all duration-300"
-          >
-            View All Tutors
-          </Button>
+          <Link to="/all-gigs">
+            <Button
+              variant="outline"
+              size="lg"
+              className="hover-scale transition-all duration-300"
+            >
+              View All Gigs
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

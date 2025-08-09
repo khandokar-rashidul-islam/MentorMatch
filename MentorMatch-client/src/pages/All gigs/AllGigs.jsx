@@ -4,16 +4,42 @@ import GigCard from "./GigCard";
 import CategoryKeywords from "../../components/HomeComponents/CategoryKeywords";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
-import { Search, Filter, Star, Clock, DollarSign, BookOpen, Calculator, Globe, Code, Palette, Grid3X3, List, X, SlidersHorizontal } from "lucide-react";
-import { useNavigate } from "react-router";
+import {
+  Search,
+  Filter,
+  Star,
+  Clock,
+  DollarSign,
+  BookOpen,
+  Calculator,
+  Globe,
+  Code,
+  Palette,
+  Grid3X3,
+  List,
+  X,
+  SlidersHorizontal,
+  ArrowDown,
+} from "lucide-react";
 import { useState } from "react";
 
-import { Card, CardHeader, CardTitle, CardContent, CardDescription, } from "@/components/ui/card";
-
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
+} from "@/components/ui/card";
 
 // Mock gigs data
 const gigs = [
@@ -132,69 +158,88 @@ const gigs = [
     featured: true,
   },
 ];
-
+const categories = [
+  "Programming",
+  "Web Development",
+  "Data Science",
+  "Mathematics",
+  "Physics",
+  "Languages",
+  "Music",
+  "Art & Design",
+  "Business",
+  "Marketing",
+  "Photography",
+  "Writing",
+  "Science",
+  "History",
+  "Economics",
+  "Psychology",
+  "Chemistry",
+  "Biology",
+  "Engineering",
+  "Finance",
+  "Cooking",
+  "Fitness",
+  "Yoga",
+];
 export default function AllGigs() {
-
-  const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(10);
+  const [scrollable, setScrollable] = useState(false);
+
+  const displayedCategories = categories.slice(0, visibleCount);
+
+  const handleLoadMore = () => {
+    const newCount = Math.min(visibleCount + 10, categories.length);
+    setVisibleCount(newCount);
+
+    // Enable scroll mode when loading more
+    if (newCount >= 10) {
+      setScrollable(true);
+    }
+  };
+
+  const [searchQuery, setSearchQuery] = useState("");
+
   const [selectedLevels, setSelectedLevels] = useState([]);
   const [priceRange, setPriceRange] = useState([0, 100]);
   const [minRating, setMinRating] = useState(0);
   const [sortBy, setSortBy] = useState("relevance");
   const [viewMode, setViewMode] = useState("grid");
   const [showFilters, setShowFilters] = useState(false);
-  const categories = [
-    "Programming",
-    "Web Development",
-    "Data Science",
-    "Mathematics",
-    "Physics",
-    "Languages",
-    "Music",
-    "Art & Design",
-    "Business",
-    "Marketing",
-    "Photography",
-    "Writing",
-    "Science",
-    "History",
-    "Economics",
-    "Psychology",
-    "Chemistry",
-    "Biology",
-    "Engineering",
-    "Finance",
-    "Cooking",
-    "Fitness",
-    "Yoga",
-  ];
 
   const levels = ["Beginner", "Intermediate", "Advanced"];
 
-const filteredGigs = gigs.filter(gig => {
-  const matchesSearch =
-    searchQuery === "" ||
-    gig.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    gig.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (gig.skills && gig.skills.some(skill =>
-      skill.toLowerCase().includes(searchQuery.toLowerCase())
-    ));
+  const filteredGigs = gigs.filter((gig) => {
+    const matchesSearch =
+      searchQuery === "" ||
+      gig.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      gig.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (gig.skills &&
+        gig.skills.some((skill) =>
+          skill.toLowerCase().includes(searchQuery.toLowerCase())
+        ));
 
-  const matchesCategory =
-    selectedCategories.length === 0 || selectedCategories.includes(gig.category);
+    const matchesCategory =
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(gig.category);
 
-  const matchesLevel =
-    selectedLevels.length === 0;
+    const matchesLevel = selectedLevels.length === 0;
 
-  const matchesPrice =
-    gig.price >= priceRange[0] && gig.price <= priceRange[1];
+    const matchesPrice =
+      gig.price >= priceRange[0] && gig.price <= priceRange[1];
 
-  const matchesRating =
-    gig.tutor.rating >= minRating;
+    const matchesRating = gig.tutor.rating >= minRating;
 
-  return matchesSearch && matchesCategory && matchesLevel && matchesPrice && matchesRating;
-});
+    return (
+      matchesSearch &&
+      matchesCategory &&
+      matchesLevel &&
+      matchesPrice &&
+      matchesRating
+    );
+  });
   // Sort logic
   const sortedGigs = [...filteredGigs].sort((a, b) => {
     switch (sortBy) {
@@ -214,9 +259,9 @@ const filteredGigs = gigs.filter(gig => {
   // Filter management functions
   const removeFilter = (type, value) => {
     if (type === "category") {
-      setSelectedCategories(prev => prev.filter(cat => cat !== value));
+      setSelectedCategories((prev) => prev.filter((cat) => cat !== value));
     } else if (type === "level") {
-      setSelectedLevels(prev => prev.filter(level => level !== value));
+      setSelectedLevels((prev) => prev.filter((level) => level !== value));
     } else if (type === "search") {
       setSearchQuery("");
     } else if (type === "rating") {
@@ -234,22 +279,28 @@ const filteredGigs = gigs.filter(gig => {
     setSearchQuery("");
   };
 
-  const activeFiltersCount = selectedCategories.length + selectedLevels.length +
-    (priceRange[0] > 0 || priceRange[1] < 100 ? 1 : 0) + (minRating > 0 ? 1 : 0) + (searchQuery ? 1 : 0);
+  const activeFiltersCount =
+    selectedCategories.length +
+    selectedLevels.length +
+    (priceRange[0] > 0 || priceRange[1] < 100 ? 1 : 0) +
+    (minRating > 0 ? 1 : 0) +
+    (searchQuery ? 1 : 0);
 
   return (
     <div className="min-h-screen w-11/12 mx-auto bg-gradient-subtle pt-20">
-      <main className=" px-4 py-8">
-        <div className="mb-8">
+      <main className=" px-4">
+        {/* <div className="mb-2">
           <h1 className="text-3xl font-bold mb-4">All Gigs</h1>
-          <p className="text-muted-foreground">Discover expert tutoring services across various subjects</p>
-        </div>
+          <p className="text-muted-foreground">
+            Discover expert tutoring services across various subjects
+          </p>
+        </div> */}
 
         {/* Search Bar */}
-        <div className="bg-card rounded-lg p-6 mb-6 shadow-elegant">
+        <div className="bg-card rounded-lg p-6 mb-3 shadow-elegant">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
               <Input
                 placeholder="Search gigs by title, description, or tags..."
                 className="pl-10"
@@ -260,7 +311,7 @@ const filteredGigs = gigs.filter(gig => {
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className="lg:w-auto"
+              className="lg:w-auto lg:hidden"
             >
               <SlidersHorizontal className="h-4 w-4 mr-2" />
               Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
@@ -268,107 +319,98 @@ const filteredGigs = gigs.filter(gig => {
           </div>
         </div>
 
-        <div className={`flex ${showFilters ? 'flex-col sm:flex-row' : 'flex-row'} gap-6`}>
-          {/* Advanced Filters Sidebar */}
-          <div className={`${showFilters ? 'block' : 'hidden'} lg:block  lg:w-80 shrink-0`}>
-            <Card className="p-6 h-fit sticky top-4">
+        <div
+          className={`flex ${
+            showFilters ? "flex-col sm:flex-row" : "flex-row"
+          } gap-6`}
+        >
+          {/* ------------------------Advanced  Sidebar Filters--------------------*/}
+
+          <div
+            className={`mb-8 ${
+              showFilters ? "block" : "hidden"
+            } lg:block  lg:w-80 shrink-0`}
+          >
+            <Card className="p-6 h-fit sticky top-4 rounded-md ">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold">Filters</h3>
-                <Button variant="ghost" size="sm" onClick={clearAllFilters}>
+                <div className="flex items-center ">
+                  <SlidersHorizontal className="h-4 w-4 mr-2" />
+                  Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+                </div>
+
+                <Button variant="outline" size="sm" onClick={clearAllFilters}>
                   Clear All
                 </Button>
               </div>
-
+              <Separator className="mb-4" />
               {/* Active Filters */}
-              {(selectedCategories.length > 0 || selectedLevels.length > 0 || searchQuery || minRating > 0 || priceRange[0] > 0 || priceRange[1] < 100) && (
-                <div className="mb-4">
-                  <p className="text-sm font-medium mb-2">Active Filters:</p>
-                  <div className="flex flex-wrap gap-2">
+              {(selectedCategories.length > 0 ||
+                selectedLevels.length > 0 ||
+                searchQuery ||
+                minRating > 0 ||
+                priceRange[0] > 0 ||
+                priceRange[1] < 100) && (
+                <div className="">
+                  <div className="text-sm text-primary font-medium mb-2">
+                    Active Filters:
+                  </div>
+                  <div className="flex flex-wrap gap-2 overflow-hidden">
                     {searchQuery && (
-                      <Badge variant="secondary" className="cursor-pointer" onClick={() => removeFilter("search", "")}>
-                        Search: "{searchQuery}" <X className="h-3 w-3 ml-1" />
+                      <Badge
+                        variant="secondary"
+                        className="cursor-pointer "
+                        onClick={() => removeFilter("search", "")}
+                      >
+                        Search: `$
+                        {searchQuery.length >= 30
+                          ? `${searchQuery.substring(0, 30)} ... `
+                          : searchQuery}
+                        ` <X className="h-3 w-3 ml-1" />
                       </Badge>
                     )}
-                    {selectedCategories.map(category => (
-                      <Badge key={category} variant="secondary" className="cursor-pointer" onClick={() => removeFilter("category", category)}>
+                    {selectedCategories.map((category) => (
+                      <Badge
+                        key={category}
+                        variant="secondary"
+                        className="cursor-pointer"
+                        onClick={() => removeFilter("category", category)}
+                      >
                         {category} <X className="h-3 w-3 ml-1" />
                       </Badge>
                     ))}
-                    {selectedLevels.map(level => (
-                      <Badge key={level} variant="secondary" className="cursor-pointer" onClick={() => removeFilter("level", level)}>
+                    {selectedLevels.map((level) => (
+                      <Badge
+                        key={level}
+                        variant="secondary"
+                        className="cursor-pointer"
+                        onClick={() => removeFilter("level", level)}
+                      >
                         {level} <X className="h-3 w-3 ml-1" />
                       </Badge>
                     ))}
                     {(priceRange[0] > 0 || priceRange[1] < 100) && (
-                      <Badge variant="secondary" className="cursor-pointer" onClick={() => removeFilter("price", "")}>
-                        Price: ${priceRange[0]} - ${priceRange[1]} <X className="h-3 w-3 ml-1" />
+                      <Badge
+                        variant="secondary"
+                        className="cursor-pointer"
+                        onClick={() => removeFilter("price", "")}
+                      >
+                        Price: ${priceRange[0]} - ${priceRange[1]}{" "}
+                        <X className="h-3 w-3 ml-1" />
                       </Badge>
                     )}
                     {minRating > 0 && (
-                      <Badge variant="secondary" className="cursor-pointer" onClick={() => removeFilter("rating", "")}>
-                        Rating: {minRating}+ stars <X className="h-3 w-3 ml-1" />
+                      <Badge
+                        variant="secondary"
+                        className="cursor-pointer"
+                        onClick={() => removeFilter("rating", "")}
+                      >
+                        Rating: {minRating}+ stars{" "}
+                        <X className="h-3 w-3 ml-1" />
                       </Badge>
                     )}
                   </div>
                 </div>
               )}
-
-              <Separator className="mb-4" />
-
-              {/* Categories */}
-              <div className="mb-6">
-                <h4 className="font-medium mb-3">Categories</h4>
-                <div className="space-y-2">
-                  {categories.map(category => (
-                    <div key={category} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={category}
-                        checked={selectedCategories.includes(category)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setSelectedCategories(prev => [...prev, category]);
-                          } else {
-                            setSelectedCategories(prev => prev.filter(cat => cat !== category));
-                          }
-                        }}
-                      />
-                      <label htmlFor={category} className="text-sm cursor-pointer">
-                        {category}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <Separator className="mb-4" />
-
-              {/* Skill Level */}
-              <div className="mb-6">
-                <h4 className="font-medium mb-3">Skill Level</h4>
-                <div className="space-y-2">
-                  {levels.map(level => (
-                    <div key={level} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={level}
-                        checked={selectedLevels.includes(level)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setSelectedLevels(prev => [...prev, level]);
-                          } else {
-                            setSelectedLevels(prev => prev.filter(l => l !== level));
-                          }
-                        }}
-                      />
-                      <label htmlFor={level} className="text-sm cursor-pointer">
-                        {level}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <Separator className="mb-4" />
-
               {/* Price Range */}
               <div className="mb-6">
                 <h4 className="font-medium mb-3">Price Range</h4>
@@ -387,6 +429,34 @@ const filteredGigs = gigs.filter(gig => {
                   </div>
                 </div>
               </div>
+              <Separator className="mb-4" />
+
+              {/* Skill Level */}
+              <div className="mb-6">
+                <h4 className="font-medium mb-3">Skill Level</h4>
+                <div className="space-y-2">
+                  {levels.map((level) => (
+                    <div key={level} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={level}
+                        checked={selectedLevels.includes(level)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setSelectedLevels((prev) => [...prev, level]);
+                          } else {
+                            setSelectedLevels((prev) =>
+                              prev.filter((l) => l !== level)
+                            );
+                          }
+                        }}
+                      />
+                      <label htmlFor={level} className="text-sm cursor-pointer">
+                        {level}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               <Separator className="mb-4" />
 
@@ -394,7 +464,7 @@ const filteredGigs = gigs.filter(gig => {
               <div className="mb-4">
                 <h4 className="font-medium mb-3">Minimum Rating</h4>
                 <div className="space-y-2">
-                  {[4.5, 4.0, 3.5, 3.0,2.0,1.0].map(rating => (
+                  {[4.5, 4.0, 3.5, 3.0, 2.0, 1.0].map((rating) => (
                     <div key={rating} className="flex items-center space-x-2">
                       <Checkbox
                         id={`rating-${rating}`}
@@ -403,7 +473,10 @@ const filteredGigs = gigs.filter(gig => {
                           setMinRating(checked ? rating : 0);
                         }}
                       />
-                      <label htmlFor={`rating-${rating}`} className="text-sm cursor-pointer flex items-center">
+                      <label
+                        htmlFor={`rating-${rating}`}
+                        className="text-sm cursor-pointer flex items-center"
+                      >
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
                         {rating}+ stars
                       </label>
@@ -411,17 +484,71 @@ const filteredGigs = gigs.filter(gig => {
                   ))}
                 </div>
               </div>
+
+              <Separator className="mb-4" />
+
+              {/* Categories */}
+              <div className="mb-6">
+                <h4 className="font-medium mb-3">Categories</h4>
+
+                <div
+                  className={`space-y-2 transition-all duration-300 ${
+                    scrollable ? "max-h-60 overflow-y-auto scrollbar-hide" : ""
+                  }`}
+                >
+                  {displayedCategories.map((category) => (
+                    <div key={category} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={category}
+                        checked={selectedCategories.includes(category)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setSelectedCategories((prev) => [
+                              ...prev,
+                              category,
+                            ]);
+                          } else {
+                            setSelectedCategories((prev) =>
+                              prev.filter((cat) => cat !== category)
+                            );
+                          }
+                        }}
+                      />
+                      <label
+                        htmlFor={category}
+                        className="text-sm cursor-pointer"
+                      >
+                        {category}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+
+                {visibleCount < categories.length && (
+                  <button
+                    onClick={handleLoadMore}
+                    className=" mt-4 text-primary text-sm hover:underline"
+                  >
+                    Load more ...
+                  </button>
+                )}
+              </div>
             </Card>
           </div>
 
-          {/* Main Content */}
-          <div className="flex-1 min-w-0">
+          {/* ------------------Main Content ------------------------*/}
+
+          <div className="flex-1 min-w-0 mb-8">
             {/* Results Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+            <Card className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 px-4 rounded-md ">
               <div className="flex items-center gap-4">
-                <p className="text-muted-foreground">
-                  {sortedGigs.length} gig{sortedGigs.length !== 1 ? 's' : ''} found
-                </p>
+                <div className=" px-4 py-1 border rounded-md font-semibold text-muted-foreground">
+                  {sortedGigs.length} Gig{sortedGigs.length !== 1 ? "s" : ""}{" "}
+                  found
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-center">
                 <div className="flex items-center gap-2">
                   <Button
                     variant={viewMode === "grid" ? "default" : "outline"}
@@ -438,51 +565,59 @@ const filteredGigs = gigs.filter(gig => {
                     <List className="h-4 w-4" />
                   </Button>
                 </div>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-full sm:w-48">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="relevance">Relevance</SelectItem>
+                    <SelectItem value="price-low">
+                      Price: Low to High
+                    </SelectItem>
+                    <SelectItem value="price-high">
+                      Price: High to Low
+                    </SelectItem>
+                    <SelectItem value="rating">Highest Rated</SelectItem>
+                    <SelectItem value="name">Name A-Z</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="relevance">Relevance</SelectItem>
-                  <SelectItem value="price-low">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high">Price: High to Low</SelectItem>
-                  <SelectItem value="rating">Highest Rated</SelectItem>
-                  <SelectItem value="name">Name A-Z</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            </Card>
 
             {/* Gigs Display */}
-            <div className={viewMode === "grid"
-              ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-              : "space-y-4"
-            }>
-              {sortedGigs.map((gig) => viewMode === "grid" ? (
-                <GigCard gig={gig}/>
-              ) : (
-                <GigCard gig={gig}/>
-              ))}
-              
+            <div
+              className={
+                viewMode === "grid"
+                  ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+                  : "space-y-4"
+              }
+            >
+              {sortedGigs.map((gig) =>
+                viewMode === "grid" ? (
+                  <GigCard gig={gig} />
+                ) : (
+                  <GigCard gig={gig} />
+                )
+              )}
             </div>
 
-            {sortedGigs.length==0?
-            (<>
-            <p>no data found</p>
-            </>)
-            :
-            (<>
-             {/* Load More */}
-            <div className="text-center mt-12">
-              <Button variant="outline" size="lg">Load More Gigs</Button>
-            </div>
-            </>)}
-           
+            {sortedGigs.length == 0 ? (
+              <>
+                <p>no data found</p>
+              </>
+            ) : (
+              <>
+                {/* Load More */}
+                <div className="text-center mt-12">
+                  <Button variant="outline" size="lg">
+                    Load More Gigs
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </main>
     </div>
-
   );
 }
