@@ -268,9 +268,9 @@ const filteredGigs = gigs.filter(gig => {
           </div>
         </div>
 
-        <div className="flex gap-6">
+        <div className={`flex ${showFilters ? 'flex-col sm:flex-row' : 'flex-row'} gap-6`}>
           {/* Advanced Filters Sidebar */}
-          <div className={`${showFilters ? 'block' : 'hidden'} lg:block w-1/3 lg:w-80 shrink-0`}>
+          <div className={`${showFilters ? 'block' : 'hidden'} lg:block  lg:w-80 shrink-0`}>
             <Card className="p-6 h-fit sticky top-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold">Filters</h3>
@@ -460,7 +460,6 @@ const filteredGigs = gigs.filter(gig => {
               : "space-y-4"
             }>
               {sortedGigs.map((gig) => viewMode === "grid" ? (
-                
                 <GigCard gig={gig}/>
               ) : (
                 <GigCard gig={gig}/>
