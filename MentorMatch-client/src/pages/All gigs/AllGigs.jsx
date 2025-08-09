@@ -352,8 +352,8 @@ export default function AllGigs() {
                         onClick={() => removeFilter("search", "")}
                       >
                         Search: `$
-                        {searchQuery.length >= 30
-                          ? `${searchQuery.substring(0, 30)} ... `
+                        {searchQuery.length >= 10
+                          ? `${searchQuery.substring(0, 10)} ... `
                           : searchQuery}
                         ` <X className="h-3 w-3 ml-1" />
                       </Badge>
