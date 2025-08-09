@@ -2,6 +2,10 @@ import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import GigCard from "./GigCard";
+import "keen-slider/keen-slider.min.css";
+
+import CategoryKeywords from "../../components/HomeComponents/CategoryKeywords";
+
 
 // Mock gigs data
 const gigsData = [
@@ -138,32 +142,22 @@ export default function AllGigs() {
   }, [activeCategory, searchTerm]);
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-6 space-y-6 w-11/12 pt-25 mx-auto">
       {/* Search & Category Tabs */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col  gap-4">
         <Input
           placeholder="Search for gigs..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="md:w-1/2"
+          className=""
         />
-        <Tabs
-          value={activeCategory}
-          onValueChange={setActiveCategory}
-          className="w-full md:w-auto"
-        >
-          <TabsList>
-            {categories.map((cat) => (
-              <TabsTrigger key={cat} value={cat}>
-                {cat}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+        <CategoryKeywords/>
+
+
       </div>
 
       {/* Gigs Grid */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className=" grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filteredGigs.length > 0 ? (
           filteredGigs.map((gig) => (
             <GigCard gig={gig} key={gig.id}/>

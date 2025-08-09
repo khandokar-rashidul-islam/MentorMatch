@@ -13,7 +13,9 @@ const Home = () => {
   return (
     <div className="">
       <Hero />
-      <CategoryKeywords />
+      <div className='w-11/12 mx-auto'>
+        <CategoryKeywords />
+      </div>
       <SearchQuery />
       <TutorGigs/>
       <Features/>

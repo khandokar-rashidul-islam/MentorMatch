@@ -66,7 +66,7 @@ const CategoryKeywords = () => {
   };
 
   return (
-    <div className=" w-11/12 mx-auto  py-10 border-b bg-background">
+    <div className="   py-10 border-b bg-background">
       <div className="flex items-center gap-2">
         {/* Prev Button */}
         <Button
