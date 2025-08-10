@@ -74,7 +74,7 @@ const TutorSidebar = ({collapsed,setCollapsed}) => {
 
   return (
     <Card
-      className={`rounded-md pt-2 mb-2 h-screen ${
+      className={`rounded-md pt-2 mb-2  ${
         collapsed ? "w-16" : "w-55"
       } border-r flex flex-col `}
       role="navigation"
