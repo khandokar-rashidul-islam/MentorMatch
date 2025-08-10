@@ -15,6 +15,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ModeToggle } from "../../components/mode-toggle";
 
 const Unavbar = () => {
@@ -39,22 +40,9 @@ const Unavbar = () => {
         <nav className="hidden md:flex md:text-xs lg:text-base  items-center space-x-4 lg:space-x-8">
           nav options here
         </nav>
-        {/* Desktop Actions */}
-        <div className="hidden md:flex  items-center space-x-2">
-          <Link to={'/dashboard/mentor/notification'}>
-            <Button variant="ghost" ><BellIcon size={18} /></Button>
-          </Link>
 
-
-          <Button variant="ghost"><MailIcon size={20} /></Button>
-          <ModeToggle />
-
-          <Link to="/registration">
-            profile avtar here
-          </Link>
-        </div>
         {/* for small devices */}
-        <div className="md:hidden flex items-center gap-2">
+        <div className=" flex items-center gap-2">
           <Link to={'/dashboard/mentor/notification'}>
             <Button variant="ghost" ><BellIcon size={20} /></Button>
           </Link>
@@ -62,47 +50,38 @@ const Unavbar = () => {
           <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                <MenuIcon />
-              </Button>
+              <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className=" md:hidden" align="start">
-              <DropdownMenuLabel>Menu</DropdownMenuLabel>
+            <DropdownMenuContent className="" align="start">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuGroup>
                 <DropdownMenuItem>
-                  <NavLink to="">Join Community</NavLink>
+                  <NavLink to="" className={'flex items-center justify-between gap-3 text-sm font-semibold'}>
+                    <Avatar>
+                      <AvatarImage src="https://github.com/shadcn.png" />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                    username
+                  </NavLink>
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <NavLink to="">notifications</NavLink>
+                  <NavLink to="">Profile settings</NavLink>
                 </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
                 <DropdownMenuItem>
-                  <NavLink to=""></NavLink>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <NavLink to="">Join Community</NavLink>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <NavLink to="">Join Community</NavLink>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <NavLink to="">Join Community</NavLink>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <NavLink to="">Join Community</NavLink>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <NavLink to="">Join Community</NavLink>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <NavLink to="">Join Community</NavLink>
+                  <Button variant="outline">switch to learner</Button>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup className="flex">
                 <DropdownMenuItem>
-                  <Link to="/registration">
-                    here other options
-                  </Link>
+                  <Button>logout</Button>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>
