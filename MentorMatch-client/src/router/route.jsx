@@ -21,6 +21,7 @@ import CommunityPosts from "../pages/UserDashboard/Tutor/TutorDashboard/Communit
 import PreviousJobs from "../pages/UserDashboard/Tutor/TutorDashboard/PreviousJobs";
 import Settings from "../pages/UserDashboard/Tutor/TutorDashboard/Settings";
 import Wallet from "../pages/UserDashboard/Tutor/TutorDashboard/Wallet";
+import SearchMentor from "../pages/Mentor Find/SearchMentor";
 
 const router = createBrowserRouter([
   {
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
         path: "all-gigs",
         element: <AllGigs />,
       },
+      {
+        path:'search-mentor',
+        element:<SearchMentor/>
+      }
     ],
   },
 
