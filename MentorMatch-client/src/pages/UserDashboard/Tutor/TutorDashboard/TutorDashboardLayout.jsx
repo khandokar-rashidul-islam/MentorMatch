@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet } from "react-router";
 import TutorSidebar from "./TutorSidebar";
 //import { Card } from "@/components/ui/card";
 const TutorDashboardLayout = () => {
+  const [collapsed, setCollapsed] = useState(false);
   return (
-    <div className="flex gap-2 pt-20 min-h-screen ">
-      <div className="mb-2">
-        <TutorSidebar />
+    <div className="relative flex gap-2 justify-between pt-20 min-h-screen w-full">
+      <div className="mb-2 absolute z-10">
+        <TutorSidebar collapsed={collapsed} setCollapsed={setCollapsed} />
       </div>
-      <div className="">
+      <div className={`${
+        collapsed ? "pl-16" : "sm:pl-55"
+      } w-11/12 mx-auto`}>
         <Outlet />
       </div>
     </div>

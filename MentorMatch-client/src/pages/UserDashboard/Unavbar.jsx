@@ -55,7 +55,9 @@ const Unavbar = () => {
         </div>
         {/* for small devices */}
         <div className="md:hidden flex items-center gap-2">
-          <BellIcon size={20} className="mx-2" />
+          <Link to={'/dashboard/mentor/notification'}>
+            <Button variant="ghost" ><BellIcon size={20} /></Button>
+          </Link>
           <MailIcon size={20} className="mx-1" />
           <ModeToggle />
           <DropdownMenu>

@@ -56,8 +56,8 @@ const menuItems = [
   { title: "Settings", url: "/dashboard/mentor/settings", icon: <Settings2 /> },
 ];
 
-const TutorSidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
+const TutorSidebar = ({collapsed,setCollapsed}) => {
+  
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -85,7 +85,7 @@ const TutorSidebar = () => {
         <button
           onClick={toggleCollapse}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors "
           type="button"
         >
           <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
