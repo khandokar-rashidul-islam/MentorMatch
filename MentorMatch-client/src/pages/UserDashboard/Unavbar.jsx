@@ -35,12 +35,7 @@ const Unavbar = () => {
 
           </div>
         </Link>
-
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex md:text-xs lg:text-base  items-center space-x-4 lg:space-x-8">
-          nav options here
-        </nav>
-
+        
         {/* for small devices */}
         <div className=" flex items-center gap-2">
           <Link to={'/dashboard/mentor/notification'}>
