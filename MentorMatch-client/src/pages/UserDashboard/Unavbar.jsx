@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { User, BookOpen, Menu, X, MenuIcon, BellIcon, ChartBar, MessageCircleCodeIcon, MessageCircle, MessageSquareCodeIcon, LucideMessageSquare, MailIcon } from "lucide-react";
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,9 +41,14 @@ const Unavbar = () => {
         </nav>
         {/* Desktop Actions */}
         <div className="hidden md:flex  items-center space-x-2">
-          <Button variant="ghost"><BellIcon size={18} /></Button>
+          <Link to={'/dashboard/mentor/notification'}>
+            <Button variant="ghost" ><BellIcon size={18} /></Button>
+          </Link>
+
+
           <Button variant="ghost"><MailIcon size={20} /></Button>
           <ModeToggle />
+
           <Link to="/registration">
             profile avtar here
           </Link>

@@ -22,6 +22,7 @@ import PreviousJobs from "../pages/UserDashboard/Tutor/TutorDashboard/PreviousJo
 import Settings from "../pages/UserDashboard/Tutor/TutorDashboard/Settings";
 import Wallet from "../pages/UserDashboard/Tutor/TutorDashboard/Wallet";
 import SearchMentor from "../pages/Mentor Find/SearchMentor";
+import Notify from "../pages/Notification/Notify";
 
 const router = createBrowserRouter([
   {
@@ -59,9 +60,10 @@ const router = createBrowserRouter([
         element: <AllGigs />,
       },
       {
-        path:'search-mentor',
-        element:<SearchMentor/>
-      }
+        path: 'search-mentor',
+        element: <SearchMentor />
+      },
+
     ],
   },
 
@@ -84,37 +86,41 @@ const router = createBrowserRouter([
             element: <TutorStats />,
           },
           {
-            path:"create-gigs",
-            element:<CreateGigs/>
+            path: "create-gigs",
+            element: <CreateGigs />
           },
           {
-            path:"my-gigs",
-            element:<MyGigs/>
+            path: "my-gigs",
+            element: <MyGigs />
           },
           {
-            path:"schedule",
-            element:<Schedule/>
+            path: "schedule",
+            element: <Schedule />
           },
           {
-            path:"payments-history",
-            element:<PaymentHistory/>
+            path: "payments-history",
+            element: <PaymentHistory />
           },
           {
-            path:"community-posts",
-            element:<CommunityPosts/>
-            
+            path: "community-posts",
+            element: <CommunityPosts />
+
           },
           {
-            path:"Previous-jobs",
-            element:<PreviousJobs/>
+            path: "Previous-jobs",
+            element: <PreviousJobs />
           },
           {
-            path:"wallet",
-            element:<Wallet/>
+            path: "wallet",
+            element: <Wallet />
           },
           {
-             path:"settings",
-             element:<Settings/>
+            path: "settings",
+            element: <Settings />
+          },
+          {
+            path: 'notification',
+            element: <Notify />
           }
 
         ],
