@@ -11,6 +11,7 @@ import UserDashboardHome from "../pages/UserDashboard/UserDashboardHome";
 import LearnerProfile from "../pages/UserDashboard/Learner/LearnerProfile";
 import TutorProfile from "../pages/UserDashboard/Tutor/TutorProfile";
 import AllGigs from "../pages/All gigs/AllGigs";
+import SearchMentor from "../pages/Mentor Find/SearchMentor";
 
 
 
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
       {
         path:"all-gigs",
         element:<AllGigs/>
+      },
+      {
+        path:"search-mentor",
+        element:<SearchMentor/>
       }
     ],
   },
