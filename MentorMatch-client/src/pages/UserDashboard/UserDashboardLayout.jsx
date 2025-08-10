@@ -9,7 +9,7 @@ const UserDashboard = () => {
       <div className="">
         <Unavbar />
       </div>
-      <div>
+      <div className="">
         <Outlet />
       </div>
       <div>
