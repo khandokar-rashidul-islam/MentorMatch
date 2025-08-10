@@ -32,16 +32,15 @@ const Unavbar = () => {
             <span className="text-lg lg:text-2xl font-bold text-primary ">
               MentorMatch
             </span>
-
           </div>
         </Link>
-        
+
         {/* for small devices */}
-        <div className=" flex items-center gap-2">
+        <div className=" flex items-center gap-2 justify-between ">
           <Link to={'/dashboard/mentor/notification'}>
             <Button variant="ghost" ><BellIcon size={20} /></Button>
           </Link>
-          <MailIcon size={20} className="mx-1" />
+          <MailIcon size={19} className="mx-1" />
           <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -50,7 +49,7 @@ const Unavbar = () => {
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="" align="start">
+            <DropdownMenuContent className="" align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuGroup>
                 <DropdownMenuItem>
@@ -64,19 +63,19 @@ const Unavbar = () => {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <NavLink to="">Profile settings</NavLink>
+                  <Button variant="outline">switch to learner</Button>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem>
-                  <Button variant="outline">switch to learner</Button>
+                  <NavLink to="">Profile settings</NavLink>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup className="flex">
                 <DropdownMenuItem>
-                  <Button>logout</Button>
+                  <Button className="px-12">logout</Button>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>
