@@ -597,9 +597,9 @@ export default function AllGigs() {
                   : "space-y-4"
               }
             >
-              {sortedGigs.map((gig) =>
+              {sortedGigs.map((gig,i) =>
                 viewMode === "grid" ? (
-                  <GigCard gig={gig} />
+                  <GigCard key={i} gig={gig} />
                 ) : (
                   <GigCard gig={gig} />
                 )
