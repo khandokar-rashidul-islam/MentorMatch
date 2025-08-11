@@ -46,7 +46,7 @@ const gigs = [
   {
     id: 1,
     tutor: {
-      name: "Sarah Chen",
+      name: "Sarah Chen ",
       avatar: "/placeholder.svg",
       rating: 4.9,
       reviews: 127,
