@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import { useLocation, NavLink } from "react-router";
 import {
   ChevronRight,
@@ -14,6 +14,7 @@ import {
   User2,
   Wallet2,
   Settings2,
+  ClipboardList,
 } from "lucide-react";
 import {
   Card,
@@ -21,6 +22,11 @@ import {
 } from "@/components/ui/card";
 const menuItems = [
   { title: "Overview", url: "/dashboard/mentor/overview", icon: <HomeIcon /> },
+  {
+    title: "Bookings",
+    url: "/dashboard/mentor/bookings",
+    icon: <ClipboardList />,
+  },
   {
     title: "Mentor Stats",
     url: "/dashboard/mentor/stats",

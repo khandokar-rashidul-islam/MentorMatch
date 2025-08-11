@@ -6,9 +6,9 @@ import { Outlet } from "react-router";
 const UserDashboard = () => {
   return (
     <>
-        <Unavbar />
-        <Outlet />
-        <Ufooter />
+      <Unavbar />
+      <Outlet />
+      <Ufooter />
     </>
   );
 };

@@ -23,6 +23,9 @@ import Settings from "../pages/UserDashboard/Tutor/TutorDashboard/Settings";
 import Wallet from "../pages/UserDashboard/Tutor/TutorDashboard/Wallet";
 import SearchMentor from "../pages/Mentor Find/SearchMentor";
 import Notify from "../pages/Notification/Notify";
+import Orders from "../pages/UserDashboard/Tutor/TutorDashboard/Bookings";
+import Bookings from "../pages/UserDashboard/Learner/Bookings";
+import Bookmarks from "../pages/UserDashboard/Learner/Bookmarks";
 
 const router = createBrowserRouter([
   {
@@ -60,10 +63,9 @@ const router = createBrowserRouter([
         element: <AllGigs />,
       },
       {
-        path: 'search-mentor',
-        element: <SearchMentor />
+        path: "search-mentor",
+        element: <SearchMentor />,
       },
-
     ],
   },
 
@@ -82,47 +84,49 @@ const router = createBrowserRouter([
             element: <Overview />,
           },
           {
+            path: "bookings",
+            element: <Orders />,
+          },
+          {
             path: "stats",
             element: <TutorStats />,
           },
           {
             path: "create-gigs",
-            element: <CreateGigs />
+            element: <CreateGigs />,
           },
           {
             path: "my-gigs",
-            element: <MyGigs />
+            element: <MyGigs />,
           },
           {
             path: "schedule",
-            element: <Schedule />
+            element: <Schedule />,
           },
           {
             path: "payments-history",
-            element: <PaymentHistory />
+            element: <PaymentHistory />,
           },
           {
             path: "community-posts",
-            element: <CommunityPosts />
-
+            element: <CommunityPosts />,
           },
           {
             path: "Previous-jobs",
-            element: <PreviousJobs />
+            element: <PreviousJobs />,
           },
           {
             path: "wallet",
-            element: <Wallet />
+            element: <Wallet />,
           },
           {
             path: "settings",
-            element: <Settings />
+            element: <Settings />,
           },
           {
-            path: 'notification',
-            element: <Notify />
-          }
-
+            path: "notification",
+            element: <Notify />,
+          },
         ],
       },
       //learner
@@ -131,12 +135,24 @@ const router = createBrowserRouter([
         element: <LearnerHome />,
         children: [
           {
-            index: true,
+            path: "all-gigs",
             element: <AllGigs />,
           },
           {
             path: "stats",
             element: <LearnerStats />,
+          },
+          {
+            path: "bookings",
+            element: <Bookings />,
+          },
+          {
+            path: "bookmarks",
+            element: <Bookmarks />,
+          },
+          {
+            path: "search-mentor",
+            element: <SearchMentor />,
           },
         ],
       },
