@@ -52,7 +52,7 @@ const gigs = [
       reviews: 127,
       badge: "Pro",
     },
-    title: "Learn Python Programming from Scratch to Advanced",
+    title: "Learn Python Programming from Scratch to Advanced ",
     description:
       "Master Python with hands-on projects, real-world examples, and personalized guidance. Perfect for beginners and intermediate learners.",
     category: "Programming",
