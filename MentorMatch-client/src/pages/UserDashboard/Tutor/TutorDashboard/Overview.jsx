@@ -2,7 +2,7 @@ import React from 'react'
 
 const Overview = () => {
   return (
-    <div>Overview</div>
+    <div className='pt-20 w-11/12 mx-auto'>Overview</div>
   )
 }
 

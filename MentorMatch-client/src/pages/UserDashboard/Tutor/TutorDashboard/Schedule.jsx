@@ -2,7 +2,7 @@ import React from 'react'
 
 const Schedule = () => {
   return (
-    <div>Schedule</div>
+    <div  className='pt-20 w-11/12 mx-auto'>Schedule</div>
   )
 }
 

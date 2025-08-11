@@ -2,7 +2,7 @@ import React from 'react'
 
 const CommunityPosts = () => {
   return (
-    <div>CommunityPosts</div>
+    <div className='pt-20 w-11/12 mx-auto'>CommunityPosts</div>
   )
 }
 

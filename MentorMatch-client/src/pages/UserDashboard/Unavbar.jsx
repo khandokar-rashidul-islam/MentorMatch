@@ -107,11 +107,16 @@ const Unavbar = () => {
 
         {/* for small devices */}
         <div className=" flex items-center gap-2 ">
-          <Link to={"/dashboard/mentor/notification"}>
+          {role=='mentor'&&<Link to={"/dashboard/mentor/notification"}>
             <Button variant="ghost">
               <BellIcon size={20} />
             </Button>
-          </Link>
+          </Link>}
+          {role=='learner'&&<Link to={"/dashboard/learner/notification"}>
+            <Button variant="ghost">
+              <BellIcon size={20} />
+            </Button>
+          </Link>}
           <MailIcon size={19} className="mx-1" />
           <ModeToggle />
           {/* dropdown manu */}

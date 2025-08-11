@@ -2,7 +2,7 @@ import React from 'react'
 
 const Wallet = () => {
   return (
-    <div>Wallet</div>
+    <div className='pt-20 w-11/12 mx-auto'>Wallet</div>
   )
 }
 

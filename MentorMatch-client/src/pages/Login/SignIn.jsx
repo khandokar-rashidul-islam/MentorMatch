@@ -6,6 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Link } from "react-router";
 
 const SignIn = () => {
   const { register, handleSubmit } = useForm();
@@ -88,12 +89,11 @@ const SignIn = () => {
               Sign In
             </Button>
           </form>
-
           <p className="text-center text-sm mt-4">
             Don’t have an account?{" "}
-            <a href="#" className="text-primary hover:underline">
+            <Link to="/dashboard/mentor/overview" className="text-primary hover:underline">
               Sign up here
-            </a>
+            </Link>
           </p>
         </CardContent>
       </Card>

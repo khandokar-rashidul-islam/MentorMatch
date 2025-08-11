@@ -154,6 +154,10 @@ const router = createBrowserRouter([
             path: "search-mentor",
             element: <SearchMentor />,
           },
+          {
+            path: "notification",
+            element: <Notify />,
+          },
         ],
       },
     ],
