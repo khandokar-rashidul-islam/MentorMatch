@@ -76,7 +76,7 @@ const TutorSidebar = ({collapsed,setCollapsed}) => {
     <Card
       className={`rounded-md pt-2 mb-2  ${
         collapsed ? "w-16" : "w-55"
-      } border-r flex flex-col`}
+      } border-r border-primary flex flex-col`}
       role="navigation"
       aria-label="Sidebar navigation"
     >

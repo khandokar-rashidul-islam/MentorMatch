@@ -1,5 +1,24 @@
 import { Button } from "@/components/ui/button";
-import { User, BookOpen, Menu, X, MenuIcon, BellIcon, ChartBar, MessageCircleCodeIcon, MessageCircle, MessageSquareCodeIcon, LucideMessageSquare, MailIcon } from "lucide-react";
+import {
+  User,
+  BookOpen,
+  Menu,
+  X,
+  MenuIcon,
+  BellIcon,
+  ChartBar,
+  MessageCircleCodeIcon,
+  MessageCircle,
+  MessageSquareCodeIcon,
+  LucideMessageSquare,
+  MailIcon,
+  Settings2,
+  LogOut,
+  HelpCircle,
+  Wallet2,
+  Languages,
+  UserCheck,
+} from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router";
 import {
   DropdownMenu,
@@ -15,7 +34,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ModeToggle } from "../../components/mode-toggle";
 
 const Unavbar = () => {
@@ -37,45 +56,98 @@ const Unavbar = () => {
 
         {/* for small devices */}
         <div className=" flex items-center gap-2 justify-between ">
-          <Link to={'/dashboard/mentor/notification'}>
-            <Button variant="ghost" ><BellIcon size={20} /></Button>
+          <Link to={"/dashboard/mentor/notification"}>
+            <Button variant="ghost">
+              <BellIcon size={20} />
+            </Button>
           </Link>
           <MailIcon size={19} className="mx-1" />
           <ModeToggle />
+          {/* dropdown manu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Avatar>
+              <Avatar className="cursor-pointer">
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="" align="end">
+
+            {/* dropdown content */}
+            <DropdownMenuContent
+              className=" flex flex-col mt-4 lg:w-80 py-2 px-2  "
+              align="end"
+            >
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <NavLink to="" className={'flex items-center justify-between gap-3 text-sm font-semibold'}>
+              <DropdownMenuGroup className="flex flex-col mt-2">
+                <DropdownMenuItem className=" mb-2 flex  hover:bg-muted/50 text-muted-foreground hover:text-foreground ">
+                  <NavLink
+                    to=""
+                    className={
+                      "flex flex-1 border border-primary px-4 py-2 rounded-md  items-center gap-3 text-sm font-semibold cursor-pointer  bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-primary"
+                    }
+                  >
                     <Avatar>
                       <AvatarImage src="https://github.com/shadcn.png" />
                       <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
-                    username
+                    Khandokar Rashidul Islam
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Button variant="outline">switch to learner</Button>
+                <DropdownMenuItem className="flex-1 ">
+                  <Button
+                    variant="outline"
+                    className=" px-8 py-2  w-full text-primary cursor-pointer"
+                  >
+                   <UserCheck className="text-primary" />  Switch to learner
+                  </Button>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <NavLink to="">Profile settings</NavLink>
+              <DropdownMenuGroup className="flex my-2 flex-col">
+                <DropdownMenuItem className="py-2 hover:bg-muted/50 text-muted-foreground hover:text-foreground flex-1 ">
+                  <NavLink
+                    to=""
+                    className="w-full flex items-center text-md font-semibold gap-2 text-md cursor-pointer"
+                  >
+                    <Settings2 className="font-semibold text-md" /> Account
+                    settings
+                  </NavLink>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="py-2 hover:bg-muted/50 text-muted-foreground hover:text-foreground flex-1 ">
+                  <NavLink
+                    to=""
+                    className="w-full flex items-center text-md font-semibold gap-2 text-md cursor-pointer"
+                  >
+                   <Languages/> English
+                  </NavLink>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="py-2 hover:bg-muted/50 text-muted-foreground hover:text-foreground flex-1 ">
+                  <NavLink
+                    to=""
+                    className="w-full flex items-center text-md font-semibold gap-2 text-md cursor-pointer"
+                  >
+                    <Wallet2/> Billing and payments
+                  </NavLink>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="py-2 hover:bg-muted/50 text-muted-foreground hover:text-foreground flex-1 ">
+                  <NavLink
+                    to=""
+                    className="w-full flex items-center text-md font-semibold gap-2 text-md cursor-pointer"
+                  >
+                     <HelpCircle/> Help and support
+                  </NavLink>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuGroup className="flex">
-                <DropdownMenuItem>
-                  <Button className="px-12">logout</Button>
+              <DropdownMenuGroup className="flex flex-col">
+                <DropdownMenuItem className="py-2 hover:bg-muted/50 text-muted-foreground hover:text-foreground cursor-pointer">
+                  <Button
+                    variant="destructive"
+                    className="px-12 w-full  flex items-center justify-center cursor-pointer "
+                  >
+                    <LogOut className="text-white" /> Sign out
+                  </Button>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>
