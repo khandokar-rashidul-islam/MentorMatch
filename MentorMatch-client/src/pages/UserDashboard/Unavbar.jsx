@@ -18,6 +18,12 @@ import {
   Wallet2,
   Languages,
   UserCheck,
+  CardSim,
+  ClipboardList,
+  MessageSquareText,
+  BookMarked,
+  Search,
+  Home,
 } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router";
 import {
@@ -63,15 +69,43 @@ const Unavbar = () => {
 
   const navLinks = {
     learner: [
-      { label: "All Gigs", path: "/dashboard/learner/all-gigs" },
-      { label: "My Bookings", path: "/dashboard/learner/bookings" },
-      { label: "Community", path: "/dashboard/learner/community" },
-      { label: "Find mentor", path: "/dashboard/learner/search-mentor" },
-      { label: "bookmarks", path: "/dashboard/learner/bookmarks" },
+      {
+        label: "All Gigs",
+        path: "/dashboard/learner/all-gigs",
+        icon: <CardSim size={16} />,
+      },
+      {
+        label: "Find mentor",
+        path: "/dashboard/learner/search-mentor",
+        icon: <Search size={16} />,
+      },
+      {
+        label: "My Bookings",
+        path: "/dashboard/learner/bookings",
+        icon: <ClipboardList size={16} />,
+      },
+      {
+        label: "Community",
+        path: "/dashboard/learner/community",
+        icon: <MessageSquareText size={16} />,
+      },
+      {
+        label: "bookmarks",
+        path: "/dashboard/learner/bookmarks",
+        icon: <BookMarked size={16} />,
+      },
     ],
     mentor: [
-      { label: "Home", path: "/dashboard/mentor/overview" },
-      { label: "Community", path: "/dashboard/mentor/community" },
+      {
+        label: "Home",
+        path: "/dashboard/mentor/overview",
+        icon: <Home size={16} />,
+      },
+      {
+        label: "Community",
+        path: "/dashboard/mentor/community",
+        icon: <MessageSquareText size={16} />,
+      },
     ],
   };
 
@@ -91,32 +125,39 @@ const Unavbar = () => {
           </div>
         </Link>
         {/* learner and mentor links */}
-        <div className="flex items-center gap-2 justify-between">
+        <div className="flex items-center gap-8  justify-between">
           {navLinks[role].map((link) => (
             <NavLink
               key={link.path}
               to={link.path}
               className={({ isActive }) =>
-                `${isActive ? "font-bold text-primary" : ""}`
+                ` flex flex-col items-center gap-1 ${
+                  isActive ? "font-bold text-primary" : ""
+                }`
               }
             >
-              {link.label}
+              <span className="">{link.icon}</span>
+              <span className="text-xs "> {link.label}</span>
             </NavLink>
           ))}
         </div>
 
         {/* for small devices */}
         <div className=" flex items-center gap-2 ">
-          {role=='mentor'&&<Link to={"/dashboard/mentor/notification"}>
-            <Button variant="ghost">
-              <BellIcon size={20} />
-            </Button>
-          </Link>}
-          {role=='learner'&&<Link to={"/dashboard/learner/notification"}>
-            <Button variant="ghost">
-              <BellIcon size={20} />
-            </Button>
-          </Link>}
+          {role == "mentor" && (
+            <Link to={"/dashboard/mentor/notification"}>
+              <Button variant="ghost">
+                <BellIcon size={20} />
+              </Button>
+            </Link>
+          )}
+          {role == "learner" && (
+            <Link to={"/dashboard/learner/notification"}>
+              <Button variant="ghost">
+                <BellIcon size={20} />
+              </Button>
+            </Link>
+          )}
           <MailIcon size={19} className="mx-1" />
           <ModeToggle />
           {/* dropdown manu */}
