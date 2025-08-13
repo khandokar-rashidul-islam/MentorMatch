@@ -3,7 +3,7 @@ import { useState } from "react";
 import { RoleContext } from "./RoleContext";
 
 export default function RoleProvider({ children }) {
-  const [role, setRole] = useState("learner");
+  const [role, setRole] = useState("mentor");
 
   const toggleRole = () => {
     setRole((prev) => (prev === "learner" ? "mentor" : "learner"));
