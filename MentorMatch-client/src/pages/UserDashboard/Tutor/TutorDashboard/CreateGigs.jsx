@@ -64,7 +64,7 @@ function TagInput({
 
   return (
     <div className="space-y-2 relative">
-      <Label className="text-sm font-medium">{label}</Label>
+      <Label className="text-sm font-bold">{label}</Label>
 
       {/* Tags list */}
       <div className="flex flex-wrap gap-2 mb-2">
@@ -165,22 +165,22 @@ export default function CreateGigs() {
 
   return (
     <div className="min-h-screen bg-gradient-secondary pt-20 px-2 mb-8 ">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto ">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* Basic Info */}
-          <Card className="shadow-medium border-0">
+          <Card className="shadow-medium border-0 rounded-md ">
             <CardHeader className="bg-gradient-primary rounded-t-lg">
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5" /> Basic Information
+              <CardTitle className="flex items-center gap-2 text-2xl font-bold ">
+                Basic Information
               </CardTitle>
               <p className="text-muted-foreground text-xs flex items-center gap-1">
-                Share your expertise and start earning by creating an amazing
-                gig
+                <Sparkles size={10} className="h-5 w-5" /> Share your expertise
+                and start earning by creating an amazing gig
               </p>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
               <div className="space-y-4">
-                <Label>Gig Title *</Label>
+                <Label className="font-bold">Gig Title</Label>
                 <Input
                   {...register("gigTitle", { required: "Title is required" })}
                   placeholder="I will create a stunning website for your business"
@@ -192,7 +192,7 @@ export default function CreateGigs() {
                 )}
               </div>
               <div className="space-y-4">
-                <Label>About This Gig *</Label>
+                <Label className="font-bold">About This Gig </Label>
                 <Textarea
                   {...register("aboutGig", {
                     required: "About gig is required",
@@ -232,9 +232,11 @@ export default function CreateGigs() {
           </Card>
 
           {/* Services */}
-          <Card className="shadow-medium border-0">
+          <Card className="shadow-medium border-0 rounded-md ">
             <CardHeader>
-              <CardTitle>Services Provided</CardTitle>
+              <CardTitle className="font-bold text-2xl">
+                Services Provided
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 p-6">
               {servicesFA.fields.map((field, index) => (
@@ -258,9 +260,11 @@ export default function CreateGigs() {
           </Card>
 
           {/* Booking Plans */}
-          <Card className="shadow-medium border-0">
+          <Card className="shadow-medium border-0 rounded-md ">
             <CardHeader>
-              <CardTitle>Booking Plans</CardTitle>
+              <CardTitle className="font-bold text-2xl">
+                Booking Plans
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="instant" className="w-full">
@@ -373,9 +377,11 @@ export default function CreateGigs() {
           </Card>
 
           {/* FAQ */}
-          <Card className="shadow-medium border-0">
+          <Card className="shadow-medium border-0 rounded-md ">
             <CardHeader>
-              <CardTitle>Frequently Asked Questions</CardTitle>
+              <CardTitle className="font-bold text-2xl">
+                Frequently Asked Questions
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-8">
               {faqFA.fields.map((item, index) => (
@@ -389,7 +395,7 @@ export default function CreateGigs() {
                     placeholder="Provide a detailed answer..."
                     className="min-h-[60px]"
                   />
-                  <div className="flex justify-end" >
+                  <div className="flex justify-end">
                     <Button
                       type="button"
                       variant="destructive"
