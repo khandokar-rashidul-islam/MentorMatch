@@ -28,13 +28,39 @@ const Navbar = () => {
           to="/"
           className="flex items-center justify-center space-x-2 hover-scale transition-all duration-300"
         >
-          <div className="flex items-end gap-2">
-            <BookOpen className="h-6 w-6 text-primary" />
-          <span className="text-xl lg:text-2xl font-bold text-primary">
-            MentorMatch
-          </span>
+          <div className="flex items-center">
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 64 64"
+                width="32"
+                height="32"
+                aria-labelledby="title"
+                role="img"
+              >
+                <title id="title">MM </title>
+
+                <rect
+                  x="0"
+                  y="0"
+                  width="54"
+                  height="64"
+                  rx="12"
+                  ry="12"
+                  fill="oklch(46.2% 0.09567 235.043)"
+                />
+
+                <path d="M12 46 V18 L20 32 L28 18 V46" fill="white" />
+
+                <g transform="translate(0,64) scale(1,-1)">
+                  <path d="M28 46 V18 L36 32 L44 18 V46" fill="#aaaaaa" />
+                </g>
+              </svg>
+            </span>
+            <span className="text-lg lg:text-2xl font-bold text-primary ">
+              MentorMatch
+            </span>
           </div>
-          
         </Link>
 
         {/* Desktop Nav */}
@@ -92,30 +118,24 @@ const Navbar = () => {
           <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline"><MenuIcon/></Button>
+              <Button variant="outline">
+                <MenuIcon />
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className=" md:hidden" align="start">
               <DropdownMenuLabel>Menu</DropdownMenuLabel>
               <DropdownMenuGroup>
                 <DropdownMenuItem>
-                  <NavLink to="/">
-                    Features
-                  </NavLink>
+                  <NavLink to="/">Features</NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <NavLink to="/">
-                    How It Works
-                  </NavLink>
+                  <NavLink to="/">How It Works</NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <NavLink to="/">
-                    Pricing
-                  </NavLink>
+                  <NavLink to="/">Pricing</NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <NavLink to="/">
-                    About
-                  </NavLink>
+                  <NavLink to="/">About</NavLink>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
@@ -148,7 +168,6 @@ const Navbar = () => {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-
       </div>
     </div>
   );
