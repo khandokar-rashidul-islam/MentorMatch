@@ -70,7 +70,7 @@ function MyGigsCard({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="p-1 mt-1 cursor-pointer"
+                  className="p-1  cursor-pointer"
                 >
                   <MoreHorizontal className="w-4 h-4" />
                 </Button>
