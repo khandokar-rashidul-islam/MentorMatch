@@ -45,9 +45,11 @@ const GigCard = ({ gig }) => {
 
           {/* Featured Tag */}
           <div className=" absolute right-0 flex flex-col items-end gap-1">
-            <Badge className="bg-green-600 text-white ">Pro</Badge>
+            <Badge className="bg-green-600 text-white  rounded-full  ">
+              Pro
+            </Badge>
             {gig.featured && (
-              <Badge className="bg-red-500 text-white rounded-full px-2 py-0.5">
+              <Badge className="bg-red-500 text-white rounded-fullpx-1 py-0.5 text-[10px] sm:text-[11px]">
                 Featured
               </Badge>
             )}

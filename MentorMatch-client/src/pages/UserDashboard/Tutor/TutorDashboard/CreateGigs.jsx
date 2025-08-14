@@ -164,156 +164,183 @@ export default function CreateGigs() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-secondary pt-20 px-2 mb-8 ">
-      <div className="max-w-4xl mx-auto ">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-          {/* Basic Info */}
-          <Card className="shadow-medium border-0 rounded-md ">
-            <CardHeader className="bg-gradient-primary rounded-t-lg">
-              <CardTitle className="flex items-center gap-2 text-2xl font-bold ">
-                Basic Information
-              </CardTitle>
-              <p className="text-muted-foreground text-xs flex items-center gap-1">
-                <Sparkles size={10} className="h-5 w-5" /> Share your expertise
-                and start earning by creating an amazing gig
-              </p>
-            </CardHeader>
-            <CardContent className="p-6 space-y-6">
-              <div className="space-y-4">
-                <Label className="font-bold">Gig Title</Label>
-                <Input
-                  {...register("gigTitle", { required: "Title is required" })}
-                  placeholder="I will create a stunning website for your business"
-                />
-                {errors.gigTitle && (
-                  <p className="text-destructive text-sm">
-                    {errors.gigTitle.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-4">
-                <Label className="font-bold">About This Gig </Label>
-                <Textarea
-                  {...register("aboutGig", {
-                    required: "About gig is required",
-                  })}
-                  placeholder="Describe your gig in detail..."
-                  className="min-h-[120px]"
-                />
-                {errors.aboutGig && (
-                  <p className="text-destructive text-sm">
-                    {errors.aboutGig.message}
-                  </p>
-                )}
-              </div>
-              <TagInput
-                label="Related Topics"
-                fieldArray={relatedTopicsFA.fields}
-                append={relatedTopicsFA.append}
-                remove={relatedTopicsFA.remove}
-                placeholder="Add a topic (e.g., Web Development)"
-                suggestions={[
-                  "Web Development",
-                  "React",
-                  "UI Design",
-                  "Tailwind",
-                ]}
+    <div className="min-h-screen bg-gradient-secondary pt-20 mb-8 px-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        {/* Basic Info */}
+        <Card className="shadow-medium border-0 rounded-md ">
+          <CardHeader className="bg-gradient-primary rounded-t-lg">
+            <CardTitle className="flex items-center gap-2 text-2xl font-bold text-primary ">
+              Basic Information
+            </CardTitle>
+            <p className="text-muted-foreground text-xs flex items-center gap-1">
+              <Sparkles size={10} className="h-5 w-5" /> Share your expertise
+              and start earning by creating an amazing gig
+            </p>
+          </CardHeader>
+          <CardContent className="p-6 space-y-6">
+            <div className="space-y-4">
+              <Label className="font-bold">Gig Title</Label>
+              <Input
+                {...register("gigTitle", { required: "Title is required" })}
+                placeholder="I will create a stunning website for your business"
               />
-
-              <TagInput
-                label="Subjects & Keywords"
-                fieldArray={keywordsFA.fields}
-                append={keywordsFA.append}
-                remove={keywordsFA.remove}
-                placeholder="Type keyword and press Enter"
-                suggestions={["JavaScript", "ReactJS", "Backend", "Frontend"]}
+              {errors.gigTitle && (
+                <p className="text-destructive text-sm">
+                  {errors.gigTitle.message}
+                </p>
+              )}
+            </div>
+            <div className="space-y-4">
+              <Label className="font-bold">About This Gig </Label>
+              <Textarea
+                {...register("aboutGig", {
+                  required: "About gig is required",
+                })}
+                placeholder="Describe your gig in detail..."
+                className="min-h-[120px]"
               />
-            </CardContent>
-          </Card>
+              {errors.aboutGig && (
+                <p className="text-destructive text-sm">
+                  {errors.aboutGig.message}
+                </p>
+              )}
+            </div>
+            <TagInput
+              label="Related Topics"
+              fieldArray={relatedTopicsFA.fields}
+              append={relatedTopicsFA.append}
+              remove={relatedTopicsFA.remove}
+              placeholder="Add a topic (e.g., Web Development)"
+              suggestions={[
+                "Web Development",
+                "React",
+                "UI Design",
+                "Tailwind",
+              ]}
+            />
 
-          {/* Services */}
-          <Card className="shadow-medium border-0 rounded-md ">
-            <CardHeader>
-              <CardTitle className="font-bold text-2xl">
-                Services Provided
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 p-6">
-              {servicesFA.fields.map((field, index) => (
-                <Input
-                  key={field.id}
-                  {...register(`services.${index}.value`, { required: true })}
-                  placeholder={`Service ${index + 1} *`}
-                  className="w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500"
-                />
-              ))}
+            <TagInput
+              label="Subjects & Keywords"
+              fieldArray={keywordsFA.fields}
+              append={keywordsFA.append}
+              remove={keywordsFA.remove}
+              placeholder="Type keyword and press Enter"
+              suggestions={["JavaScript", "ReactJS", "Backend", "Frontend"]}
+            />
+          </CardContent>
+        </Card>
 
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => servicesFA.append({ value: "" })}
-                className="w-full flex justify-center items-center gap-2 mt-2 py-3 border-dashed border border-gray-400"
-              >
-                <PlusCircle className="w-5 h-5" /> Add Service
-              </Button>
-            </CardContent>
-          </Card>
+        {/* Services */}
+        <Card className="shadow-medium border-0 rounded-md ">
+          <CardHeader>
+            <CardTitle className="font-bold text-2xl text-primary">
+              Services Provided
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 p-6">
+            {servicesFA.fields.map((field, index) => (
+              <Input
+                key={field.id}
+                {...register(`services.${index}.value`, { required: true })}
+                placeholder={`Service ${index + 1} *`}
+                className="w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500"
+              />
+            ))}
 
-          {/* Booking Plans */}
-          <Card className="shadow-medium border-0 rounded-md ">
-            <CardHeader>
-              <CardTitle className="font-bold text-2xl">
-                Booking Plans
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="instant" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger
-                    value="instant"
-                    className="flex items-center gap-2"
-                  >
-                    <Sparkles className="h-4 w-4" /> Instant
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="weekly"
-                    className="flex items-center gap-2"
-                  >
-                    <Calendar className="h-4 w-4" /> Weekly
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="monthly"
-                    className="flex items-center gap-2"
-                  >
-                    <Award className="h-4 w-4" /> Monthly
-                  </TabsTrigger>
-                </TabsList>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => servicesFA.append({ value: "" })}
+              className="w-full flex justify-center items-center gap-2 mt-2 py-3 border-dashed border border-gray-400"
+            >
+              <PlusCircle className="w-5 h-5" /> Add Service
+            </Button>
+          </CardContent>
+        </Card>
 
-                {/* Instant */}
-                <TabsContent value="instant" className="mt-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-4">
-                      <Label>Price ($)</Label>
-                      <Input
-                        {...register("bookingPlans.instant.price", {
-                          required: true,
-                        })}
-                        type="number"
-                      />
-                    </div>
-                    <div className="space-y-4">
-                      <Label>Services</Label>
-                      <Input
-                        {...register("bookingPlans.instant.services")}
-                        placeholder="Comma separated"
-                      />
-                    </div>
+        {/* Booking Plans */}
+        <Card className="shadow-medium border-0 rounded-md ">
+          <CardHeader>
+            <CardTitle className="font-bold text-2xl text-primary">
+              Booking Plans
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="instant" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger
+                  value="instant"
+                  className="flex items-center gap-2"
+                >
+                  <Sparkles className="h-4 w-4" /> Instant
+                </TabsTrigger>
+                <TabsTrigger value="weekly" className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" /> Weekly
+                </TabsTrigger>
+                <TabsTrigger
+                  value="monthly"
+                  className="flex items-center gap-2"
+                >
+                  <Award className="h-4 w-4" /> Monthly
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Instant */}
+              <TabsContent value="instant" className="mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    <Label>Price ($)</Label>
+                    <Input
+                      {...register("bookingPlans.instant.price", {
+                        required: true,
+                      })}
+                      type="number"
+                    />
                   </div>
-                </TabsContent>
+                  <div className="space-y-4">
+                    <Label>Services</Label>
+                    <Input
+                      {...register("bookingPlans.instant.services")}
+                      placeholder="Comma separated"
+                    />
+                  </div>
+                </div>
+              </TabsContent>
 
-                {/* Weekly */}
-                <TabsContent value="weekly" className="space-y-6 mt-6">
-                  {["weeklyBasic", "weeklyIntensive"].map((plan, idx) => (
+              {/* Weekly */}
+              <TabsContent value="weekly" className="space-y-6 mt-6">
+                {["weeklyBasic", "weeklyIntensive"].map((plan, idx) => (
+                  <div key={idx} className="space-y-8">
+                    <h4 className="font-medium capitalize">
+                      {plan.replace(/([A-Z])/g, " $1")}
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-4">
+                        <Label>Price ($)</Label>
+                        <Input
+                          {...register(`bookingPlans.${plan}.price`, {
+                            required: true,
+                          })}
+                          type="number"
+                        />
+                      </div>
+                      <div className="space-y-4">
+                        <Label>Services</Label>
+                        <Input
+                          {...register(`bookingPlans.${plan}.services`)}
+                          placeholder="Comma separated"
+                        />
+                      </div>
+                    </div>
+                    {idx === 0 && <Separator />}
+                  </div>
+                ))}
+              </TabsContent>
+
+              {/* Monthly */}
+              <TabsContent value="monthly" className="space-y-6 mt-6">
+                {["monthlyStandard", "monthlyPremium", "monthlyElite"].map(
+                  (plan, idx) => (
                     <div key={idx} className="space-y-8">
                       <h4 className="font-medium capitalize">
                         {plan.replace(/([A-Z])/g, " $1")}
@@ -336,99 +363,67 @@ export default function CreateGigs() {
                           />
                         </div>
                       </div>
-                      {idx === 0 && <Separator />}
+                      {idx < 2 && <Separator />}
                     </div>
-                  ))}
-                </TabsContent>
+                  )
+                )}
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
 
-                {/* Monthly */}
-                <TabsContent value="monthly" className="space-y-6 mt-6">
-                  {["monthlyStandard", "monthlyPremium", "monthlyElite"].map(
-                    (plan, idx) => (
-                      <div key={idx} className="space-y-8">
-                        <h4 className="font-medium capitalize">
-                          {plan.replace(/([A-Z])/g, " $1")}
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-4">
-                            <Label>Price ($)</Label>
-                            <Input
-                              {...register(`bookingPlans.${plan}.price`, {
-                                required: true,
-                              })}
-                              type="number"
-                            />
-                          </div>
-                          <div className="space-y-4">
-                            <Label>Services</Label>
-                            <Input
-                              {...register(`bookingPlans.${plan}.services`)}
-                              placeholder="Comma separated"
-                            />
-                          </div>
-                        </div>
-                        {idx < 2 && <Separator />}
-                      </div>
-                    )
-                  )}
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
-
-          {/* FAQ */}
-          <Card className="shadow-medium border-0 rounded-md ">
-            <CardHeader>
-              <CardTitle className="font-bold text-2xl">
-                Frequently Asked Questions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-8">
-              {faqFA.fields.map((item, index) => (
-                <div key={item.id} className="space-y-2 p-4 border rounded-lg">
-                  <Input
-                    {...register(`faq.${index}.question`, { required: true })}
-                    placeholder="Question"
-                  />
-                  <Textarea
-                    {...register(`faq.${index}.answer`, { required: true })}
-                    placeholder="Provide a detailed answer..."
-                    className="min-h-[60px]"
-                  />
-                  <div className="flex justify-end">
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={() => faqFA.remove(index)}
-                      size="sm"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
+        {/* FAQ */}
+        <Card className="shadow-medium border-0 rounded-md ">
+          <CardHeader>
+            <CardTitle className="font-bold text-2xl ">
+              Frequently Asked Questions
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-8">
+            {faqFA.fields.map((item, index) => (
+              <div key={item.id} className="space-y-2 p-4 border rounded-lg">
+                <Input
+                  {...register(`faq.${index}.question`, { required: true })}
+                  placeholder="Question"
+                />
+                <Textarea
+                  {...register(`faq.${index}.answer`, { required: true })}
+                  placeholder="Provide a detailed answer..."
+                  className="min-h-[60px]"
+                />
+                <div className="flex justify-end">
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={() => faqFA.remove(index)}
+                    size="sm"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
                 </div>
-              ))}
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => faqFA.append({ question: "", answer: "" })}
-                className="w-full"
-              >
-                <PlusCircle className="w-4 h-4 mr-2" /> Add FAQ
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Submit */}
-          <div className="flex justify-end">
+              </div>
+            ))}
             <Button
-              type="submit"
-              className=" cursor-pointer hover:opacity-90 hover:text-white  px-8 py-3 text-lg font-medium shadow-lg"
+              type="button"
+              variant="outline"
+              onClick={() => faqFA.append({ question: "", answer: "" })}
+              className="w-full"
             >
-              Create Gig
+              <PlusCircle className="w-4 h-4 mr-2" /> Add FAQ
             </Button>
-          </div>
-        </form>
-      </div>
+          </CardContent>
+        </Card>
+
+        {/* Submit */}
+        <div className="flex justify-end">
+          <Button
+            type="submit"
+            className=" cursor-pointer hover:opacity-90 hover:text-white  px-8 py-3 text-lg font-medium shadow-lg"
+          >
+            Create Gig
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }
