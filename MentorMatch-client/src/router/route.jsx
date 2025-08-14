@@ -26,6 +26,7 @@ import Notify from "../pages/Notification/Notify";
 import Orders from "../pages/UserDashboard/Tutor/TutorDashboard/Bookings";
 import Bookings from "../pages/UserDashboard/Learner/Bookings";
 import Bookmarks from "../pages/UserDashboard/Learner/Bookmarks";
+import LearnerProfile from "../pages/UserDashboard/Learner/LearnerProfile";
 
 const router = createBrowserRouter([
   {
@@ -127,6 +128,10 @@ const router = createBrowserRouter([
             path: "notification",
             element: <Notify />,
           },
+          {
+            path:"learner-profile",
+            element:<LearnerProfile/>
+          }
         ],
       },
       //learner
