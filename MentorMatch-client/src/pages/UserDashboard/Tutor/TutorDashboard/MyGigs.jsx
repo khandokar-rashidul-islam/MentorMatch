@@ -279,13 +279,13 @@ export default function MyGigs() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="px-3 py-2 border rounded-lg bg-background hover:bg-muted/50 transition"
+            className="px-3 py-2 border rounded-md bg-background transition"
           >
             <option value="title">Sort by Title</option>
             <option value="price">Sort by Price</option>
             <option value="rating">Sort by Rating</option>
           </select>
-          <div className="flex border rounded-lg p-1 bg-muted/20">
+          <div className="flex gap-1 border rounded-md p-1 bg-muted/20">
             <Button
               variant={viewMode === "list" ? "default" : "ghost"}
               size="sm"
