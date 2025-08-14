@@ -2,10 +2,18 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger, } from "@/components/ui/tabs";
-
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+import {
   Plus,
   Search,
   Grid3X3,
@@ -13,13 +21,14 @@ import {
   FolderOpen,
   BarChart3,
 } from "lucide-react";
-import {toast, Toaster } from "../../../../hooks/use-toast";
+import { toast, Toaster } from "../../../../hooks/use-toast";
 import { Link } from "react-router";
 import MyGigsCard from "./MyGigsCard";
 
 const myGigs = [
   {
     id: 1,
+    status: "active",
     tutor: {
       name: "Sarah Chen ",
       avatar: "/placeholder.svg",
@@ -39,6 +48,7 @@ const myGigs = [
   },
   {
     id: 2,
+    status: "active",
     tutor: {
       name: "Michael Rodriguez",
       avatar: "/placeholder.svg",
@@ -58,6 +68,7 @@ const myGigs = [
   },
   {
     id: 3,
+    status: "active",
     tutor: {
       name: "Emma Thompson",
       avatar: "/placeholder.svg",
@@ -77,6 +88,7 @@ const myGigs = [
   },
   {
     id: 4,
+    status: "active",
     tutor: {
       name: "Dr. James Wilson",
       avatar: "/placeholder.svg",
@@ -96,6 +108,7 @@ const myGigs = [
   },
   {
     id: 5,
+    status: "active",
     tutor: {
       name: "Lisa Park",
       avatar: "/placeholder.svg",
@@ -115,6 +128,7 @@ const myGigs = [
   },
   {
     id: 6,
+    status: "active",
     tutor: {
       name: "Ahmed Hassan",
       avatar: "/placeholder.svg",
@@ -140,7 +154,7 @@ export default function MyGigs() {
   const [activeTab, setActiveTab] = useState("all");
   const [gigs, setGigs] = useState(myGigs);
   const [sortBy, setSortBy] = useState("title");
- 
+
   const filteredGigs = gigs.filter(
     (g) =>
       g.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -149,16 +163,14 @@ export default function MyGigs() {
 
   const sortedGigs = [...filteredGigs].sort((a, b) => {
     if (sortBy === "price") return b.price - a.price;
-    if (sortBy === "rating") return b.rating - a.rating;
-    if (sortBy === "revenue") return b.revenue - a.revenue;
+    if (sortBy === "rating") return b.tutor.rating - a.tutor.rating;
     return a.title.localeCompare(b.title);
   });
 
   const getGigsByStatus = (status) =>
-    status === "all"
-      ? sortedGigs
-      : sortedGigs.filter((g) => g.status === status);
+    status === "all" ? sortedGigs : sortedGigs.filter((g) => g.status === status);
 
+  // Actions
   const handleStatusToggle = (id) => {
     setGigs((prev) =>
       prev.map((g) =>
@@ -193,9 +205,6 @@ export default function MyGigs() {
         id: Math.max(...gigs.map((g) => g.id)) + 1,
         title: `${gig.title} (Copy)`,
         status: "paused",
-        bookings: 0,
-        revenue: 0,
-        lastUpdated: "just now",
       };
       setGigs((prev) => [...prev, newGig]);
       toast({
@@ -205,10 +214,22 @@ export default function MyGigs() {
     }
   };
 
+  const handleDelete = (gig) => {
+    if (!gig) return;
+    if (window.confirm(`Are you sure you want to delete "${gig.title}"?`)) {
+      setGigs((prev) => prev.filter((g) => g.id !== gig.id));
+      toast({
+        title: "Gig Deleted",
+        description: `"${gig.title}" has been removed.`,
+      });
+    }
+  };
+
   return (
     <div className="pt-20 min-h-screen p-6 bg-background space-y-6">
-      {/* Header */}
       <Toaster />
+
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg">
@@ -224,15 +245,7 @@ export default function MyGigs() {
           </div>
         </div>
         <Link to="/dashboard/mentor/create-gigs">
-          <Button
-            className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 hover:scale-105"
-            // onClick={() =>
-            //   toast({
-            //     title: "Create New Gig",
-            //     description: "Redirecting to creation page...",
-            //   })
-            // }
-          >
+          <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 hover:scale-105">
             <Plus className="w-4 h-4 mr-2" /> Create New Gig
           </Button>
         </Link>
@@ -271,7 +284,6 @@ export default function MyGigs() {
             <option value="title">Sort by Title</option>
             <option value="price">Sort by Price</option>
             <option value="rating">Sort by Rating</option>
-            <option value="revenue">Sort by Revenue</option>
           </select>
           <div className="flex border rounded-lg p-1 bg-muted/20">
             <Button
@@ -312,6 +324,7 @@ export default function MyGigs() {
               onStatusToggle={handleStatusToggle}
               onShare={handleShare}
               onDuplicate={handleDuplicate}
+              onDelete={handleDelete}
             />
           </div>
         ))}

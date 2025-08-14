@@ -1,4 +1,3 @@
-
 import {
   Card,
   CardHeader,
@@ -14,7 +13,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { Tooltip } from "@/components/ui/tooltip";
 import {
   Star,
   Clock,
@@ -26,9 +24,17 @@ import {
   Copy,
   Pause,
   Play,
+  Trash2,
 } from "lucide-react";
 
-function MyGigsCard({ gig, viewMode, onStatusToggle, onShare, onDuplicate }) {
+function MyGigsCard({
+  gig,
+  viewMode,
+  onStatusToggle,
+  onShare,
+  onDuplicate,
+  onDelete,
+}) {
   return (
     <Card
       className={`flex flex-col justify-between h-full rounded-xl border shadow-sm transition-all duration-300 ${
@@ -37,7 +43,6 @@ function MyGigsCard({ gig, viewMode, onStatusToggle, onShare, onDuplicate }) {
           : "border-l-4 hover:border-l-primary hover:shadow-md"
       }`}
     >
-      {/* Header: Title, Description, Badges, Three-dot menu */}
       <CardHeader className="pb-2 relative">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -60,39 +65,48 @@ function MyGigsCard({ gig, viewMode, onStatusToggle, onShare, onDuplicate }) {
           </div>
 
           <div className="flex flex-col items-end gap-1 ml-2">
-            {/* Three-dot menu with tooltip */}
-            <Tooltip content="More options">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="p-1 mt-1">
-                    <MoreHorizontal className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-40">
-                  <DropdownMenuItem onClick={() => onStatusToggle(gig.id)}>
-                    {gig.status === "active" ? (
-                      <Pause className="w-4 h-4 mr-2" />
-                    ) : (
-                      <Play className="w-4 h-4 mr-2" />
-                    )}
-                    {gig.status === "active" ? "Pause" : "Activate"}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onShare(gig.id)}>
-                    <Share2 className="w-4 h-4 mr-2" /> Share
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onDuplicate(gig.id)}>
-                    <Copy className="w-4 h-4 mr-2" /> Duplicate
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </Tooltip>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="p-1 mt-1 cursor-pointer"
+                >
+                  <MoreHorizontal className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem onClick={() => onStatusToggle(gig.id)}>
+                  {gig.status === "active" ? (
+                    <Pause className="w-4 h-4 mr-2" />
+                  ) : (
+                    <Play className="w-4 h-4 mr-2" />
+                  )}
+                  {gig.status === "active" ? "Pause" : "Activate"}
+                </DropdownMenuItem>
+
+                <DropdownMenuItem onClick={() => onShare(gig.id)}>
+                  <Share2 className="w-4 h-4 mr-2" /> Share
+                </DropdownMenuItem>
+
+                <DropdownMenuItem onClick={() => onDuplicate(gig.id)}>
+                  <Copy className="w-4 h-4 mr-2" /> Duplicate
+                </DropdownMenuItem>
+
+                {/* Delete button */}
+                <DropdownMenuItem
+                  className="text-red-600"
+                  onClick={() => onDelete(gig)}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" /> Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </CardHeader>
 
-      {/* Content: Skills + Info row + View/Edit */}
       <CardContent className="flex flex-col justify-between flex-grow mt-2">
-        {/* Skills */}
         <div className="flex flex-wrap gap-2 text-xs mb-3">
           {gig.skills.slice(0, 3).map((skill) => (
             <Badge
@@ -113,7 +127,6 @@ function MyGigsCard({ gig, viewMode, onStatusToggle, onShare, onDuplicate }) {
           )}
         </div>
 
-        {/* Info Row */}
         <div className="flex items-center justify-between text-sm py-2 text-gray-500">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
@@ -131,7 +144,6 @@ function MyGigsCard({ gig, viewMode, onStatusToggle, onShare, onDuplicate }) {
           </div>
         </div>
 
-        {/* View/Edit Buttons */}
         <div className="flex justify-end gap-2 mt-2">
           <Button variant="outline" size="sm" className="hover:scale-105">
             <Eye className="w-4 h-4 mr-1" /> View

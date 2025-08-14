@@ -128,7 +128,7 @@ function Toaster() {
         t.open ? (
           <div
             key={t.id}
-            className="bg-white border p-3 rounded shadow-lg flex items-start justify-between gap-4 animate-fade-in"
+            className="bg-secondary border p-3 rounded shadow-lg flex items-start justify-between gap-4 animate-fade-in"
           >
             <div>
               {t.title && <p className="font-semibold">{t.title}</p>}
