@@ -75,8 +75,21 @@ const TutorDetails = () => {
                 <Gigs/>
               </TabsContent>
             </Tabs>
-            <div className="xl:hidden">
+            <div className="xl:hidden space-y-4 sm:space-y-6 ">
               <BookingPlans />
+              <Card>
+              <CardContent className="p-4 sm:p-6">
+                <h3 className="font-semibold mb-3 sm:mb-4">Availability</h3>
+                <div className="space-y-3">
+                  {days.map(({ day, time }) => (
+                    <div className="flex justify-between items-center" key={day}>
+                      <span className="text-muted-foreground">{day}</span>
+                      <span className="text-sm">{time}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
             </div>
             
 
@@ -85,39 +98,11 @@ const TutorDetails = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-4 sm:space-y-6">
-            <div className="hidden xl:block">
+          <div className="space-y-4 sm:space-y-6 hidden xl:block">
+            <div className="">
               <BookingPlans />
             </div>
             
-
-            <Card>
-              <CardContent className="p-4 sm:p-6">
-                <h3 className="font-semibold mb-3 sm:mb-4">Quick Stats</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Total Students:</span>
-                    <span className="font-medium">500+</span>
-                  </div>
-                  <Separator />
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Years Teaching:</span>
-                    <span className="font-medium">10+</span>
-                  </div>
-                  <Separator />
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Response Time:</span>
-                    <span className="font-medium">2 hours</span>
-                  </div>
-                  <Separator />
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Success Rate:</span>
-                    <span className="font-medium text-success">98%</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
             <Card>
               <CardContent className="p-4 sm:p-6">
                 <h3 className="font-semibold mb-3 sm:mb-4">Availability</h3>
