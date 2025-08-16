@@ -162,7 +162,7 @@ const BookingPlans = () => {
                         )}
                       </div>
                       {plan.savings && (
-                        <p className="text-xs sm:text-sm text-success text-green-500">Save ${plan.savings}</p>
+                        <p className="text-xs sm:text-sm text-success text-green-700 dark:text-green-500">Save ${plan.savings}</p>
                       )}
                     </div>
 
@@ -214,7 +214,7 @@ const BookingPlans = () => {
                       {plan.originalPrice && (
                         <>
                           <p className="text-xs sm:text-sm text-muted-foreground line-through">${plan.originalPrice}</p>
-                          <p className="text-xs sm:text-sm text-success">Save ${plan.savings}</p>
+                          <p className="text-xs sm:text-sm text-green-700 dark:text-green-500">Save ${plan.savings}</p>
                         </>
                       )}
                     </div>
