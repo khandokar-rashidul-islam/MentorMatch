@@ -28,7 +28,7 @@ const GigHeader = () => {
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
                     <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                            <Badge variant="secondary" className="bg-gradient-primary text-white">
+                            <Badge variant="secondary" className="bg-gradient-primary text-primary">
                                 Top Rated
                             </Badge>
                             <Badge variant="outline">Mathematics Expert</Badge>

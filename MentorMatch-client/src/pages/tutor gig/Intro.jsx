@@ -50,7 +50,7 @@ const Intro = () => {
                             className="w-24 h-24  rounded-full object-cover border-4 border-primary/20"
                         />
                         <div className="absolute right-1 bottom-5 bg-success rounded-full ">
-                            <CheckCircle className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+                            <CheckCircle className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
                         </div>
                     </div>
 

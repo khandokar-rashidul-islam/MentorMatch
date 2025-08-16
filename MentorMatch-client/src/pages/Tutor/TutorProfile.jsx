@@ -39,7 +39,7 @@ const TutorProfile = () => {
                 className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-primary/20"
               />
               <div className="absolute -bottom-1 -right-1 sm:top-24 sm:right-2 bg-success rounded-full p-0.5 sm:p-1">
-                <CheckCircle className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+                <CheckCircle className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
               </div>
             </div>
           
