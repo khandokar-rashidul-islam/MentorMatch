@@ -228,7 +228,7 @@ const Unavbar = () => {
               <DropdownMenuGroup className="flex flex-col mt-2">
                 <DropdownMenuItem className=" mb-2 flex  hover:bg-muted/50 text-muted-foreground hover:text-foreground ">
                   <NavLink
-                    to=""
+                    to="/dashboard/mentor/tutor-details"
                     className={
                       "flex flex-1 border border-primary px-4 py-2 rounded-md  items-center gap-3 text-sm font-semibold cursor-pointer  bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-primary"
                     }

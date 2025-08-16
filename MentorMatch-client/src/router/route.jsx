@@ -129,9 +129,13 @@ const router = createBrowserRouter([
             element: <Notify />,
           },
           {
-            path:"learner-profile",
-            element:<LearnerProfile/>
-          }
+            path: "learner-profile",
+            element: <LearnerProfile />
+          },
+          {
+            path: "tutor-details",
+            element: <TutorDetails />,
+          },
         ],
       },
       //learner

@@ -13,12 +13,12 @@ import Posts from "./Posts";
 import Gigs from "./Gigs";
 
 const TutorDetails = () => {
-  const breadcrumbItems = [
-    { label: "Home", href: "/" },
-    { label: "Find Tutors", href: "/tutors" },
-    { label: "Mathematics", href: "/tutors/mathematics" },
-    { label: "Dr. Sarah Johnson" }
-  ];
+  // const breadcrumbItems = [
+  //   { label: "Home", href: "/" },
+  //   { label: "Find Tutors", href: "/tutors" },
+  //   { label: "Mathematics", href: "/tutors/mathematics" },
+  //   { label: "Dr. Sarah Johnson" }
+  // ];
   const days = [
     { day: "Monday", time: "9:00 AM - 6:00 PM" },
     { day: "Tuesday", time: "9:00 AM - 6:00 PM" },
@@ -32,9 +32,9 @@ const TutorDetails = () => {
     <div className="min-h-screen mt-20 bg-gradient-subtle">
       <main className="w-11/12 mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Breadcrumbs */}
-        <div className="mb-4 sm:mb-6">
+        {/* <div className="mb-4 sm:mb-6">
           <Breadcrumbs items={breadcrumbItems} />
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Main Content */}
@@ -75,6 +75,10 @@ const TutorDetails = () => {
                 <Gigs/>
               </TabsContent>
             </Tabs>
+            <div className="xl:hidden">
+              <BookingPlans />
+            </div>
+            
 
             <ReviewSection />
             <FAQSection />
@@ -82,7 +86,10 @@ const TutorDetails = () => {
 
           {/* Sidebar */}
           <div className="space-y-4 sm:space-y-6">
-            <BookingPlans />
+            <div className="hidden xl:block">
+              <BookingPlans />
+            </div>
+            
 
             <Card>
               <CardContent className="p-4 sm:p-6">
