@@ -37,34 +37,23 @@ function MyGigsCard({
 }) {
   return (
     <Card
-      className={`flex flex-col justify-between h-full rounded-xl border shadow-sm transition-all duration-300 ${
-        viewMode === "grid"
-          ? "hover:shadow-lg hover:scale-[1.02]"
-          : "border-l-4 hover:border-l-primary hover:shadow-md"
-      }`}
+      className={`flex flex-col justify-between w-full h-full rounded-xl border shadow-sm transition-all duration-300 ${viewMode === "grid"
+        ? "hover:shadow-lg hover:scale-[1.02]"
+        : "border-l-4 hover:border-l-primary hover:shadow-md"
+        }`}
     >
-      <CardHeader className="pb-2 relative">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
+      <CardHeader className="pb-2 relative w-full">
+        <div className="flex flex-col items-start justify-between ">
+          <div className="w-full flex items-center justify-between ">
             <Badge
               variant="secondary"
-              className={`px-1 py-0.5 text-[10px] sm:text-[11px]${
-                gig.status === "active"
-                  ? " text-green-700"
-                  : " text-muted-foreground "
-              }`}
+              className={`px-1 py-0.5 text-[10px] sm:text-[11px]${gig.status === "active"
+                ? " text-green-700"
+                : " text-muted-foreground "
+                }`}
             >
               {gig.status === "active" ? "Active" : "Inactive"}
             </Badge>
-            <CardTitle className="mt-0 font-semibold text-xl line-clamp-2">
-              {gig.title}
-            </CardTitle>
-            <CardDescription className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
-              {gig.description}
-            </CardDescription>
-          </div>
-
-          <div className="flex flex-col items-end gap-1 ml-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -103,6 +92,15 @@ function MyGigsCard({
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+          <div className="flex-1 flex flex-col">
+            <CardTitle className="mt-0 font-semibold text-xl line-clamp-2">
+              {gig.title}
+            </CardTitle>
+            <CardDescription className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
+              {gig.description}
+            </CardDescription>
+          </div>
+
         </div>
       </CardHeader>
 
@@ -127,8 +125,8 @@ function MyGigsCard({
           )}
         </div>
 
-        <div className="flex items-center justify-between text-sm py-2 text-gray-500">
-          <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between flex-wrap text-sm py-2 text-gray-500">
+          <div className="flex items-center flex-wrap gap-4">
             <div className="flex items-center gap-1">
               <Clock className="h-4 w-4" />
               <span>{gig.duration}</span>
@@ -138,13 +136,13 @@ function MyGigsCard({
               <span>{gig.students}</span>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-right">
+          <div className="flex items-center gap-2 flex-wrap text-right">
             <div className="text-lg font-bold text-primary">${gig.price}</div>
             <div className="text-xs text-gray-400">per session</div>
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 mt-2">
+        <div className="flex sm:justify-end flex-wrap gap-2 mt-2">
           <Button variant="outline" size="sm" className="hover:scale-105">
             <Eye className="w-4 h-4 mr-1" /> View
           </Button>

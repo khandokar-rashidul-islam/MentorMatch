@@ -77,7 +77,7 @@ const insights = [
 
 export default function TutorStats() {
   return (
-    <div className="p-6 space-y-6 pt-20">
+    <div className="p-6 space-y-6 pt-28 w-11/12 mx-auto">
       {/* Page Header */}
       <div>
         <h1 className="text-2xl font-bold">Performance & Statistics</h1>

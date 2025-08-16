@@ -226,11 +226,11 @@ export default function MyGigs() {
   };
 
   return (
-    <div className="pt-20 min-h-screen p-6 bg-background space-y-6">
+    <div className="pt-28 min-h-screen p-6 bg-background space-y-6 w-11/12 mx-auto">
       <Toaster />
 
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg">
             <FolderOpen className="w-8 h-8 text-primary" />
@@ -252,9 +252,9 @@ export default function MyGigs() {
       </div>
 
       {/* Tabs & Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="bg-muted/50 hover:bg-muted transition-colors">
+      <div className="flex flex-col md:flex-row md:items-center justify-between flex-wrap gap-4 w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="bg-muted/50 hover:bg-muted transition-colors w-full h-full flex flex-wrap">
             <TabsTrigger value="all">All ({gigs.length})</TabsTrigger>
             <TabsTrigger value="active">
               Active ({gigs.filter((g) => g.status === "active").length})
@@ -266,20 +266,20 @@ export default function MyGigs() {
           </TabsList>
         </Tabs>
 
-        <div className="flex items-center gap-4">
-          <div className="relative">
+        <div className="w-full flex items-center justify-between flex-wrap  gap-4">
+          <div className="relative w-full sm:w-2/3 ">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Search gigs..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 w-64"
+              className="pl-10 "
             />
           </div>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="px-3 py-2 border rounded-md bg-background transition"
+            className="px-3 py-2 border rounded-md bg-background transition  "
           >
             <option value="title">Sort by Title</option>
             <option value="price">Sort by Price</option>
@@ -308,7 +308,7 @@ export default function MyGigs() {
       <div
         className={`${
           viewMode === "grid"
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
             : "space-y-4"
         }`}
       >

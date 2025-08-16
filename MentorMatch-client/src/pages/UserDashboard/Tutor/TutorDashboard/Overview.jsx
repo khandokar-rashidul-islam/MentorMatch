@@ -102,19 +102,19 @@ const recentReviews = [
 
 export default function Overview() {
   return (
-    <div className="p-6 space-y-6 pt-20">
+    <div className="p-6 space-y-6 pt-28 w-11/12 mx-auto">
       {/* Welcome Section */}
       <div className="p-6 bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/10 rounded-xl shadow-sm">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h2 className="text-2xl font-bold mb-2">Welcome back, John! 👋</h2>
             <p className="text-muted-foreground mb-4">
               Your profile is 85% complete. Complete your profile to attract
               more students.
             </p>
-            <Progress value={85} className="w-64 mb-3" />
+            <Progress value={85} className="w-full mb-3" />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <Button variant="outline">Edit Profile</Button>
             <Button className="bg-primary text-white">
               Create New Session
@@ -124,7 +124,7 @@ export default function Overview() {
       </div>
 
       {/* Stats Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 item gap-6">
         <StatsCard
           title="Total Students"
           value="127"
@@ -155,8 +155,8 @@ export default function Overview() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div className="space-y-2">
                 <CardTitle>Upcoming Sessions</CardTitle>
                 <CardDescription>
                   Your scheduled tutoring sessions
@@ -172,16 +172,19 @@ export default function Overview() {
               {upcomingSessions.map((session) => (
                 <div
                   key={session.id}
-                  className="flex items-center gap-4 p-4 rounded-lg border hover:bg-secondary/50 transition-colors"
+                  className="flex items-center flex-wrap gap-4 p-4 rounded-lg border hover:bg-secondary/50 transition-colors"
                 >
-                  <Avatar>
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      {session.avatar}
-                    </AvatarFallback>
-                  </Avatar>
+
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-medium">{session.student}</h4>
+                    <div className="flex items-center flex-wrap gap-4 mb-1">
+                      <div className="flex items-center gap-2">
+                        <Avatar>
+                          <AvatarFallback className="bg-primary/10 text-primary">
+                            {session.avatar}
+                          </AvatarFallback>
+                        </Avatar>
+                        <h4 className="font-medium">{session.student}</h4>
+                      </div>
                       <Badge
                         variant={
                           session.status === "confirmed"
@@ -195,7 +198,7 @@ export default function Overview() {
                     <p className="text-sm text-muted-foreground">
                       {session.subject}
                     </p>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                    <div className="flex items-center flex-wrap gap-4 mt-2 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {session.time}
@@ -204,7 +207,7 @@ export default function Overview() {
                       <span>{session.type}</span>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="outline" size="sm">
                     Join
                   </Button>
                 </div>
@@ -294,17 +297,21 @@ export default function Overview() {
             <div className="space-y-4">
               {recentReviews.map((review) => (
                 <div key={review.id} className="p-4 rounded-lg border">
-                  <div className="flex items-start gap-3">
-                    <Avatar className="w-8 h-8">
-                      <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                        {review.avatar}
-                      </AvatarFallback>
-                    </Avatar>
+                  <div className="flex items-start flex-wrap gap-3">
+
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h5 className="text-sm font-medium">
-                          {review.student}
-                        </h5>
+                      <div className="flex items-center flex-wrap gap-4 mb-2">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Avatar className="w-8 h-8">
+                            <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                              {review.avatar}
+                            </AvatarFallback>
+                          </Avatar>
+                          <h5 className="text-sm font-medium">
+                            {review.student}
+                          </h5>
+                        </div>
+
                         <div className="flex items-center">
                           {[...Array(review.rating)].map((_, i) => (
                             <Star
@@ -343,17 +350,16 @@ function StatsCard({ title, value, change, icon: Icon }) {
       <div className="p-3 rounded-full bg-primary/10 text-primary">
         <Icon className="w-6 h-6" />
       </div>
-      <div>
+      <div className="flex flex-col justify-center items-center text-center">
         <h4 className="text-sm text-muted-foreground">{title}</h4>
         <p className="text-xl font-bold">{value}</p>
         <p
-          className={`text-xs ${
-            change.trend === "up"
-              ? "text-green-500"
-              : change.trend === "down"
+          className={`text-xs ${change.trend === "up"
+            ? "text-green-500"
+            : change.trend === "down"
               ? "text-red-500"
               : "text-muted-foreground"
-          }`}
+            }`}
         >
           {change.value}
         </p>
