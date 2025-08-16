@@ -28,7 +28,7 @@ const menuItems = [
     icon: <ClipboardList />,
   },
   {
-    title: "Mentor Stats",
+    title: "Analytics",
     url: "/dashboard/mentor/stats",
     icon: <BarChart3Icon />,
   },
