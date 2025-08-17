@@ -175,7 +175,7 @@ const Unavbar = () => {
           </Link>
         </div>
         {/* learner and mentor links */}
-        <div className="hidden md:flex items-center gap-8  justify-between">
+        <div className="hidden md:flex items-center gap-3 justify-evenly">
           {navLinks[role].map((link) => (
             <NavLink
               key={link.path}
@@ -250,25 +250,29 @@ const Unavbar = () => {
                     {role === "learner" ? "Mentor" : "Learner"} Mode
                   </Button>
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
               </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup className="flex my-2 flex-col">
+              
+              <DropdownMenuGroup className="flex md:hidden my-2 flex-col">
                 {navLinks[role].map((link) => (
-                   <DropdownMenuItem className="py-2 hover:bg-muted/50 text-muted-foreground hover:text-foreground flex-1 ">
+                  <DropdownMenuItem className="py-2 hover:bg-muted/50 text-muted-foreground hover:text-foreground flex-1 ">
                     <NavLink
-                    key={link.path}
-                    to={link.path}
-                    className={({ isActive }) =>
-                      `w-full flex items-center text-md font-semibold gap-2 cursor-pointer${isActive ? "font-bold text-primary" : ""
-                      }`
-                    }
-                  >
-                    <span className="">{link.icon}</span>
-                    <span className="text-xs "> {link.label}</span>
-                  </NavLink>
-                   </DropdownMenuItem>
-                  
+                      key={link.path}
+                      to={link.path}
+                      className={({ isActive }) =>
+                        `w-full flex items-center text-md font-semibold gap-2 cursor-pointer text-md ${isActive ? "font-bold text-primary" : ""
+                        }`
+                      }
+                    >
+                      <span className="">{link.icon}</span>
+                      <span className=" "> {link.label}</span>
+                    </NavLink>
+                  </DropdownMenuItem>
+
                 ))}
+                <DropdownMenuSeparator />
+              </DropdownMenuGroup>
+              <DropdownMenuGroup className="flex my-2 flex-col">
                 <DropdownMenuItem className="py-2 hover:bg-muted/50 text-muted-foreground hover:text-foreground flex-1 ">
                   <NavLink
                     to=""

@@ -284,7 +284,7 @@ export default function AllGigs() {
     (searchQuery ? 1 : 0);
 
   return (
-    <div className="min-h-screen w-11/12 mx-auto bg-gradient-subtle pt-20">
+    <div className="min-h-screen w-11/12 mx-auto bg-gradient-subtle pt-28">
       <main className=" px-4">
         {/* Search Bar */}
         <div className="bg-card rounded-lg p-6 mb-3 shadow-elegant lg:hidden ">
