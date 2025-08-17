@@ -27,6 +27,7 @@ import Orders from "../pages/UserDashboard/Tutor/TutorDashboard/Bookings";
 import Bookings from "../pages/UserDashboard/Learner/Bookings";
 import Bookmarks from "../pages/UserDashboard/Learner/Bookmarks";
 import LearnerProfile from "../pages/UserDashboard/Learner/LearnerProfile";
+import EditTutorProfile from "../pages/UserDashboard/Tutor/TutorProfile/EditTutorProfile";
 
 const router = createBrowserRouter([
   {
@@ -130,11 +131,15 @@ const router = createBrowserRouter([
           },
           {
             path: "learner-profile",
-            element: <LearnerProfile />
+            element: <LearnerProfile />,
           },
           {
-            path: "tutor-details",
+            path: "mentor-profile/:id",
             element: <TutorDetails />,
+          },
+          {
+            path: "mentor-profile/:id/edit",
+            element: <EditTutorProfile />,
           },
         ],
       },
