@@ -265,13 +265,13 @@ export default function EditTutorProfile() {
   };
 
   return (
-    <div className="pt-20">
+    <div className="pt-28 w-11/12 mx-auto">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="max-w-4xl mx-auto space-y-6 animate-fade-in"
+        className=" space-y-6 animate-fade-in"
       >
         {/* Header Actions */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-3">
           <NavLink to="/dashboard/mentor/mentor-profile/:id/edit">
             <Button
               type="button"
@@ -300,7 +300,7 @@ export default function EditTutorProfile() {
             <CardTitle>Profile Picture</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-6 flex-wrap">
               <div className="relative">
                 <Avatar className="h-24 w-24 ring-4 ring-primary/10">
                   <AvatarImage src="/placeholder.svg" alt="Profile" />
@@ -492,7 +492,7 @@ export default function EditTutorProfile() {
         {/* Certifications Section */}
         <Card className="dashboard-card">
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4 flex-wrap">
               <CardTitle>Certifications</CardTitle>
               <Button
                 type="button"
@@ -588,7 +588,7 @@ export default function EditTutorProfile() {
         {/* Education Section */}
         <Card className="dashboard-card">
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4 flex-wrap">
               <CardTitle>Education Qualifications</CardTitle>
               <Button
                 type="button"
@@ -935,7 +935,7 @@ export default function EditTutorProfile() {
         {/* FAQ Section */}
         <Card className="dashboard-card">
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4 flex-wrap">
               <div className="flex items-center gap-2">
                 <HelpCircle className="h-5 w-5 text-primary" />
                 <CardTitle>Frequently Asked Questions</CardTitle>

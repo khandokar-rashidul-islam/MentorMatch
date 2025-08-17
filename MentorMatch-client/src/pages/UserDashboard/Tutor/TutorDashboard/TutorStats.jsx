@@ -77,7 +77,7 @@ const insights = [
 
 export default function TutorStats() {
   return (
-    <div className="p-6 space-y-6 pt-28 w-11/12 mx-auto">
+    <div className="space-y-6 pt-28 w-11/12 mx-auto">
       {/* Page Header */}
       <div>
         <h1 className="text-2xl font-bold">Performance & Statistics</h1>
@@ -87,8 +87,8 @@ export default function TutorStats() {
       </div>
 
       {/* Header Actions */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-4 ">
           <Select defaultValue="month">
             <SelectTrigger className="w-32">
               <SelectValue placeholder="Select range" />
@@ -102,7 +102,7 @@ export default function TutorStats() {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center  flex-wrap gap-3">
           <Button variant="outline" className="flex items-center gap-2">
             <Download className="w-4 h-4" /> Export PDF
           </Button>
@@ -113,7 +113,7 @@ export default function TutorStats() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
           title="Total Earnings"
           value="$12,450"
@@ -182,11 +182,10 @@ export default function TutorStats() {
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-3 h-3 rounded-full ${
-                        item.type === "New Students"
-                          ? "bg-primary"
-                          : "bg-green-500"
-                      }`}
+                      className={`w-3 h-3 rounded-full ${item.type === "New Students"
+                        ? "bg-primary"
+                        : "bg-green-500"
+                        }`}
                     />
                     <span className="text-sm font-medium">{item.type}</span>
                   </div>
@@ -332,11 +331,10 @@ export default function TutorStats() {
             {insights.map((insight, index) => (
               <div
                 key={index}
-                className={`p-4 rounded-lg border ${
-                  insight.type === "success"
-                    ? "border-green-300 bg-green-50"
-                    : "border-primary/20 bg-primary/5"
-                }`}
+                className={`p-4 rounded-lg border ${insight.type === "success"
+                  ? "border-green-300 bg-green-50 dark:bg-green-900/30"
+                  : "border-primary/20 bg-primary/5"
+                  }`}
               >
                 <h4 className="font-medium mb-2">{insight.title}</h4>
                 <p className="text-sm text-muted-foreground">
@@ -344,11 +342,10 @@ export default function TutorStats() {
                 </p>
                 <Badge
                   variant="outline"
-                  className={`mt-2 ${
-                    insight.type === "success"
-                      ? "text-green-600"
-                      : "text-primary"
-                  }`}
+                  className={`mt-2 ${insight.type === "success"
+                    ? "text-green-700 dark:text-green-300"
+                    : "text-primary"
+                    }`}
                 >
                   {insight.type === "success" ? "Great Work!" : "Opportunity"}
                 </Badge>
@@ -365,21 +362,20 @@ export default function TutorStats() {
 // eslint-disable-next-line no-unused-vars
 function StatsCard({ title, value, change, icon: Icon }) {
   return (
-    <Card className="p-4 flex items-center gap-4">
+    <Card className="p-4 flex items-center justify-center texty-center gap-4">
       <div className="p-3 rounded-full bg-primary/10 text-primary">
         <Icon className="w-6 h-6" />
       </div>
-      <div>
+      <div className="text-center">
         <h4 className="text-sm text-muted-foreground">{title}</h4>
         <p className="text-xl font-bold">{value}</p>
         <p
-          className={`text-xs ${
-            change.trend === "up"
-              ? "text-green-500"
-              : change.trend === "down"
+          className={`text-xs text-center ${change.trend === "up"
+            ? "text-green-500"
+            : change.trend === "down"
               ? "text-red-500"
               : "text-muted-foreground"
-          }`}
+            }`}
         >
           {change.value}
         </p>

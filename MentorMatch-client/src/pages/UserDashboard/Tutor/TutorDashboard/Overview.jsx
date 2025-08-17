@@ -102,7 +102,7 @@ const recentReviews = [
 
 export default function Overview() {
   return (
-    <div className="p-6 space-y-6 pt-28 w-11/12 mx-auto">
+    <div className="space-y-6 pt-28 w-11/12 mx-auto">
       {/* Welcome Section */}
       <div className="p-6 bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/10 rounded-xl shadow-sm">
         <div className="flex items-center justify-between flex-wrap gap-3">

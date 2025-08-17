@@ -226,7 +226,7 @@ export default function MyGigs() {
   };
 
   return (
-    <div className="pt-28 min-h-screen p-6 bg-background space-y-6 w-11/12 mx-auto">
+    <div className="pt-28 min-h-screen  bg-background space-y-6 w-11/12 mx-auto">
       <Toaster />
 
       {/* Header */}
