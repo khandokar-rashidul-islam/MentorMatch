@@ -1,4 +1,3 @@
-
 import { useLocation, NavLink } from "react-router";
 import {
   ChevronRight,
@@ -16,22 +15,20 @@ import {
   Settings2,
   ClipboardList,
 } from "lucide-react";
-import {
-  Card,
-
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 const menuItems = [
   { title: "Overview", url: "/dashboard/mentor/overview", icon: <HomeIcon /> },
-  {
-    title: "Bookings",
-    url: "/dashboard/mentor/bookings",
-    icon: <ClipboardList />,
-  },
   {
     title: "Analytics",
     url: "/dashboard/mentor/stats",
     icon: <BarChart3Icon />,
   },
+  {
+    title: "Bookings",
+    url: "/dashboard/mentor/bookings",
+    icon: <ClipboardList />,
+  },
+
   {
     title: "Create Gigs",
     url: "/dashboard/mentor/create-gigs",
@@ -62,8 +59,7 @@ const menuItems = [
   { title: "Settings", url: "/dashboard/mentor/settings", icon: <Settings2 /> },
 ];
 
-const TutorSidebar = ({collapsed,setCollapsed}) => {
-  
+const TutorSidebar = ({ collapsed, setCollapsed }) => {
   const location = useLocation();
   const currentPath = location.pathname;
 
