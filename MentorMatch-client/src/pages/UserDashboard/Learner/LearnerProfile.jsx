@@ -7,8 +7,10 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star } from "lucide-react";
 import { Heart, MessageSquare } from "lucide-react";
+import { useNavigate } from "react-router";
 
 const LearnerProfile = () => {
+   const navigate = useNavigate();
   const [reviews, setReviews] = useState([
     {
       id: 1,
@@ -128,26 +130,26 @@ const LearnerProfile = () => {
     setRating(0);
   };
 
-const handleReply = (reviewId) => {
-  if (!replyText[reviewId]?.trim()) return;
+  const handleReply = (reviewId) => {
+    if (!replyText[reviewId]?.trim()) return;
 
-  setReviews(
-    reviews.map((rev) =>
-      rev.id === reviewId
-        ? {
+    setReviews(
+      reviews.map((rev) =>
+        rev.id === reviewId
+          ? {
             ...rev,
             replies: [
               ...rev.replies,
               { id: Date.now(), text: replyText[reviewId], user: "Learner" },
             ],
           }
-        : rev
-    )
-  );
+          : rev
+      )
+    );
 
-  // Clear only this review's reply input
-  setReplyText({ ...replyText, [reviewId]: "" });
-};
+    // Clear only this review's reply input
+    setReplyText({ ...replyText, [reviewId]: "" });
+  };
   const toggleReplies = (id) => {
     setReviews(reviews.map(r =>
       r.id === id ? { ...r, showReplies: !r.showReplies } : r
@@ -155,7 +157,7 @@ const handleReply = (reviewId) => {
   };
 
   return (
-    <div className='w-11/12 mx-auto pt-20'>
+    <div className='w-11/12 mx-auto pt-24'>
       <div className="max-w-5xl mx-auto p-4 space-y-6">
         {/* Profile Header */}
         <motion.div
@@ -168,11 +170,18 @@ const handleReply = (reviewId) => {
             <AvatarImage src="https://i.pravatar.cc/150?img=12" />
             <AvatarFallback>LS</AvatarFallback>
           </Avatar>
-          <div className="flex-1 text-center md:text-left">
-            <h1 className="text-3xl font-bold">Learner Name</h1>
-            <p className="text-gray-500 dark:text-gray-400">
-              MERN Stack Enthusiast | Passionate Problem Solver
-            </p>
+          <div className="flex-1 flex flex-col md:items-start text-center md:text-left">
+            <div className="w-full flex items-start justify-between">
+              <div>
+                <h1 className="text-3xl font-bold">Learner Name</h1>
+                <p className="text-gray-500 dark:text-gray-400">
+                  MERN Stack Enthusiast | Passionate Problem Solver
+                </p>
+              </div>
+              <Button variant="default" className="ml-4 hidden md:block"  onClick={() => navigate(`/dashboard/learner/edit-profile`)}>
+                Edit
+              </Button>
+            </div>
             <div className="flex flex-wrap gap-2 mt-3 justify-center md:justify-start">
               <span className="bg-purple-100 text-purple-800 px-3  rounded-full text-sm flex items-center justify-center">
                 React
@@ -183,7 +192,9 @@ const handleReply = (reviewId) => {
               <span className="bg-green-100 text-green-800 px-3 flex items-center justify-center rounded-full text-sm">
                 MongoDB
               </span>
+
             </div>
+            <Button variant="default" className="mt-4 md:hidden"  onClick={() => navigate(`/dashboard/learner/edit-profile`)}> edit</Button>
           </div>
         </motion.div>
 
@@ -292,7 +303,7 @@ const handleReply = (reviewId) => {
                     >
                       {r.showReplyInput ? "Cancel" : "Reply"}
                     </button>
-                    
+
 
                     {/* Reply Input (Hidden Initially) */}
                     {r.showReplyInput && (

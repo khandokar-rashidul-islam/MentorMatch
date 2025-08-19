@@ -28,6 +28,7 @@ import Bookings from "../pages/UserDashboard/Learner/Bookings";
 import Bookmarks from "../pages/UserDashboard/Learner/Bookmarks";
 import LearnerProfile from "../pages/UserDashboard/Learner/LearnerProfile";
 import EditTutorProfile from "../pages/UserDashboard/Tutor/TutorProfile/EditTutorProfile";
+import EditProfile from "../pages/UserDashboard/Learner/EditProfile";
 
 const router = createBrowserRouter([
   {
@@ -172,6 +173,14 @@ const router = createBrowserRouter([
             path: "notification",
             element: <Notify />,
           },
+          {
+            path: "learner-profile",
+            element: <LearnerProfile />,
+          },
+          {
+            path:"edit-profile",
+            element:<EditProfile/>
+          }
         ],
       },
     ],

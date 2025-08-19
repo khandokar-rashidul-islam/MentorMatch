@@ -22,8 +22,12 @@ const defaultValues = {
   name: "Dr. Sarah Johnson",
   email: "sarah.johnson@mentormatch.com",
   phone: "+1 (555) 123-4567",
-  location: "San Francisco, CA",
+  address: "San Francisco, CA",
   specialization: "Computer Science & Mathematics",
+  gender: "Female",
+  birthdate: "2000-01-01",
+  nid: "1234567890",
+  bankAccount: "9876543210",
   about:
     "Passionate educator with over 8 years of experience in computer science and mathematics. I specialize in making complex concepts accessible and engaging for students of all levels. My teaching philosophy focuses on building confidence through practical problem-solving and real-world applications.",
   skills: [
@@ -371,6 +375,33 @@ export default function EditTutorProfile() {
                 )}
               </div>
               <div className="space-y-2">
+                <Label htmlFor="name">Gender</Label>
+                <Input
+                  id="gender"
+                  {...register("gender")}
+                  className="bg-background"
+                />
+                {errors.gender && (
+                  <p className="text-sm text-destructive">
+                    {errors.gender.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="birthdate">Birthdate</Label>
+                <Input
+                  id="birthdate"
+                  type="date"
+                  {...register("birthdate")}
+                  className="bg-background"
+                />
+                {errors.birthdate && (
+                  <p className="text-sm text-destructive">
+                    {errors.birthdate.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="phone">Phone</Label>
                 <Input
                   id="phone"
@@ -384,15 +415,41 @@ export default function EditTutorProfile() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
+                <Label htmlFor="address">Address</Label>
                 <Input
-                  id="location"
-                  {...register("location")}
+                  id="address"
+                  {...register("address")}
                   className="bg-background"
                 />
-                {errors.location && (
+                {errors.address && (
                   <p className="text-sm text-destructive">
-                    {errors.location.message}
+                    {errors.address.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="nid">N_ID/Birth_ID</Label>
+                <Input
+                  id="nid"
+                  {...register("nid")}
+                  className="bg-background"
+                />
+                {errors.nid && (
+                  <p className="text-sm text-destructive">
+                    {errors.nid.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="bankAccount">Bank Account No.</Label>
+                <Input
+                  id="bankAccount"
+                  {...register("bankAccount")}
+                  className="bg-background"
+                />
+                {errors.bankAccount && (
+                  <p className="text-sm text-destructive">
+                    {errors.bankAccount.message}
                   </p>
                 )}
               </div>
