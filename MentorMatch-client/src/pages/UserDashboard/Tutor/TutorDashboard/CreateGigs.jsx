@@ -164,7 +164,7 @@ export default function CreateGigs() {
   };
 
   return (
-    <div className="w-11/12 mx-auto min-h-screen bg-gradient-secondary pt-28 mb-8 ">
+    <div className="w-11/12 mx-auto min-h-screen bg-gradient-secondary pt-20 mb-8 ">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         {/* Basic Info */}
         <Card className="shadow-medium border-0 rounded-md ">
