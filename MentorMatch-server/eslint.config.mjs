@@ -22,7 +22,7 @@ export default [
       "no-unused-vars": "error",
       "no-unused-expressions": "error",
       "prefer-const": "error",
-      "no-undef": "error",
+      "no-undef": "off",
       "no-debugger": "warn",
       // "no-console": "warn",
       "prettier/prettier": [
