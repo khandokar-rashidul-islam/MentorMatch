@@ -3,22 +3,84 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router";
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import { loadSlim } from "@tsparticles/slim"; 
+import { useTheme } from "next-themes";
 
 const SignIn = () => {
   const { register, handleSubmit } = useForm();
+  const [init, setInit] = useState(false);
+  const { theme } = useTheme()
   const [showPassword, setShowPassword] = useState(false);
+    useEffect(() => {
+    initParticlesEngine(async (engine) => {
+      await loadSlim(engine);
+    }).then(() => {
+      setInit(true);
+    });
+  }, []);
 
   const onSubmit = (data) => {
     console.log(data);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center ">
-      <Card className="w-full max-w-md shadow-lg border mt-35 mb-20 ">
+    <div className="relative min-h-screen flex items-center justify-center ">
+      <div className="grok-bg fixed inset-0 -z-5 dark:opacity-8 opacity-20"></div>
+      <div className="fixed inset-0 -z-8 ">
+        <Particles
+          id="tsparticles"
+          init={init}
+          options={{
+            background: {
+               // 
+            },
+            fpsLimit: 60,
+            interactivity: {
+              
+            },
+            particles: {
+              number: {
+                value: 120, // how many stars
+                density: {
+                  enable: true,
+                  area: 800,
+                },
+              },
+              color: { value: theme === "dark" ? "#36b1e5" : "#076086" }, // star color
+              shape: { type: "circle" },
+              opacity: {
+                value: 0.8,
+                random: true,
+                animation: {
+                  enable: true,
+                  speed: 0.5,
+                  minimumValue: 0.2,
+                },
+              },
+              size: {
+                value: { min: 1, max: 3 }, // random star sizes
+              },
+              move: {
+                enable: true,
+                speed: 1, // slow drift like stars
+                direction: "none",
+                random: true,
+                straight: false,
+                outModes: {
+                  default: "out",
+                },
+              },
+            },
+            detectRetina: true,
+          }}
+        />
+      </div>
+      <Card className="w-full max-w-md shadow-lg border mt-35 mb-20 relative z-10">
         <CardContent className="p-6">
           <h2 className="text-2xl font-bold text-center mb-2 text-primary">Welcome Back</h2>
           <p className="text-sm text-center text-muted-foreground mb-6">
