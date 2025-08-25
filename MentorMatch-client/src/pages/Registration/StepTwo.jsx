@@ -1,4 +1,4 @@
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,11 @@ const StepTwo = ({ onNext, onBack, isLast }) => {
     register,
     setValue,
     formState: { errors },
+    control,
   } = useFormContext();
+
+  // Watch the role selected in StepRole
+  const role = useWatch({ control, name: "role" });
 
   return (
     <div>
@@ -23,6 +27,7 @@ const StepTwo = ({ onNext, onBack, isLast }) => {
         Professional Details
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Common Fields */}
         <div className="flex flex-col gap-4">
           <Label>Profession *</Label>
           <Select
@@ -44,7 +49,7 @@ const StepTwo = ({ onNext, onBack, isLast }) => {
           )}
         </div>
 
-        <div className="flex flex-col  gap-4">
+        <div className="flex flex-col gap-4">
           <Label>Highest Education *</Label>
           <Select
             onValueChange={(val) =>
@@ -81,7 +86,36 @@ const StepTwo = ({ onNext, onBack, isLast }) => {
           <Label>Bank Account (Optional)</Label>
           <Input {...register("bank")} />
         </div>
+
+        {/* Mentor-only fields */}
+        {role === "mentor" && (
+          <>
+            <div className="sm:col-span-2 flex flex-col gap-4">
+              <Label>Expertise Areas</Label>
+              <Input
+                {...register("expertiseAreas")}
+                placeholder="Comma separated, e.g. Math, Physics"
+              />
+            </div>
+            <div className="sm:col-span-2 flex flex-col gap-4">
+              <Label>Bio</Label>
+              <textarea
+                {...register("bio")}
+                className="border rounded-md p-2"
+                placeholder="Short bio"
+              />
+            </div>
+            <div className="flex flex-col gap-4">
+              <Label>Experience (Years)</Label>
+              <Input
+                type="number"
+                {...register("experienceYears", { valueAsNumber: true })}
+              />
+            </div>
+          </>
+        )}
       </div>
+
       <div className="flex justify-between items-center pt-6">
         <Button variant="outline" onClick={onBack}>
           Previous

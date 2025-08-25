@@ -26,7 +26,7 @@ export default [
       "no-debugger": "warn",
       // "no-console": "warn",
       "prettier/prettier": [
-        "error",
+        "off",
         {
           singleQuote: true,
           semi: true,
