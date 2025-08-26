@@ -12,7 +12,7 @@ const steps = [StepRole, StepOne, StepTwo, StepThree]; // Add more as needed
 
 export default function RegistrationForm() {
   const [init, setInit] = useState(false);
-  const { theme } = useTheme()
+  const { theme } = useTheme();
   const methods = useForm({ mode: "onTouched" });
   const [step, setStep] = useState(0);
   const CurrentStep = steps[step];
@@ -43,7 +43,7 @@ export default function RegistrationForm() {
     education: data.education,
     educationInstitute: data.institute,
     profession: data.profession,
-    profileImage: "", // uploaded URL 
+    profileImage: "", // uploaded URL
     nidOrBirthCertId: data.nid,
     bankAccountNo: data.bank,
   });
@@ -63,7 +63,7 @@ export default function RegistrationForm() {
   });
 
   // onSubmit function
-  const onSubmit = methods.handleSubmit(async(data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     const payload = {
       role: data.role,
       user: {
@@ -80,35 +80,85 @@ export default function RegistrationForm() {
 
     console.log("Final Payload:", payload);
 
- try {
-    const res = await fetch(`http://localhost:5000/api/v1/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const res = await fetch(`http://localhost:5000/api/v1/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.message || "Failed to register user");
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to register user");
+      }
+
+      const result = await res.json();
+      console.log("User created successfully:", result);
+      alert("User registered successfully!");
+    } catch (err) {
+      console.error("Error creating user:", err);
+      alert(` Registration failed: ${err.message}`);
     }
-
-    const result = await res.json();
-    console.log("User created successfully:", result);
-    alert("User registered successfully!");
-  } catch (err) {
-    console.error("Error creating user:", err);
-    alert(` Registration failed: ${err.message}`);
-  }
-
-
   });
 
   return (
     <FormProvider {...methods}>
       <div className="w-11/12 min-h-screen mx-auto flex flex-col justify-center items-center p-4">
-        <form onSubmit={onSubmit} className="pt-35 pb-20 flex flex-col lg:flex-row ">
+        <div className="grok-bg fixed inset-0 -z-5 dark:opacity-8 opacity-20"></div>
+        <div className="fixed inset-0 -z-8 ">
+          <Particles
+            id="tsparticles"
+            init={init}
+            options={{
+              background: {
+                //
+              },
+              fpsLimit: 60,
+              interactivity: {},
+              particles: {
+                number: {
+                  value: 120, // how many stars
+                  density: {
+                    enable: true,
+                    area: 800,
+                  },
+                },
+                color: { value: theme === "dark" ? "#36b1e5" : "#076086" }, // star color
+                shape: { type: "circle" },
+                opacity: {
+                  value: 0.8,
+                  random: true,
+                  animation: {
+                    enable: true,
+                    speed: 0.5,
+                    minimumValue: 0.2,
+                  },
+                },
+                size: {
+                  value: { min: 1, max: 3 }, // random star sizes
+                },
+                move: {
+                  enable: true,
+                  speed: 1, // slow drift like stars
+                  direction: "none",
+                  random: true,
+                  straight: false,
+                  outModes: {
+                    default: "out",
+                  },
+                },
+              },
+              detectRetina: true,
+            }}
+          />
+        </div>
+
+        <form
+          onSubmit={onSubmit}
+          className="pt-35 pb-20 flex flex-col lg:flex-row "
+        >
           {/* Sidebar */}
           <div className=" lg:w-[45%] lg:rounded-l-xl bg-primary text-secondary p-10 flex flex-col justify-between">
             <div>
@@ -140,9 +190,9 @@ export default function RegistrationForm() {
                         className={`h-6 w-6 rounded-full flex items-center justify-center border-2  text-xs font-medium
                 ${
                   isCompleted
-                          ? "bg-teal-900 border-teal-500 text-teal-500 dark:text-teal-300"
+                    ? "bg-teal-900 border-teal-500 text-teal-500 dark:text-teal-300"
                     : isActive
-                            ? "bg-white border-teal-300 text-teal-800 dark:text-teal-800 dark:border-teal-800"
+                    ? "bg-white border-teal-300 text-teal-800 dark:text-teal-800 dark:border-teal-800"
                     : "bg-white border-red-600 text-red-500"
                 }`}
                       >
@@ -153,11 +203,11 @@ export default function RegistrationForm() {
                       <div
                         className={`ml-3 text-sm ${
                           isCompleted
-                          ? "text-teal-500 dark:text-teal-900"
+                            ? "text-teal-500 dark:text-teal-900"
                             : isActive
                             ? "text-white font-semibold"
                             : "text-gray-400 dark:text-gray-600 font-semibold"
-                          }`}
+                        }`}
                       >
                         {label}
                       </div>
