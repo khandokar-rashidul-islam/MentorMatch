@@ -5,13 +5,13 @@ import { BookOpen, Users, ArrowRight } from "lucide-react";
 
 const CTA = () => {
   return (
-    <div className="py-20">
-      <div className="w-11/12 mx-auto px-4">
+    <div className="py-20 ">
+      <div className="w-11/12 mx-auto px-4 ">
         <div className=" mx-auto">
-          <Card className="overflow-hidden shadow-xl rounded-2xl">
-            <CardContent className="p-0">
+          <Card className="overflow-hidden shadow-xl rounded-2xl bg-transparent">
+            <CardContent className="p-0 ">
               {/* CTA Header */}
-              <div className="bg-secondary p-12 text-center">
+              <div className="bg-primary/10 p-12 text-center">
                 <Badge
                   variant="secondary"
                   className="mb-4 bg-primary/10 text-primary border border-primary/20"

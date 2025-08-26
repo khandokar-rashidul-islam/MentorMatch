@@ -130,7 +130,7 @@ const TutorGigs = () => {
   ];
 
   return (
-    <section className=" mx-auto py-16 bg-background animate-fade-in ">
+    <section className=" mx-auto py-16 bg-background/20 animate-fade-in ">
       <div className="w-11/12 mx-auto px-4">
         <div className="text-center mb-12 animate-fade-in [animation-delay:200ms]">
           <Badge
