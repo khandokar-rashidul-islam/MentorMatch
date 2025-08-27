@@ -43,7 +43,7 @@ export default function RegistrationForm() {
     education: data.education,
     educationInstitute: data.institute,
     profession: data.profession,
-    profileImage: "", // uploaded URL
+    profileImage: "", // uploaded URL (skip for now)
     nidOrBirthCertId: data.nid,
     bankAccountNo: data.bank,
   });
@@ -57,7 +57,7 @@ export default function RegistrationForm() {
     experienceYears: Number(data.experienceYears) || 0,
   });
 
-  // Learner profile
+  // Learner profile (used only if role is learner)
   const LearnerProfile = (data) => ({
     ...CommonFields(data),
   });
@@ -73,6 +73,7 @@ export default function RegistrationForm() {
     };
 
     if (data.role === "mentor") {
+      // Only send mentorProfile, learnerProfile will be created automatically on backend
       payload.mentorProfile = MentorProfile(data);
     } else if (data.role === "learner") {
       payload.learnerProfile = LearnerProfile(data);
@@ -99,10 +100,11 @@ export default function RegistrationForm() {
       alert("User registered successfully!");
     } catch (err) {
       console.error("Error creating user:", err);
-      alert(` Registration failed: ${err.message}`);
+      alert(`Registration failed: ${err.message}`);
     }
   });
 
+  
   return (
     <FormProvider {...methods}>
       <div className="w-11/12 min-h-screen mx-auto flex flex-col justify-center items-center p-4">

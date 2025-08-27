@@ -16,8 +16,8 @@ export const userRegistrationSchema = z
         message: "Role must be one of admin, learner, or mentor",
       }),
     }),
-    learnerProfile: learnerProfileSchema.optional(),
-    mentorProfile: mentorProfileSchema.optional(),
+    learnerProfile: learnerProfileSchema.optional(), // optional now
+    mentorProfile: mentorProfileSchema.optional(), // required only for mentor-specific data
   })
   .superRefine((data, ctx) => {
     if (data.role === "learner") {
@@ -26,13 +26,6 @@ export const userRegistrationSchema = z
           code: z.ZodIssueCode.custom,
           message: "Learner profile is required when role is learner",
           path: ["learnerProfile"],
-        });
-      }
-      if (data.mentorProfile) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Mentor profile should not be provided for learners",
-          path: ["mentorProfile"],
         });
       }
     }
@@ -45,13 +38,7 @@ export const userRegistrationSchema = z
           path: ["mentorProfile"],
         });
       }
-      if (data.learnerProfile) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Learner profile should not be provided for mentors",
-          path: ["learnerProfile"],
-        });
-      }
+      // learnerProfile can be optional here because we create fallback automatically
     }
 
     if (data.role === "admin") {

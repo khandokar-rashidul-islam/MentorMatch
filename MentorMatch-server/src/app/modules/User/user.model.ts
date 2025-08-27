@@ -10,6 +10,11 @@ const userSchema = new Schema<IUser>(
       enum: ["admin", "learner", "mentor"],
       required: true,
     },
+    activeRole: {
+      type: String,
+      enum: ["learner", "mentor"],
+      default: "learner", // default active role is learner
+    },
     status: {
       type: String,
       enum: ["in-progress", "blocked"],

@@ -3,7 +3,7 @@ import { ILearnerProfile } from "./learner.interface.js";
 
 const learnerProfileSchema = new Schema<ILearnerProfile>(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    user: { type: Schema.Types.ObjectId, ref: "User", unique:true , required: true },
     profileImage: String,
     name: { type: String, required: true },
     phone: String,
