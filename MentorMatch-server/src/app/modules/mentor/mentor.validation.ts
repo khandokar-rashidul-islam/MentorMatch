@@ -2,7 +2,6 @@ import { z } from "zod";
 import { APPROVAL_STATUS } from "../user/user.constant";
 
 export const mentorProfileSchema = z.object({
-  profileImage: z.string(),
   name: z.string().min(1, { message: "Name is required" }),
   phone: z.string(),
   birthDate: z

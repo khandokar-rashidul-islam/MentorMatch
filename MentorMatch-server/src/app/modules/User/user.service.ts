@@ -40,6 +40,7 @@ const createMentorProfile = (
 const mapCommonFromMentor = (
   mentorProfile: Omit<IMentorProfile, "_id" | "user" | "approvalStatus">
 ): Omit<ILearnerProfile, "_id" | "user"> => ({
+  profileImage: mentorProfile.profileImage,
   name: mentorProfile.name,
   phone: mentorProfile.phone,
   birthDate: mentorProfile.birthDate,
@@ -48,7 +49,6 @@ const mapCommonFromMentor = (
   education: mentorProfile.education,
   educationInstitute: mentorProfile.educationInstitute,
   profession: mentorProfile.profession,
-  profileImage: mentorProfile.profileImage,
   nidOrBirthCertId: mentorProfile.nidOrBirthCertId,
   bankAccountNo: mentorProfile.bankAccountNo,
 });
@@ -192,6 +192,8 @@ export const approveMentor = async (userId: string) => {
 
   mentorProfile.approvalStatus = APPROVAL_STATUS.APPROVED;
   await mentorProfile.save();
+   // Now update user role to MENTOR
+  await UserModel.findByIdAndUpdate(mentorProfile.user, { role: "MENTOR" });
   return mentorProfile;
 };
 

@@ -20,7 +20,7 @@ app.get("/", (req: Request, res: Response) => {
   res.send(a);
 });
 
-
+//Global Error Handler
 app.use(globalErrorHandler)
 
 //*Not Found

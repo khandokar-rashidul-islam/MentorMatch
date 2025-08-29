@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const learnerProfileSchema = z.object({
-  profileImage: z.string(),
   name: z.string().min(1, { message: "Name is required" }),
   phone: z.string().optional(),
   birthDate: z
