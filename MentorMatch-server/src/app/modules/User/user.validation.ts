@@ -2,8 +2,8 @@ import { z } from "zod";
 import { learnerProfileSchema } from "../learner/learner.validation";
 import { mentorProfileSchema } from "../mentor/mentor.validation";
 
-export const userRegistrationSchema = z
-  .object({
+export const userRegistrationSchema = z.object({
+  body: z.object({
     user: z.object({
       email: z.string().email({ message: "Invalid email address" }),
       password: z
@@ -50,6 +50,7 @@ export const userRegistrationSchema = z
         });
       }
     }
-  });
+  })
+})
 
 export type UserRegistrationInput = z.infer<typeof userRegistrationSchema>;

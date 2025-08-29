@@ -9,13 +9,13 @@ const validateRequest =
         body: req.body,
         query: req.query,
         params: req.params,
-        cookies: req.cookies, // ✅ included
+        cookies: req.cookies,
       });
       next();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      res.status(400).json({ success: false, message: err.errors });
+     next(err)
     }
   };
-
+  
 export default validateRequest;

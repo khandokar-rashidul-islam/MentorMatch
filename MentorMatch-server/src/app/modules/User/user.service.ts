@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Types, ClientSession } from "mongoose";
 import bcrypt from "bcrypt";
 import config from "../../config";
@@ -10,9 +11,9 @@ import { ILearnerProfile } from "../learner/learner.interface";
 import { IMentorProfile } from "../mentor/mentor.interface";
 import { JwtPayload } from "../auth/auth.interface";
 import { createToken } from "../auth/auth.utils";
+//import AppError from "../../errors/AppError";
 
-
-// -- helpers that accept session so all writes are atomic
+// -- helpers --
 const createLearnerProfile = (
   userId: Types.ObjectId,
   profile: Omit<ILearnerProfile, "_id" | "user">,
@@ -47,7 +48,7 @@ const mapCommonFromMentor = (
   education: mentorProfile.education,
   educationInstitute: mentorProfile.educationInstitute,
   profession: mentorProfile.profession,
-  profileImage: "",
+  profileImage: mentorProfile.profileImage,
   nidOrBirthCertId: mentorProfile.nidOrBirthCertId,
   bankAccountNo: mentorProfile.bankAccountNo,
 });
@@ -122,8 +123,9 @@ export const registerUser = async (data: RegisterData) => {
     );
 
     return { user: createdUser, accessToken, refreshToken };
-  } catch (err: unknown) {
+  } catch (err: any) {
     await session.abortTransaction();
+    session.endSession();
     throw err;
   } finally {
     session.endSession();
@@ -183,7 +185,6 @@ export const applyMentorForExistingLearner = async (
   return createdMentor;
 };
 
-
 // -------------------- Approve Mentor (Admin) --------------------
 export const approveMentor = async (userId: string) => {
   const mentorProfile = await MentorProfileModel.findOne({ user: userId });
@@ -227,7 +228,10 @@ export const toggleRoleAndActiveRole = async (userId: string) => {
   if (user.activeRole === "learner") {
     // Check if mentor profile exists and is approved
     const mentorProfile = await MentorProfileModel.findOne({ user: userId });
-    if (!mentorProfile || mentorProfile.approvalStatus !== APPROVAL_STATUS.APPROVED) {
+    if (
+      !mentorProfile ||
+      mentorProfile.approvalStatus !== APPROVAL_STATUS.APPROVED
+    ) {
       throw new Error("Mentor profile not approved yet");
     }
     targetRole = "mentor";

@@ -23,4 +23,4 @@ export interface MentorSpecificData {
   expertiseAreas: string[];
   bio: string;
   experienceYears: number;
-};
+}

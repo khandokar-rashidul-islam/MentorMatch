@@ -5,7 +5,7 @@ export interface ILearnerProfile {
   user: Types.ObjectId;
   profileImage?: string;
   name: string;
-  phone?: string;
+  phone: string;
   birthDate?: string;
   nidOrBirthCertId?: string;
   bankAccountNo?: string;

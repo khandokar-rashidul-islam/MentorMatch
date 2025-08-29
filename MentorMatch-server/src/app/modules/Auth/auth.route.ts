@@ -15,4 +15,5 @@ router.post(
   refreshTokenController
 );
 
-export default router;
+
+export const AuthRoutes = router;

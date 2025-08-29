@@ -1,12 +1,18 @@
 import { Router } from "express";
 import * as userController from "./user.controller";
+import validateRequest from "../../middlewares/validateRequest";
+import { userRegistrationSchema } from "./user.validation";
 // add auth & admin middlewares if you have them
 // import { requireAuth, requireAdmin } from "../../middlewares/auth";
 
 const router = Router();
 
 // register
-router.post("/register", userController.registerUser);
+router.post(
+  "/register",
+  validateRequest(userRegistrationSchema),
+  userController.registerUser
+);
 
 // learner applies to mentor (must be logged-in learner)
 router.post(
@@ -26,4 +32,4 @@ router.patch(
   /*requireAuth,*/ userController.toggleActiveRoleController
 );
 
-export default router;
+export const UserRoutes = router;

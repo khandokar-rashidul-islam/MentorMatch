@@ -4,12 +4,17 @@ import { APPROVAL_STATUS } from "../user/user.constant";
 
 const mentorProfileSchema = new Schema<IMentorProfile>(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User", unique:true, required: true },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      unique: true,
+      required: true,
+    },
     profileImage: String,
-    name: { type: String, required: true },
-    phone: String,
+    name: { type: String, required: [true, "Name is required"], unique: true },
+    phone: { type: String, required: [true, "phone is required"], unique: true },
     birthDate: String,
-    nidOrBirthCertId: String,
+    nidOrBirthCertId: { type: String, unique: true },
     bankAccountNo: String,
     gender: String,
     address: String,

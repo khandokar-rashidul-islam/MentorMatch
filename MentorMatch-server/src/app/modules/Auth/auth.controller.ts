@@ -1,5 +1,3 @@
-// src/app/modules/auth/auth.controller.ts
-import { Request, Response } from "express";
 import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
@@ -23,15 +21,17 @@ export const loginController = catchAsync(async (req, res) => {
     maxAge: 1000 * 60 * 60 * 24 * 365,
   });
 
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
     success: true,
-    message: "User logged in successfully",
+    message: "User is logged in successfully!",
     data: { user, accessToken },
   });
+
 });
 
 export const refreshTokenController = catchAsync(
-  async (req: Request, res: Response) => {
+  async (req, res) => {
     const { refreshToken: token } = req.cookies;
     const result = await refreshToken(token);
 
