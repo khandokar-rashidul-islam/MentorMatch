@@ -12,7 +12,7 @@ export const learnerProfileSchema = z.object({
   address: z.string(),
   education: z.string(),
   educationInstitute: z.string(),
-  profession: z.string(),
+  profession: z.string().optional(),
 });
 // export const UpdatelearnerProfileSchema = z.object({
 //   profileImage: z.string().optional(),

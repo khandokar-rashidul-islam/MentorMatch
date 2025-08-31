@@ -6,6 +6,5 @@ export interface LoginPayload {
 
 export interface JwtPayload {
   userId: string;
-  role: string;
   activeRole: string;
 }

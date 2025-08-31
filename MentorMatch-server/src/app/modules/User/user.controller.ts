@@ -4,63 +4,35 @@ import config from "../../config";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
-import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
-import { USER_ROLES } from "./user.constant";
 
-//*user registration
+
+//*user registration and login
 export const registerUser = catchAsync( async (req , res) => {
   const registrationData = req.body as RegisterData;
-
-  // Handle uploaded image if provided
-  let profileImageUrl: string | undefined = undefined;
+  // Optional image
   if (req.file) {
- const uniqueImageName = `user-${req.body.email}-${Date.now()}`;
-    const uploadedImage = await sendImageToCloudinary(
-      uniqueImageName,
-      req.file.path
-    );
-    profileImageUrl = uploadedImage.secure_url as string;
-  }
-
-  // Attach profileImage correctly based on role
-  if (registrationData.role === USER_ROLES.LEARNER) {
-    if (registrationData.learnerProfile) {
-      registrationData.learnerProfile.profileImage = profileImageUrl;
-    }
-  }
-
-  if (registrationData.role === USER_ROLES.MENTOR) {
-    if (registrationData.mentorProfile) {
-      registrationData.mentorProfile.profileImage = profileImageUrl;
-    }
-    if (registrationData.learnerProfile) {
-      registrationData.learnerProfile.profileImage = profileImageUrl;
-    }
+    registrationData.profileImageFile = req.file; // pass file buffer to service
   }
 
   const result = await userService.registerUser(registrationData);
-
-  // Set access token in cookie
+  // Set cookies
   res.cookie("accessToken", result.accessToken, {
     httpOnly: true,
     secure: config.NODE_ENV === "production",
     sameSite: "none",
-    maxAge: 1000 * 60 * 60 * 24, // 1 day, same as access token expiry
+    maxAge: 1000 * 60 * 60 * 24,
   });
-
-  // Set refresh token in cookie (same as login)
   res.cookie("refreshToken", result.refreshToken, {
     httpOnly: true,
     secure: config.NODE_ENV === "production",
     sameSite: "none",
-    maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
+    maxAge: 1000 * 60 * 60 * 24 * 365,
   });
 
-  // Send response
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "User is logged in successfully!",
+    message: "User registered and logged in successfully!",
     data: { user: result.user, accessToken: result.accessToken },
   });
 });
@@ -69,59 +41,49 @@ export const registerUser = catchAsync( async (req , res) => {
 
 
 
-//* learner -> apply to become mentor (later)
-export const applyMentorController = catchAsync(async (req, res) => {
-    // const userId = req.user._id; // from auth middleware
-    const { userId } = req.params; // for auth middleware
-    const mentorSpecific = req.body; // { expertiseAreas, bio, experienceYears }
+//* Admin approval for mentor
+export const approveMentor = catchAsync(async (req, res) => {
+  const { userId } = req.params; //letter this id should come from auth middleware not params
+  const mentorProfile = await userService.approveMentorApplication(userId);
+  //const user = await userService.toggleActiveRole(userId); 
 
-    const mentorProfile = await userService.applyMentorForExistingLearner(
-      userId,
-      mentorSpecific
-    );
-
-    // Send response
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Mentor application submitted successfully. Pending approval!",
-      data: { mentorProfile },
-    });
-
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Mentor approved!",
+    data: {mentorProfile },
+  });
 });
 
 
 
+//* Admin rejection for mentor
+export const rejectMentor = catchAsync(async (req, res) => {
+  const { userId } = req.params; //letter this id should come from auth middleware not params
 
-//*Admin approval for mentor
-export const approveMentor =catchAsync( async (req, res) => {
+  const mentorProfile = await userService.rejectMentorApplication(userId);
 
-    const { userId } = req.params;
-    const mentorProfile = await userService.approveMentor(userId);
-    const user = await userService.toggleRoleAndActiveRole(userId); // optional immediate switch
-
-    // Send response
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Mentor approved!",
-      data: {user, mentorProfile },
-    });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Mentor rejected!",
+    data:{ mentorProfile},
+  });
 });
 
 
 
-//*role switch functionalities
-export const toggleActiveRoleController = catchAsync(async (req, res) => {
+//* Role switch (learner <-> mentor)
 
-    const { userId } = req.params;
+export const toggleActiveRole = catchAsync(async (req, res) => {
+  const { userId } = req.params;
 
-    const user = await userService.toggleRoleAndActiveRole(userId);
-    // Send response
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: `Role and active role switched to ${user.activeRole}`,
-      data: { user },
-    });
+  const user = await userService.toggleActiveRole(userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `Active role switched to ${user.activeRole}`,
+    data: { user },
+  });
 });

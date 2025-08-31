@@ -4,13 +4,16 @@ import bcrypt from "bcrypt";
 import config from "../../config";
 import { UserModel } from "./user.model";
 import { USER_ROLES, APPROVAL_STATUS, USER_STATUS } from "./user.constant";
-import { MentorSpecificData, RegisterData } from "./user.interface";
+import { IUser,RegisterData } from "./user.interface";
 import { LearnerProfileModel } from "../learner/learner.model";
 import { MentorProfileModel } from "../mentor/mentor.model";
 import { ILearnerProfile } from "../learner/learner.interface";
 import { IMentorProfile } from "../mentor/mentor.interface";
 import { JwtPayload } from "../auth/auth.interface";
 import { createToken } from "../auth/auth.utils";
+import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
+import { v2 as cloudinary } from "cloudinary";
+
 //import AppError from "../../errors/AppError";
 
 // -- helpers --
@@ -53,28 +56,48 @@ const mapCommonFromMentor = (
   bankAccountNo: mentorProfile.bankAccountNo,
 });
 
-// -------------------- Register and login User --------------------
+//* -------------------- Register and login User --------------------
+
 export const registerUser = async (data: RegisterData) => {
-  const { role, user, learnerProfile, mentorProfile } = data;
+  const { user, learnerProfile, mentorProfile, profileImageFile } = data;
   const session = await mongoose.startSession();
+  let profileImageUrl: string | undefined;
+  let uploadedImage: { secure_url: string; public_id: string } | null = null;
 
   try {
     session.startTransaction();
 
-    // 1) Hash password
+    // 1) Validate optional image before registration
+    if (profileImageFile) {
+      uploadedImage = await sendImageToCloudinary(
+        `user-${user.email}-${Date.now()}`,
+        profileImageFile.buffer
+      );
+      profileImageUrl = uploadedImage.secure_url as string;
+    }
+
+    // 2) Hash password
     const hashedPassword = await bcrypt.hash(
       user.password,
       Number(config.bcrypt_salt_rounds)
     );
 
-    // 2) Create user
+    // 3) Build roles array
+    const role: IUser["role"] = [USER_ROLES.LEARNER];
+    // If user selected mentor, add "mentor" to roles array
+    if (data.role.includes(USER_ROLES.MENTOR)) {
+      role.push(USER_ROLES.MENTOR);
+    }
+
+    // 3) Create user
+
     const [createdUser] = await UserModel.create(
       [
         {
           email: user.email,
           password: hashedPassword,
           role,
-          activeRole: "learner",
+          activeRole: USER_ROLES.LEARNER,
           status: USER_STATUS.IN_PROGRESS,
           isDeleted: false,
         },
@@ -82,12 +105,13 @@ export const registerUser = async (data: RegisterData) => {
       { session }
     );
 
-    // 3) Create profiles based on role
-    if (role === USER_ROLES.LEARNER) {
-      if (!learnerProfile) throw new Error("Learner profile required");
+    // Attach profile image to profile data if exists
+    if (role.includes(USER_ROLES.LEARNER) && learnerProfile) {
+      if (profileImageUrl) learnerProfile.profileImage = profileImageUrl;
       await createLearnerProfile(createdUser._id, learnerProfile, session);
-    } else if (role === USER_ROLES.MENTOR) {
+    } else if (role.includes(USER_ROLES.MENTOR)) {
       if (!mentorProfile) throw new Error("Mentor profile required");
+      if (profileImageUrl) mentorProfile.profileImage = profileImageUrl;
       await createMentorProfile(
         createdUser._id,
         mentorProfile,
@@ -106,8 +130,7 @@ export const registerUser = async (data: RegisterData) => {
     // --- Auto-login: create JWT tokens ---
     const jwtPayload: JwtPayload = {
       userId: createdUser._id.toString(),
-      role: createdUser.role,
-      activeRole: "learner",
+      activeRole: USER_ROLES.LEARNER,
     };
 
     const accessToken = createToken(
@@ -115,7 +138,6 @@ export const registerUser = async (data: RegisterData) => {
       config.jwt_access_secret as string,
       config.jwt_access_expires_in as string
     );
-
     const refreshToken = createToken(
       jwtPayload,
       config.jwt_refresh_secret as string,
@@ -123,127 +145,83 @@ export const registerUser = async (data: RegisterData) => {
     );
 
     return { user: createdUser, accessToken, refreshToken };
-  } catch (err: any) {
+  } catch (err) {
     await session.abortTransaction();
-    session.endSession();
-    throw err;
+    // Delete uploaded Cloudinary image if transaction fails
+    if (uploadedImage?.public_id) {
+      await cloudinary.uploader.destroy(uploadedImage.public_id);
+    }
+
+    throw err; // Global error handler will catch this
   } finally {
     session.endSession();
   }
 };
 
-// -------------------- Learner applies to become Mentor later --------------------
-export const applyMentorForExistingLearner = async (
-  userId: string,
-  mentorSpecific: MentorSpecificData
-) => {
-  // 1. Fetch learner profile
-  const learner = await LearnerProfileModel.findOne({ user: userId });
-  if (!learner) {
-    throw new Error("Learner profile not found");
-  }
+//* -------------------- Admin approves mentor application --------------------
 
-  // 2. Check if mentor profile already exists
-  const existingMentor = await MentorProfileModel.findOne({ user: userId });
-  if (existingMentor) {
-    if (existingMentor.approvalStatus === APPROVAL_STATUS.REJECTED) {
-      // if rejected, update and set back to pending
-      existingMentor.set({
-        ...mentorSpecific,
-        ...learner.toObject(),
-        approvalStatus: APPROVAL_STATUS.PENDING,
-      });
-      await existingMentor.save();
-      return existingMentor;
-    }
-    throw new Error("Mentor profile already exists or is pending/approved");
-  }
+export const approveMentorApplication = async (userId: string) => {
+  const mentor = await MentorProfileModel.findOne({ user: userId });
+  if (!mentor) throw new Error("Mentor not found");
 
-  // 3. Merge learner data + mentor-specific fields
-  const mergedMentorData = {
-    user: learner.user,
-    name: learner.name,
-    phone: learner.phone,
-    birthDate: learner.birthDate,
-    gender: learner.gender,
-    address: learner.address,
-    education: learner.education,
-    educationInstitute: learner.educationInstitute,
-    profession: learner.profession,
-    nidOrBirthCertId: learner.nidOrBirthCertId,
-    bankAccountNo: learner.bankAccountNo,
-    profileImage: learner.profileImage,
+  mentor.approvalStatus = APPROVAL_STATUS.APPROVED;
+  await mentor.save();
 
-    // mentor-specific fields
-    ...mentorSpecific,
+  // ensure role updated
+  await UserModel.findByIdAndUpdate(
+    userId,
+    { $addToSet: { role: "mentor" } },
+    { new: true }
+  );
 
-    approvalStatus: APPROVAL_STATUS.PENDING,
-  };
-
-  // 4. Create mentor profile
-  const createdMentor = await MentorProfileModel.create(mergedMentorData);
-  return createdMentor;
+  return mentor;
 };
 
-// -------------------- Approve Mentor (Admin) --------------------
-export const approveMentor = async (userId: string) => {
-  const mentorProfile = await MentorProfileModel.findOne({ user: userId });
-  if (!mentorProfile) throw new Error("Mentor profile not found");
+// -------------------- Admin rejects mentor application --------------------
+export const rejectMentorApplication = async (userId: string) => {
+  const mentor = await MentorProfileModel.findOne({ user: userId });
+  if (!mentor) throw new Error("Mentor not found");
+  // Prevent rejecting an already approved mentor
+  if (mentor.approvalStatus === APPROVAL_STATUS.APPROVED) {
+    throw new Error("Cannot reject an already approved mentor");
+  }
+  mentor.approvalStatus = APPROVAL_STATUS.REJECTED;
 
-  mentorProfile.approvalStatus = APPROVAL_STATUS.APPROVED;
-  await mentorProfile.save();
-   // Now update user role to MENTOR
-  await UserModel.findByIdAndUpdate(mentorProfile.user, { role: "MENTOR" });
-  return mentorProfile;
+  
+  await mentor.save();
+
+  return mentor;
 };
 
-// -------------------- Switch Active Role --------------------
-// export const toggleActiveRole = async (userId: string) => {
-//   const user = await UserModel.findById(userId);
-//   if (!user) throw new Error("User not found");
-
-//   // Determine the role to switch to
-//   const targetRole: "learner" | "mentor" =
-//     user.activeRole === "learner" ? "mentor" : "learner";
-
-//   // If switching to mentor, ensure mentor profile exists & approved
-//   if (targetRole === "mentor") {
-//     const mentorProfile = await MentorProfileModel.findOne({ user: userId });
-//     if (!mentorProfile) throw new Error("Mentor profile not found");
-//     if (mentorProfile.approvalStatus !== APPROVAL_STATUS.APPROVED) {
-//       throw new Error("Mentor not approved yet");
-//     }
-//   }
-
-//   user.activeRole = targetRole;
-//   await user.save();
-
-//   return user;
-// };
-// Toggle both role and activeRole
-export const toggleRoleAndActiveRole = async (userId: string) => {
+//* -------------------- Toggle Active Role (learner <-> mentor) --------------------
+export const toggleActiveRole = async (userId: string) => {
   const user = await UserModel.findById(userId);
   if (!user) throw new Error("User not found");
 
-  let targetRole: "learner" | "mentor";
+  // Determine the role to switch to
+  const targetRole: "learner" | "mentor" =
+    user.activeRole === "learner" ? "mentor" : "learner";
 
-  if (user.activeRole === "learner") {
-    // Check if mentor profile exists and is approved
-    const mentorProfile = await MentorProfileModel.findOne({ user: userId });
-    if (
-      !mentorProfile ||
-      mentorProfile.approvalStatus !== APPROVAL_STATUS.APPROVED
-    ) {
-      throw new Error("Mentor profile not approved yet");
+  // Only switch to mentor if user has mentor role and is approved
+  if (targetRole === "mentor") {
+    if (!user.role.includes("mentor")) {
+      throw new Error("User does not have mentor role");
     }
-    targetRole = "mentor";
-  } else {
-    targetRole = "learner";
+    const mentorProfile = await MentorProfileModel.findOne({ user: userId });
+    if (!mentorProfile) throw new Error("Mentor profile not found");
+
+    if (mentorProfile.approvalStatus === APPROVAL_STATUS.PENDING) {
+      throw new Error("Mentor not approved yet");
+    }
+
+    if (mentorProfile.approvalStatus === APPROVAL_STATUS.REJECTED) {
+      throw new Error("Mentor application was rejected");
+    }
   }
 
-  user.role = targetRole;
+  // Update active role
   user.activeRole = targetRole;
-
   await user.save();
+
   return user;
 };

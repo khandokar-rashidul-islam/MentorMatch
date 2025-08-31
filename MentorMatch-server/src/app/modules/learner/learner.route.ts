@@ -1,8 +1,12 @@
+import * as learnerController from "./learner.controller";
 import { Router } from "express";
 
 const router = Router();
 
-// future learner-specific routes
-// e.g., router.get("/profile/:id", learnerController.getProfile);
+//* learner applies to mentor (must be logged-in learner)
+router.post(
+  "/:userId/mentor/apply",
+  /*requireAuth,*/ learnerController.applyLearnerToMentor
+);
 
-export default router;
+export const learnerRoutes = router;

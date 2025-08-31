@@ -7,9 +7,10 @@ const userSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: {
-      type: String,
+      type: [String],
       enum: ["admin", "learner", "mentor"],
       required: true,
+      default: ["learner"], // default role is learner
     },
     activeRole: {
       type: String,

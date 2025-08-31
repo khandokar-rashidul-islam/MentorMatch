@@ -9,23 +9,27 @@ import { upload } from "../../utils/sendImageToCloudinary";
 
 const router = Router();
 
-// register
+// user registration
 router.post(
   "/register",
-  upload.single("file"),
-  (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
+  upload.single("profileImage"), // optional image
+  (req:Request, res:Response, next:NextFunction) => {
+    if (req.body.data) req.body = JSON.parse(req.body.data); // parse JSON
+    if (req.file) req.body.profileImageFile = req.file; // pass buffer
     next();
   },
   validateRequest(userRegistrationSchema),
   userController.registerUser
 );
 
-// learner applies to mentor (must be logged-in learner)
-router.post(
-  "/:userId/mentor/apply",
-  /*requireAuth,*/ userController.applyMentorController
+//* user switches active role
+router.patch(
+  "/:userId/active-role/toggle",
+  /*requireAuth,*/ userController.toggleActiveRole
 );
+
+
+//*----------For admin to approve/reject mentor application-------------------
 
 // admin approves mentor
 router.patch(
@@ -33,10 +37,13 @@ router.patch(
   /*requireAdmin,*/ userController.approveMentor
 );
 
-// user/admin switches active role
+
+// admin reject mentor
 router.patch(
-  "/:userId/active-role/toggle",
-  /*requireAuth,*/ userController.toggleActiveRoleController
+  "/:userId/mentor/reject",
+  /*requireAdmin,*/ userController.rejectMentor
 );
+
+
 
 export const UserRoutes = router;
