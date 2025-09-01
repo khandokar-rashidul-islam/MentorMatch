@@ -9,6 +9,8 @@ import {
 const router = express.Router();
 
 router.post("/login", validateRequest(loginValidationSchema), loginController);
+
+
 router.post(
   "/refresh-token",
   validateRequest(refreshTokenValidationSchema),

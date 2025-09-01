@@ -1,4 +1,5 @@
-// src/app/modules/auth/auth.interface.ts
+import { TUserRole } from "../user/user.constant";
+
 export interface LoginPayload {
   email: string;
   password: string;
@@ -7,4 +8,5 @@ export interface LoginPayload {
 export interface JwtPayload {
   userId: string;
   activeRole: string;
+  role: TUserRole[];
 }

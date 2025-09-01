@@ -4,12 +4,12 @@ import * as userController from "./user.controller";
 import validateRequest from "../../middlewares/validateRequest";
 import { userRegistrationSchema } from "./user.validation";
 import { upload } from "../../utils/sendImageToCloudinary";
-// add auth & admin middlewares if you have them
-// import { requireAuth, requireAdmin } from "../../middlewares/auth";
+import { USER_ROLES } from "./user.constant";
+import auth from "../../middlewares/auth";
 
 const router = Router();
 
-// user registration
+// ---------------- User registration ----------------
 router.post(
   "/register",
   upload.single("profileImage"), // optional image
@@ -22,28 +22,28 @@ router.post(
   userController.registerUser
 );
 
-//* user switches active role
+// ---------------- Toggle active role (learner <-> mentor) ----------------
 router.patch(
-  "/:userId/active-role/toggle",
-  /*requireAuth,*/ userController.toggleActiveRole
+  "/active-role/toggle",
+  auth(USER_ROLES.LEARNER, USER_ROLES.MENTOR), // must be logged in
+  userController.toggleActiveRole
 );
 
 
-//*----------For admin to approve/reject mentor application-------------------
 
-// admin approves mentor
+// ---------------- Admin approves/rejects mentor ----------------
 router.patch(
-  "/:userId/mentor/approve",
-  /*requireAdmin,*/ userController.approveMentor
+  "/mentor/:mentorUserId/approve",
+  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN), // only admins
+  userController.approveMentor
 );
 
 
-// admin reject mentor
 router.patch(
-  "/:userId/mentor/reject",
-  /*requireAdmin,*/ userController.rejectMentor
+  "/mentor/:mentorUserId/reject",
+  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN), // only admins
+  userController.rejectMentor
 );
-
 
 
 export const UserRoutes = router;

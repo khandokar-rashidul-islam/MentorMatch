@@ -5,7 +5,7 @@ import { IUser } from "./user.interface";
 const userSchema = new Schema<IUser>(
   {
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: 0 },
     role: {
       type: [String],
       enum: ["admin", "learner", "mentor"],
@@ -37,6 +37,5 @@ const userSchema = new Schema<IUser>(
 //   }
 //   next();
 // });
-
 
 export const UserModel = model<IUser>("User", userSchema);

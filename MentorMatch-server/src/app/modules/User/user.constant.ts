@@ -1,4 +1,5 @@
 export const USER_ROLES = {
+  SUPER_ADMIN: "super-admin",
   ADMIN: "admin",
   LEARNER: "learner",
   MENTOR: "mentor",
@@ -15,4 +16,6 @@ export const USER_STATUS = {
   BLOCKED: "blocked",
 } as const;
 
-export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
+// export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
+// Type for all user roles
+export type TUserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
