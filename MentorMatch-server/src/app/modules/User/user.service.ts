@@ -89,7 +89,7 @@ export const registerUser = async (data: RegisterData) => {
       role.push(USER_ROLES.MENTOR);
     }
 
-    // 3) Create user
+    // 4) Create user
 
     const [createdUser] = await UserModel.create(
       [
@@ -144,8 +144,11 @@ export const registerUser = async (data: RegisterData) => {
       config.jwt_refresh_secret as string,
       config.jwt_refresh_expires_in as string
     );
-
-    return { user: createdUser, accessToken, refreshToken };
+     // Remove password safely for response
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+    const { password: _password, ...userWithoutPassword } = createdUser.toObject();
+    return { user: userWithoutPassword, accessToken, refreshToken };
+    
   } catch (err) {
     await session.abortTransaction();
     

@@ -8,7 +8,7 @@ import { Request } from "express";
 export interface IUser {
   _id?: Types.ObjectId;
   email: string;
-  password: string;
+  password : string;
   role: TUserRole[];
   activeRole: "learner" | "mentor"; // currently active role
   status: "in-progress" | "blocked";

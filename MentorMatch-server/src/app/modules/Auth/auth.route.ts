@@ -1,5 +1,5 @@
 import express from "express";
-import { loginController, refreshTokenController } from "./auth.controller";
+import { loginController, logout, refreshTokenController } from "./auth.controller";
 import validateRequest from "../../middlewares/validateRequest";
 import {
   loginValidationSchema,
@@ -9,7 +9,7 @@ import {
 const router = express.Router();
 
 router.post("/login", validateRequest(loginValidationSchema), loginController);
-
+router.post("/logout", logout);
 
 router.post(
   "/refresh-token",

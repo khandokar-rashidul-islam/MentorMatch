@@ -24,8 +24,11 @@ const userSchema = new Schema<IUser>(
     },
     isDeleted: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  {
+    timestamps: true
+  }
 );
+
 
 // userSchema.pre("save", async function (next) {
 //   const isUserExist = await UserModel.findOne({
@@ -37,5 +40,12 @@ const userSchema = new Schema<IUser>(
 //   }
 //   next();
 // });
+
+
+//set '' after saving password
+userSchema.post('save', function (doc, next) {
+  doc.password = '';
+  next();
+});
 
 export const UserModel = model<IUser>("User", userSchema);

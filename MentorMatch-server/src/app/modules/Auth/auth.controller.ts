@@ -1,9 +1,10 @@
 import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
-import { loginUser, refreshToken } from "./auth.service";
+import { loginUser, logoutUser, refreshToken } from "./auth.service";
 import config from "../../config";
 
+//* login user
 export const loginController = catchAsync(async (req, res) => {
   const { accessToken, refreshToken, user } = await loginUser(req.body);
 
@@ -30,6 +31,18 @@ export const loginController = catchAsync(async (req, res) => {
 
 });
 
+
+
+//* logout user 
+export const logout = catchAsync(async (req, res) => {
+  const result = await logoutUser(res);
+  return res.status(200).json(result);
+});
+
+
+
+
+//* refresh access token
 export const refreshTokenController = catchAsync(
   async (req, res) => {
     const { refreshToken: token } = req.cookies;

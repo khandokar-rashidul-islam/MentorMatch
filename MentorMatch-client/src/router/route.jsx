@@ -190,6 +190,9 @@ const router = createBrowserRouter([
     path: "/*",
     Component: Error404,
   },
+  
+
+
 ]);
 
 export default router;

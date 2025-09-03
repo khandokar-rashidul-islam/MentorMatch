@@ -33,7 +33,10 @@ export const createAdmin = async (data: {
     isLocked: false,
   });
 
-  return newAdmin;
+  
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+  const { password: _password, ...adminWithoutPassword } = newAdmin.toObject();
+  return adminWithoutPassword;
 };
 
 //* Admin login function
@@ -62,6 +65,9 @@ export const loginAdmin = async (email: string, password: string) => {
     config.jwt_refresh_secret as string,
     config.jwt_refresh_expires_in as string
   );
+const adminObject = admin.toObject();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+const { password: _password, ...adminWithoutPassword } = adminObject;
 
-  return { admin, accessToken, refreshToken };
+  return { admin: adminWithoutPassword, accessToken, refreshToken };
 };
