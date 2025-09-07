@@ -5,9 +5,9 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 
-
 //*user registration and login
-export const registerUser = catchAsync( async (req , res) => {
+
+export const registerUser = catchAsync(async (req, res) => {
   const registrationData = req.body as RegisterData;
   // Optional image
   if (req.file) {
@@ -15,33 +15,37 @@ export const registerUser = catchAsync( async (req , res) => {
   }
 
   const result = await userService.registerUser(registrationData);
-  // Set cookies
+
+  //Set cookies
+
   res.cookie("accessToken", result.accessToken, {
     httpOnly: true,
-    secure: config.NODE_ENV === "production",
-    sameSite: "none",
-    maxAge: 1000 * 60 * 60 * 24,
+    secure: config.NODE_ENV === "production", // false in dev
+    sameSite: config.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 15 * 60 * 1000, // 15 minutes
+    path: "/",
   });
   res.cookie("refreshToken", result.refreshToken, {
     httpOnly: true,
-    secure: config.NODE_ENV === "production",
-    sameSite: "none",
-    maxAge: 1000 * 60 * 60 * 24 * 365,
+    secure: config.NODE_ENV === "production", // false in dev
+    sameSite: config.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    path: "/",
   });
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "User registered and logged in successfully!",
-    data: { user: result.user, accessToken: result.accessToken },
+    data: {
+      user: result.user,
+      // accessToken: result.accessToken,
+    },
   });
 });
 
-
-
-
-
 //* Admin approval for mentor
+
 export const approveMentor = catchAsync(async (req, res) => {
   const authReq = req as AuthRequest;
   const adminId = authReq.user?.id; // logged-in admin ID
@@ -61,8 +65,8 @@ export const approveMentor = catchAsync(async (req, res) => {
   });
 });
 
-
 //* Admin rejection for mentor
+
 export const rejectMentor = catchAsync(async (req, res) => {
   const authReq = req as AuthRequest;
   const adminId = authReq.user?.id; // logged-in admin ID
@@ -81,14 +85,12 @@ export const rejectMentor = catchAsync(async (req, res) => {
   });
 });
 
-
-
 //* Role switch (learner <-> mentor)
-export const toggleActiveRole = catchAsync(async (req, res) => {
 
-    const authReq = req as AuthRequest;
-    // Use authenticated user ID
-    const userId = authReq.user?.id;
+export const toggleActiveRole = catchAsync(async (req, res) => {
+  const authReq = req as AuthRequest;
+  // Use authenticated user ID
+  const userId = authReq.user?.id;
 
   if (!userId) throw new Error("User ID not found in request");
 
@@ -100,7 +102,8 @@ export const toggleActiveRole = catchAsync(async (req, res) => {
     httpOnly: true,
     secure: config.NODE_ENV === "production",
     sameSite: "none",
-    maxAge: 1000 * 60 * 60 * 24,
+    maxAge: 15 * 60 * 1000, // 15 minutes
+    path: "/",
   });
 
   sendResponse(res, {
@@ -108,5 +111,22 @@ export const toggleActiveRole = catchAsync(async (req, res) => {
     success: true,
     message: `Active role switched to ${user.activeRole}`,
     data: { user, accessToken },
+  });
+});
+
+// * -------------------- Get user profile based on active role --------------------
+
+export const getProfile = catchAsync(async (req, res) => {
+  const authReq = req as AuthRequest;
+  const userId = authReq.user?.id;
+  if (!userId) throw new Error("User ID not found in request");
+
+  const profile = await userService.getProfile(userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Active role profile fetched successfully",
+    data: profile,
   });
 });

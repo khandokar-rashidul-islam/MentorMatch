@@ -6,17 +6,28 @@ import { Eye, EyeOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadSlim } from "@tsparticles/slim"; 
+import { loadSlim } from "@tsparticles/slim";
 import { useTheme } from "next-themes";
+import { useLoginMutation } from "../../redux/features/auth/authApi";
+import { toast } from "sonner";
 
 const SignIn = () => {
-  const { register, handleSubmit } = useForm();
+  const navigate = useNavigate();
+  const { register, handleSubmit } = useForm({
+    defaultValues: {
+      email: "ifarabiislam@example.com",
+      password: "pass1234",
+    },
+  });
   const [init, setInit] = useState(false);
-  const { theme } = useTheme()
+  // RTK Query login mutation
+  const [login, { isLoading }] = useLoginMutation();
+
+  const { theme } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
-    useEffect(() => {
+  useEffect(() => {
     initParticlesEngine(async (engine) => {
       await loadSlim(engine);
     }).then(() => {
@@ -24,8 +35,29 @@ const SignIn = () => {
     });
   }, []);
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      // call login mutation
+      const result = await login({
+        email: data.email,
+        password: data.password,
+      }).unwrap();
+
+      const user = result?.data?.user;
+
+      if (!user) throw new Error("Login failed: missing user or token");
+
+      toast.success("Logged in successfully!");
+
+      // Navigate based on role
+      const role = user.activeRole;
+      if (role === "mentor") navigate("/dashboard/mentor/overview");
+      else if (role === "learner") navigate("/dashboard/learner/all-gigs");
+      else navigate("/");
+    } catch (err) {
+      console.error("Login failed:", err);
+      toast.error(err?.data?.message || err.message || "Login failed");
+    }
   };
 
   return (
@@ -37,12 +69,10 @@ const SignIn = () => {
           init={init}
           options={{
             background: {
-               // 
+              //
             },
             fpsLimit: 60,
-            interactivity: {
-              
-            },
+            interactivity: {},
             particles: {
               number: {
                 value: 120, // how many stars
@@ -82,7 +112,9 @@ const SignIn = () => {
       </div>
       <Card className="w-full max-w-md shadow-lg border mt-35 mb-20 relative z-10">
         <CardContent className="p-6">
-          <h2 className="text-2xl font-bold text-center mb-2 text-primary">Welcome Back</h2>
+          <h2 className="text-2xl font-bold text-center mb-2 text-primary">
+            Welcome Back
+          </h2>
           <p className="text-sm text-center text-muted-foreground mb-6">
             Sign in to access your professional dashboard
           </p>
@@ -148,12 +180,15 @@ const SignIn = () => {
               type="submit"
               className="w-full bg-primary hover:bg-primary"
             >
-              Sign In
+              {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
           <p className="text-center text-sm mt-4">
             Don’t have an account?{" "}
-            <Link to="/dashboard/mentor/overview" className="text-primary hover:underline">
+            <Link
+              to="/dashboard/mentor/overview"
+              className="text-primary hover:underline"
+            >
               Sign up here
             </Link>
           </p>

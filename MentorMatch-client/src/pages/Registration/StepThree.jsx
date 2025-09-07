@@ -12,7 +12,7 @@ import {
 import { UploadCloud } from "lucide-react";
 
 // eslint-disable-next-line no-unused-vars
-const StepThree = ({ onNext, onBack, isLast }) => {
+const StepThree = ({ onBack, isLast, setProfileImage, isLoading }) => {
   const {
     register,
     setValue,
@@ -20,9 +20,8 @@ const StepThree = ({ onNext, onBack, isLast }) => {
   } = useFormContext();
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setValue("profileImage", file);
+    if (e.target.files && e.target.files[0]) {
+      setProfileImage(e.target.files[0]);
     }
   };
 
@@ -74,9 +73,7 @@ const StepThree = ({ onNext, onBack, isLast }) => {
               />
             </div>
 
-            <span className="text-gray-500 text-sm ">
-              PNG, JPG up to 5MB
-            </span>
+            <span className="text-gray-500 text-sm ">PNG, JPG up to 5MB</span>
           </div>
         </div>
       </div>
@@ -85,11 +82,11 @@ const StepThree = ({ onNext, onBack, isLast }) => {
         <Button variant="outline" onClick={onBack}>
           Previous
         </Button>
-        <Button >
-          {isLast ? "Create Account" : "Continue"}
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "Registering..." : "Register"}
         </Button>
       </div>
     </div>
   );
-}
+};
 export default StepThree;

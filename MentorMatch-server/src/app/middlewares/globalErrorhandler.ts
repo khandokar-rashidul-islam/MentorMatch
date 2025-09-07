@@ -58,6 +58,25 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
         message: err?.message,
       },
     ];
+  } else if (err?.name === "TokenExpiredError") {
+    statusCode = 401;
+    message = "Access token expired";
+    errorSources = [
+      {
+        path: "authorization",
+        message:
+          "Your session has expired. Please refresh your token or log in again.",
+      },
+    ];
+  } else if (err?.name === "JsonWebTokenError") {
+    statusCode = 401;
+    message = "Invalid token";
+    errorSources = [
+      {
+        path: "authorization",
+        message: "Invalid or malformed token",
+      },
+    ];
   }
 
   //ultimate return

@@ -41,34 +41,13 @@ const router = createBrowserRouter([
       </div>
     ),
     children: [
-      {
-        path: "/",
-        element: <Home />,
-      },
-      {
-        path: "/registration",
-        element: <RegistrationForm />,
-      },
-      {
-        path: "/signin",
-        element: <SignIn />,
-      },
-      {
-        path: "/tutor/details",
-        element: <TutorDetails />,
-      },
-      {
-        path: "/tutor/gig/details",
-        element: <GigDetails />,
-      },
-      {
-        path: "all-gigs",
-        element: <AllGigs />,
-      },
-      {
-        path: "search-mentor",
-        element: <SearchMentor />,
-      },
+      { path: "/", element: <Home /> },
+      { path: "/registration", element: <RegistrationForm /> },
+      { path: "/signin", element: <SignIn /> },
+      { path: "/tutor/details", element: <TutorDetails /> },
+      { path: "/tutor/gig/details", element: <GigDetails /> },
+      { path: "all-gigs", element: <AllGigs /> },
+      { path: "search-mentor", element: <SearchMentor /> },
     ],
   },
 
@@ -77,71 +56,27 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: <UserDashboardLayout />,
     children: [
+      
       //tutor dashboard
       {
         path: "mentor",
         element: <TutorDashboardLayout />,
         children: [
-          {
-            path: "overview",
-            element: <Overview />,
-          },
-          {
-            path: "bookings",
-            element: <Orders />,
-          },
-          {
-            path: "stats",
-            element: <TutorStats />,
-          },
-          {
-            path: "create-gigs",
-            element: <CreateGigs />,
-          },
-          {
-            path: "my-gigs",
-            element: <MyGigs />,
-          },
-          {
-            path: "schedule",
-            element: <Schedule />,
-          },
-          {
-            path: "payments-history",
-            element: <PaymentHistory />,
-          },
-          {
-            path: "community-posts",
-            element: <CommunityPosts />,
-          },
-          {
-            path: "Previous-jobs",
-            element: <PreviousJobs />,
-          },
-          {
-            path: "wallet",
-            element: <Wallet />,
-          },
-          {
-            path: "settings",
-            element: <Settings />,
-          },
-          {
-            path: "notification",
-            element: <Notify />,
-          },
-          {
-            path: "learner-profile",
-            element: <LearnerProfile />,
-          },
-          {
-            path: "mentor-profile/:id",
-            element: <TutorDetails />,
-          },
-          {
-            path: "mentor-profile/:id/edit",
-            element: <EditTutorProfile />,
-          },
+          { path: "overview", element: <Overview /> },
+          { path: "bookings", element: <Orders /> },
+          { path: "stats", element: <TutorStats /> },
+          { path: "create-gigs", element: <CreateGigs /> },
+          { path: "my-gigs", element: <MyGigs /> },
+          { path: "schedule", element: <Schedule /> },
+          { path: "payments-history", element: <PaymentHistory /> },
+          { path: "community-posts", element: <CommunityPosts /> },
+          { path: "previous-jobs", element: <PreviousJobs /> },
+          { path: "wallet", element: <Wallet /> },
+          { path: "settings", element: <Settings /> },
+          { path: "notification", element: <Notify /> },
+          { path: "learner-profile", element: <LearnerProfile /> },
+          { path: "mentor-profile/:id", element: <TutorDetails /> },
+          { path: "mentor-profile/:id/edit", element: <EditTutorProfile /> },
         ],
       },
       //learner
@@ -149,50 +84,20 @@ const router = createBrowserRouter([
         path: "learner",
         element: <LearnerHome />,
         children: [
-          {
-            path: "all-gigs",
-            element: <AllGigs />,
-          },
-          {
-            path: "stats",
-            element: <LearnerStats />,
-          },
-          {
-            path: "bookings",
-            element: <Bookings />,
-          },
-          {
-            path: "bookmarks",
-            element: <Bookmarks />,
-          },
-          {
-            path: "search-mentor",
-            element: <SearchMentor />,
-          },
-          {
-            path: "notification",
-            element: <Notify />,
-          },
-          {
-            path: "learner-profile",
-            element: <LearnerProfile />,
-          },
-          {
-            path:"edit-profile",
-            element:<EditProfile/>
-          }
+          { path: "all-gigs", element: <AllGigs /> },
+          { path: "stats", element: <TutorStats /> },
+          { path: "bookings", element: <Bookings /> },
+          { path: "bookmarks", element: <Bookmarks /> },
+          { path: "search-mentor", element: <SearchMentor /> },
+          { path: "notification", element: <Notify /> },
+          { path: "learner-profile", element: <LearnerProfile /> },
+          { path: "edit-profile", element: <EditProfile /> },
         ],
       },
     ],
   },
 
-  {
-    path: "/*",
-    Component: Error404,
-  },
-  
-
-
+  { path: "/*", Component: Error404 },
 ]);
 
 export default router;

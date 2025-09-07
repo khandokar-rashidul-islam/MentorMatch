@@ -7,26 +7,30 @@ import AppError from "../errors/AppError";
 import catchAsync from "../utils/catchAsync";
 import { UserModel } from "../modules/user/user.model";
 import { AdminModel } from "../modules/admin/admin.model";
-import {
-  AuthRequest,
-  AuthUserPayload,
-} from "../modules/user/user.interface";
+import { AuthRequest, AuthUserPayload } from "../modules/user/user.interface";
 import { TUserRole, USER_ROLES } from "../modules/user/user.constant";
 
-// Middleware to protect routes based on roles
+// Middleware for authentication and role-based authorization
+
 const auth = (...requiredRoles: TUserRole[]) =>
   catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token)
-      throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
+    // 1. Get token (prefer cookie, fallback to header)
+    const token =
+      req.cookies?.accessToken || req.headers.authorization?.split(" ")[1];
 
+    if (!token) {
+      throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
+    }
+
+    // 2. Verify token
     const decoded = jwt.verify(
       token,
       config.jwt_access_secret as string
     ) as JwtPayload & { userId?: string; activeRole: string; role: string[] };
+
     const { userId, activeRole } = decoded;
 
-    // Determine admin or normal user
+    // 3. Load user from DB
     let user: any;
     if (
       activeRole === USER_ROLES.ADMIN ||
@@ -45,31 +49,33 @@ const auth = (...requiredRoles: TUserRole[]) =>
         throw new AppError(httpStatus.FORBIDDEN, "User is blocked!");
     }
 
-    // Map to AuthUserPayload for type-safety
+    // 4. Map to AuthUserPayload
     const authUser: AuthUserPayload = {
       id: user._id.toString(),
       activeRole: activeRole,
       role: user.role as TUserRole[],
-      email: user.email,
-      name: user.name,
     };
+    req.user = authUser;
 
-    // 4. Super-admin bypass
-    if (user.role.includes(USER_ROLES.SUPER_ADMIN)) {
-      req.user = authUser;
+    // 5. If no roles passed → only authentication (good for `/auth/me`)
+    if (requiredRoles.length === 0) {
       return next();
     }
 
-    // 5. Admin routes
+    // 6. Super Admin bypass
+    if (user.role.includes(USER_ROLES.SUPER_ADMIN)) {
+      return next();
+    }
+
+    // 7. Admin routes
     if (requiredRoles.includes(USER_ROLES.ADMIN as any)) {
       if (!user.role.includes(USER_ROLES.ADMIN)) {
         throw new AppError(httpStatus.UNAUTHORIZED, "Admin access required");
       }
-      req.user = authUser;
       return next();
     }
 
-    // 6. Learner/Mentor routes
+    // 8. Learner/Mentor routes
     if (
       requiredRoles.includes(activeRole as any) &&
       user.role.includes(activeRole)
@@ -84,11 +90,10 @@ const auth = (...requiredRoles: TUserRole[]) =>
           throw new AppError(httpStatus.FORBIDDEN, "Mentor not approved yet");
         }
       }
-
-      req.user = authUser;
       return next();
     }
 
+    // 9. Otherwise → not authorized
     throw new AppError(
       httpStatus.UNAUTHORIZED,
       "You are not authorized for this route!"

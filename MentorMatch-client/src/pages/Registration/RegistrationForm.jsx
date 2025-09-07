@@ -7,16 +7,25 @@ import StepRole from "./StepRole";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { useTheme } from "next-themes";
+import { useRegisterMutation } from "../../redux/features/auth/authApi";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 const steps = [StepRole, StepOne, StepTwo, StepThree]; // Add more as needed
 
 export default function RegistrationForm() {
+    const navigate = useNavigate();
   const [init, setInit] = useState(false);
   const { theme } = useTheme();
   const methods = useForm({ mode: "onTouched" });
   const [step, setStep] = useState(0);
   const CurrentStep = steps[step];
   const progress = ((step + 1) / steps.length) * 100;
+
+ const [profileImage, setProfileImage] = useState(null);
+const [register, { isLoading }] = useRegisterMutation();
+
+
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {
@@ -63,47 +72,40 @@ export default function RegistrationForm() {
   });
 
   // onSubmit function
-  const onSubmit = methods.handleSubmit(async (data) => {
+const onSubmit = methods.handleSubmit(async (data) => {
+  try {
     const payload = {
       role: data.role,
-      user: {
-        email: data.email,
-        password: data.password,
-      },
+      user: { email: data.email, password: data.password },
+      ...(data.role === "learner"
+        ? { learnerProfile: LearnerProfile(data) }
+        : { mentorProfile: MentorProfile(data) }),
     };
 
-    if (data.role === "mentor") {
-      // Only send mentorProfile, learnerProfile will be created automatically on backend
-      payload.mentorProfile = MentorProfile(data);
-    } else if (data.role === "learner") {
-      payload.learnerProfile = LearnerProfile(data);
-    }
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(payload));
+    if (profileImage) formData.append("profileImage", profileImage);
 
-    console.log("Final Payload:", payload);
+    const result = await register(formData).unwrap();
 
-    try {
-      const res = await fetch(`http://localhost:5000/api/v1/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+    console.log("Raw registration response:", result); // <-- DEBUG
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to register user");
-      }
+    const user = result?.data?.user;
 
-      const result = await res.json();
-      console.log("User created successfully:", result);
-      alert("User registered successfully!");
-    } catch (err) {
-      console.error("Error creating user:", err);
-      alert(`Registration failed: ${err.message}`);
-    }
-  });
+    if (!user) throw new Error("User data is missing from response");
 
+    toast.success("User registered and logged in successfully!");
+
+    const role = user.activeRole;
+    if (role === "mentor") navigate("/dashboard/mentor/overview");
+    else if (role === "learner") navigate("/dashboard/learner/all-gigs");
+    else navigate("/");
+
+  } catch (err) {
+    console.error("Registration failed:", err);
+    toast.error(err?.data?.message || err.message || "Registration failed");
+  }
+});
   
   return (
     <FormProvider {...methods}>
@@ -236,6 +238,8 @@ export default function RegistrationForm() {
               onNext={nextStep}
               onBack={prevStep}
               isLast={step === steps.length - 1}
+              setProfileImage={setProfileImage}
+              isLoading={isLoading}
             />
           </div>
         </form>

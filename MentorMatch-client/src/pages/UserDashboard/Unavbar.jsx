@@ -15,7 +15,7 @@ import {
   Search,
   Home,
 } from "lucide-react";
-import { Link, NavLink, useNavigate } from "react-router";
+import { Link, NavLink, useNavigate,} from "react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,23 +27,35 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ModeToggle } from "../../components/mode-toggle";
-
-import { useContext } from "react";
-import { RoleContext } from "../../context/RoleContext";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useLogoutMutation } from "../../redux/features/auth/authApi";
+import { logout } from "../../redux/features/auth/authSlice";
 
 const Unavbar = () => {
-  const { role, toggleRole } = useContext(RoleContext);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [logoutApi] = useLogoutMutation();
+
+  // Get user from Redux
+  const user = useAppSelector((state) => state.auth.user);
+  const role = user?.activeRole || "learner"; // fallback role
+
+  const handleSignOut = async () => {
+    try {
+      // Call backend logout to clear httpOnly cookies
+      await logoutApi().unwrap();
+      
+      // Clear Redux state
+      dispatch(logout());
+      // Redirect to login page
+      navigate("/signin");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
 
   const handleToggle = () => {
-    toggleRole();
-
     // Navigate to the appropriate dashboard route
-    if (role === "learner") {
-      navigate("/dashboard/mentor/overview"); // or any default mentor route
-    } else {
-      navigate("/dashboard/learner/all-gigs"); // or any default learner route
-    }
   };
 
   const navLinks = {
@@ -166,7 +178,8 @@ const Unavbar = () => {
               key={link.path}
               to={link.path}
               className={({ isActive }) =>
-                ` flex flex-col items-center gap-1 ${isActive ? "font-bold text-primary" : ""
+                ` flex flex-col items-center gap-1 ${
+                  isActive ? "font-bold text-primary" : ""
                 }`
               }
             >
@@ -198,8 +211,18 @@ const Unavbar = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="cursor-pointer">
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
+                {user?.profileImage ? (
+                  <AvatarImage src={user.profileImage} />
+                ) : (
+                  <AvatarFallback>
+                    {user?.name
+                      ? user.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                      : "CN"}
+                  </AvatarFallback>
+                )}
               </Avatar>
             </DropdownMenuTrigger>
 
@@ -212,16 +235,32 @@ const Unavbar = () => {
               <DropdownMenuGroup className="flex flex-col mt-2">
                 <DropdownMenuItem className=" mb-2 flex  hover:bg-muted/50 text-muted-foreground hover:text-foreground ">
                   <NavLink
-                    to={role==='mentor'? "/dashboard/mentor/mentor-profile/:id" : role==='learner' ?"/dashboard/learner/learner-profile":" "}
+                    to={
+                      role === "mentor"
+                        ? "/dashboard/mentor/mentor-profile/:id"
+                        : role === "learner"
+                        ? "/dashboard/learner/learner-profile"
+                        : " "
+                    }
                     className={
                       "flex flex-1 border border-primary px-4 py-2 rounded-md  items-center gap-3 text-sm font-semibold cursor-pointer  bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-primary"
                     }
                   >
                     <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" />
-                      <AvatarFallback>CN</AvatarFallback>
+                      {user?.profileImage ? (
+                        <AvatarImage src={user.profileImage} />
+                      ) : (
+                        <AvatarFallback>
+                          {user?.name
+                            ? user.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                            : "CN"}
+                        </AvatarFallback>
+                      )}
                     </Avatar>
-                    Khandokar Rashidul Islam
+                  { user?.name }
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -237,15 +276,18 @@ const Unavbar = () => {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
               </DropdownMenuGroup>
-              
+
               <DropdownMenuGroup className="flex md:hidden my-2 flex-col">
                 {navLinks[role].map((link) => (
-                  <DropdownMenuItem className="py-2 hover:bg-muted/50 text-muted-foreground hover:text-foreground flex-1 ">
+                  <DropdownMenuItem
+                    key={link.path}
+                    className="py-2 hover:bg-muted/50 text-muted-foreground hover:text-foreground flex-1 "
+                  >
                     <NavLink
-                      key={link.path}
                       to={link.path}
                       className={({ isActive }) =>
-                        `w-full flex items-center text-md font-semibold gap-2 cursor-pointer text-md ${isActive ? "font-bold text-primary" : ""
+                        `w-full flex items-center text-md font-semibold gap-2 cursor-pointer text-md ${
+                          isActive ? "font-bold text-primary" : ""
                         }`
                       }
                     >
@@ -253,7 +295,6 @@ const Unavbar = () => {
                       <span className=" "> {link.label}</span>
                     </NavLink>
                   </DropdownMenuItem>
-
                 ))}
                 <DropdownMenuSeparator />
               </DropdownMenuGroup>
@@ -296,6 +337,7 @@ const Unavbar = () => {
               <DropdownMenuGroup className="flex flex-col">
                 <DropdownMenuItem className="py-2 hover:bg-muted/50 text-muted-foreground hover:text-foreground cursor-pointer">
                   <Button
+                    onClick={handleSignOut}
                     variant="destructive"
                     className="px-12 w-full  flex items-center justify-center cursor-pointer "
                   >

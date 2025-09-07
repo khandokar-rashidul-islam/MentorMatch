@@ -9,7 +9,7 @@ import auth from "../../middlewares/auth";
 
 const router = Router();
 
-// ---------------- User registration ----------------
+//* ---------------- User registration ----------------
 router.post(
   "/register",
   upload.single("profileImage"), // optional image
@@ -22,7 +22,7 @@ router.post(
   userController.registerUser
 );
 
-// ---------------- Toggle active role (learner <-> mentor) ----------------
+//* ---------------- Toggle active role (learner <-> mentor) ----------------
 router.patch(
   "/active-role/toggle",
   auth(USER_ROLES.LEARNER, USER_ROLES.MENTOR), // must be logged in
@@ -31,7 +31,7 @@ router.patch(
 
 
 
-// ---------------- Admin approves/rejects mentor ----------------
+//* ---------------- Admin approves/rejects mentor ----------------
 router.patch(
   "/mentor/:mentorUserId/approve",
   auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN), // only admins
@@ -45,5 +45,13 @@ router.patch(
   userController.rejectMentor
 );
 
+
+
+//*---------- Get active role profile---------------------
+router.get(
+  "/profile",
+  auth(USER_ROLES.LEARNER, USER_ROLES.MENTOR), // must be logged in
+  userController.getProfile
+);
 
 export const UserRoutes = router;

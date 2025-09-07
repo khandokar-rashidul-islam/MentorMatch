@@ -1,11 +1,25 @@
-import { useContext } from "react";
 import Unavbar from "./Unavbar";
 import Ufooter from "./Ufooter";
-import { Outlet } from "react-router";
-import { RoleContext } from "../../context/RoleContext";
+import { Navigate, Outlet } from "react-router";
+import { useBootstrapAuth } from "../../hooks/useBootstrapAuth";
 
 const UserDashboard = () => {
-  const { role } = useContext(RoleContext);
+
+  const { user, isLoading } = useBootstrapAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center flex-col">
+        Loading dashboard...
+        <progress className="progress w-56"></progress>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/signin" replace />;
+  }
+
   return (
     <>
       <div>
@@ -14,7 +28,7 @@ const UserDashboard = () => {
       <div>
         <Outlet />
       </div>
-      <div>{role !== "mentor" && <Ufooter />}</div>
+      <div> <Ufooter /> </div>
     </>
   );
 };

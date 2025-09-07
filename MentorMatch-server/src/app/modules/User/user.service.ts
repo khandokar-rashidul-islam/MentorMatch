@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import config from "../../config";
 import { UserModel } from "./user.model";
 import { USER_ROLES, APPROVAL_STATUS, USER_STATUS } from "./user.constant";
-import { IUser,RegisterData } from "./user.interface";
+import { IUser, RegisterData } from "./user.interface";
 import { LearnerProfileModel } from "../learner/learner.model";
 import { MentorProfileModel } from "../mentor/mentor.model";
 import { ILearnerProfile } from "../learner/learner.interface";
@@ -105,10 +105,16 @@ export const registerUser = async (data: RegisterData) => {
       { session }
     );
 
+    // --- Common fields (name + image) ---
+    let commonName = "";
+    let commonProfileImage = profileImageUrl;
+
     // Attach profile image to profile data if exists
     if (role.includes(USER_ROLES.LEARNER) && learnerProfile) {
       if (profileImageUrl) learnerProfile.profileImage = profileImageUrl;
       await createLearnerProfile(createdUser._id, learnerProfile, session);
+      commonName = learnerProfile.name;
+      commonProfileImage = learnerProfile.profileImage;
     } else if (role.includes(USER_ROLES.MENTOR)) {
       if (!mentorProfile) throw new Error("Mentor profile required");
       if (profileImageUrl) mentorProfile.profileImage = profileImageUrl;
@@ -122,6 +128,9 @@ export const registerUser = async (data: RegisterData) => {
       // Fallback learner profile from mentor
       const fallbackLearner = mapCommonFromMentor(mentorProfile);
       await createLearnerProfile(createdUser._id, fallbackLearner, session);
+
+      commonName = mentorProfile.name;
+      commonProfileImage = mentorProfile.profileImage;
     }
 
     // Commit transaction
@@ -144,14 +153,22 @@ export const registerUser = async (data: RegisterData) => {
       config.jwt_refresh_secret as string,
       config.jwt_refresh_expires_in as string
     );
-     // Remove password safely for response
-    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-    const { password: _password, ...userWithoutPassword } = createdUser.toObject();
-    return { user: userWithoutPassword, accessToken, refreshToken };
-    
+
+  const { _id,role: userRoles, activeRole } = createdUser.toObject();
+
+    // Attach common fields (name + image)
+    const userWithProfile = {
+      _id,
+      name: commonName,
+      activeRole,
+      userRoles,
+      profileImage: commonProfileImage,
+    };
+
+    return { user: userWithProfile, accessToken, refreshToken };
   } catch (err) {
     await session.abortTransaction();
-    
+
     // Delete uploaded Cloudinary image if transaction fails
     if (uploadedImage?.public_id) {
       await cloudinary.uploader.destroy(uploadedImage.public_id);
@@ -165,7 +182,6 @@ export const registerUser = async (data: RegisterData) => {
 
 //* -------------------- Admin approves mentor application --------------------
 export const approveMentorApplication = async (mentorUserId: string) => {
- 
   const mentor = await MentorProfileModel.findOne({ user: mentorUserId });
   if (!mentor) throw new Error("Mentor not found");
 
@@ -189,7 +205,6 @@ export const approveMentorApplication = async (mentorUserId: string) => {
 
 // -------------------- Admin rejects mentor application --------------------
 export const rejectMentorApplication = async (mentorUserId: string) => {
-
   const mentor = await MentorProfileModel.findOne({ user: mentorUserId });
   if (!mentor) throw new Error("Mentor not found");
 
@@ -257,4 +272,39 @@ export const toggleActiveRole = async (userId: string) => {
   );
 
   return { user, accessToken: newAccessToken };
+};
+
+// * -------------------- Get user profile based on active role --------------------
+export const getProfile = async (userId: string) => {
+  const user: IUser | null = await UserModel.findById(userId);
+  if (!user) throw new AppError(httpStatus.NOT_FOUND, "User not found");
+
+  let profileData: ILearnerProfile | IMentorProfile;
+
+  if (user.activeRole === USER_ROLES.LEARNER) {
+    const learnerProfile = await LearnerProfileModel.findOne({
+      user: user._id,
+    }).lean();
+    if (!learnerProfile)
+      throw new AppError(httpStatus.NOT_FOUND, "Learner profile not found");
+    profileData = learnerProfile;
+  } else if (user.activeRole === USER_ROLES.MENTOR) {
+    const mentorProfile = await MentorProfileModel.findOne({
+      user: user._id,
+    }).lean();
+    if (!mentorProfile)
+      throw new AppError(httpStatus.NOT_FOUND, "Mentor profile not found");
+    profileData = mentorProfile;
+  } else {
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid active role");
+  }
+
+  return {
+    user: {
+      name: profileData.name,
+      profileImage: profileData.profileImage,
+      activeRole: user.activeRole,
+      profile: profileData, // full active role profile
+    },
+  };
 };
