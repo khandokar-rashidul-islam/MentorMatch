@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import Error404 from "../pages/Error404";
 import AppLayout from "../layouts/AppLayout";
 import Home from "../pages/Home/Home";
@@ -29,6 +29,7 @@ import Bookmarks from "../pages/UserDashboard/Learner/Bookmarks";
 import LearnerProfile from "../pages/UserDashboard/Learner/LearnerProfile";
 import EditTutorProfile from "../pages/UserDashboard/Tutor/TutorProfile/EditTutorProfile";
 import EditProfile from "../pages/UserDashboard/Learner/EditProfile";
+import PublicRoute from "./PublicRoute";
 
 const router = createBrowserRouter([
   {
@@ -41,27 +42,76 @@ const router = createBrowserRouter([
       </div>
     ),
     children: [
-      { path: "/", element: <Home /> },
-      { path: "/registration", element: <RegistrationForm /> },
-      { path: "/signin", element: <SignIn /> },
-      { path: "/tutor/details", element: <TutorDetails /> },
-      { path: "/tutor/gig/details", element: <GigDetails /> },
-      { path: "all-gigs", element: <AllGigs /> },
-      { path: "search-mentor", element: <SearchMentor /> },
+      {
+        path: "/",
+        element: (
+          <PublicRoute>
+            <Home />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "/registration",
+        element: (
+          <PublicRoute>
+            <RegistrationForm />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "/signin",
+        element: (
+          <PublicRoute>
+            <SignIn />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "/tutor/details",
+        element: (
+          <PublicRoute>
+            <TutorDetails />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "/tutor/gig/details",
+        element: (
+          <PublicRoute>
+            <GigDetails />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "all-gigs",
+        element: (
+          <PublicRoute>
+            <AllGigs />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "search-mentor",
+        element: (
+          <PublicRoute>
+            <SearchMentor />
+          </PublicRoute>
+        ),
+      },
     ],
   },
 
-  //Dashboard
+  //* User dashboard routes
   {
     path: "/dashboard",
-    element: <UserDashboardLayout />,
+    element: (<UserDashboardLayout />),
     children: [
-      
-      //tutor dashboard
+      //mentor dashboard
       {
         path: "mentor",
         element: <TutorDashboardLayout />,
         children: [
+          { index: true, element: <Navigate to="overview" replace /> },
           { path: "overview", element: <Overview /> },
           { path: "bookings", element: <Orders /> },
           { path: "stats", element: <TutorStats /> },
@@ -84,6 +134,7 @@ const router = createBrowserRouter([
         path: "learner",
         element: <LearnerHome />,
         children: [
+          { index: true, element: <Navigate to="all-gigs" replace /> },
           { path: "all-gigs", element: <AllGigs /> },
           { path: "stats", element: <TutorStats /> },
           { path: "bookings", element: <Bookings /> },
