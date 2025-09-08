@@ -50,14 +50,6 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
         message: err?.message,
       },
     ];
-  } else if (err instanceof Error) {
-    message = err.message;
-    errorSources = [
-      {
-        path: "",
-        message: err?.message,
-      },
-    ];
   } else if (err?.name === "TokenExpiredError") {
     statusCode = 401;
     message = "Access token expired";
@@ -75,6 +67,14 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
       {
         path: "authorization",
         message: "Invalid or malformed token",
+      },
+    ];
+  } else if (err instanceof Error) {
+    message = err.message;
+    errorSources = [
+      {
+        path: "",
+        message: err?.message,
       },
     ];
   }

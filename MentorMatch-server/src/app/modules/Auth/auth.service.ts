@@ -166,67 +166,60 @@ export const getAuthenticatedUser = async (userId: string) => {
 //* refresh access token
 
 export const refreshToken = async (token: string) => {
+  // Step 1: Verify refresh token synchronously
+  let decoded;
   try {
-    const decoded = verifyToken(token, config.jwt_refresh_secret as string);
+    decoded = verifyToken(token, config.jwt_refresh_secret as string);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+  } catch (err) {
+    // Directly throw AppError so globalErrorHandler sees the correct status
+    throw new AppError(401, "Refresh token expired or invalid!");
+  }
 
-    // check if user exists
-    const user = await UserModel.findById(decoded.userId);
-    if (!user) throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  // Step 2: Async operations (Mongoose queries)
+  const user = await UserModel.findById(decoded.userId);
+  if (!user) throw new AppError(404, "User not found");
+  if (user?.isDeleted) throw new AppError(403, "User deleted!");
+  if (user?.status === "blocked") throw new AppError(403, "User blocked!");
 
-    // check if deleted or blocked
-    if (user?.isDeleted)
-      throw new AppError(httpStatus.FORBIDDEN, "This user is deleted !");
-    if (user?.status === "blocked")
-      throw new AppError(httpStatus.FORBIDDEN, "This user is blocked ! !");
+  // Step 3: Create new access token
+  const jwtPayload = {
+    userId: user._id.toString(),
+    role: user.role,
+    activeRole: user.activeRole,
+  };
+  const newAccessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    config.jwt_access_expires_in as string
+  );
 
-    // create new access token
-    const jwtPayload: JwtPayload = {
-      userId: user._id.toString(),
-      activeRole: user.activeRole,
-      role: user.role,
-    };
-
-    const newAccessToken = createToken(
-      jwtPayload,
-      config.jwt_access_secret as string,
-      config.jwt_access_expires_in as string
-    );
-
-    // fetch minimal profile info like login
-    let name = "";
-    let profileImage: string | undefined;
-
-    if (user.activeRole === USER_ROLES.LEARNER) {
-      const learnerProfile = await LearnerProfileModel.findOne({
-        user: user._id,
-      });
-      if (learnerProfile) {
-        name = learnerProfile.name;
-        profileImage = learnerProfile.profileImage;
-      }
-    } else if (user.activeRole === USER_ROLES.MENTOR) {
-      const mentorProfile = await MentorProfileModel.findOne({
-        user: user._id,
-      });
-      if (mentorProfile) {
-        name = mentorProfile.name;
-        profileImage = mentorProfile.profileImage;
-      }
+  // Step 4: Get user profile
+  let name = "",
+    profileImage: string | undefined;
+  if (user.activeRole === USER_ROLES.LEARNER) {
+    const profile = await LearnerProfileModel.findOne({ user: user._id });
+    if (profile) {
+      name = profile.name;
+      profileImage = profile.profileImage;
     }
+  } else if (user.activeRole === USER_ROLES.MENTOR) {
+    const profile = await MentorProfileModel.findOne({ user: user._id });
+    if (profile) {
+      name = profile.name;
+      profileImage = profile.profileImage;
+    }
+  }
 
-    const userWithProfile = {
+  return {
+    accessToken: newAccessToken,
+    user: {
       _id: user._id,
       name,
       activeRole: user.activeRole,
       role: user.role,
       profileImage,
-    };
-
-    return { accessToken: newAccessToken, user: userWithProfile };
-  } catch {
-    throw new AppError(
-      httpStatus.UNAUTHORIZED,
-      "Invalid or expired refresh token"
-    );
-  }
+    },
+  };
 };
+

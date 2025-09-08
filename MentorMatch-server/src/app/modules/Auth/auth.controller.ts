@@ -73,33 +73,24 @@ export const getMe = catchAsync(async (req, res) => {
 
 //* refresh access token
 export const refreshTokenController = catchAsync(async (req, res) => {
-  const { refreshToken: token } = req.cookies;
+  const token = req.cookies.refreshToken;
+  if (!token) throw new AppError(401, "Refresh token missing!");
 
-  if (!token) {
-    throw new AppError(
-      httpStatus.UNAUTHORIZED,
-      "Invalid or expired refresh token!"
-    );
-  }
+  const result = await refreshToken(token); // now will throw 401 if expired
 
-  const result = await refreshToken(token);
-
-  // set new accessToken as HTTP-only cookie
   res.cookie("accessToken", result.accessToken, {
     httpOnly: true,
     secure: config.NODE_ENV === "production",
     sameSite: config.NODE_ENV === "production" ? "none" : "lax",
-    maxAge: 15 * 60 * 1000, // 15 minutes
+    maxAge: 15 * 60 * 1000,
     path: "/",
   });
 
-  // send user info back like login
   sendResponse(res, {
-    statusCode: httpStatus.OK,
+    statusCode: 200,
     success: true,
     message: "Access token refreshed successfully",
-    data: {
-      user: result.user,
-    },
+    data: { user: result.user },
   });
 });
+

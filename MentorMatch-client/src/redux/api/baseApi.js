@@ -10,7 +10,8 @@ const baseQuery = fetchBaseQuery({
 
 const baseQueryWithRefreshToken = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
-
+  
+  console.log("Base Query Result:", result); // Debug log
   if (result?.error?.status === 401) {
     try {
       const res = await fetch(

@@ -14,8 +14,12 @@ import {
   Link,
 } from "lucide-react";
 import { NavLink } from "react-router";
+import { useGetActiveProfileQuery } from "../../redux/features/user/userApi";
 
 const TutorProfile = () => {
+
+const { data, isLoading, isError } = useGetActiveProfileQuery();
+
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(247);
 
@@ -23,6 +27,18 @@ const TutorProfile = () => {
     setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
     setIsLiked(!isLiked);
   };
+ 
+  if(isLoading){
+    return <div>Loading...</div>
+  }
+  if(isError){
+    return <div>Error loading profile</div>
+  }
+
+ const user = data?.data?.user;
+ const profile = user?.profile;
+
+
 
   return (
     <Card className="overflow-hidden">
@@ -31,7 +47,8 @@ const TutorProfile = () => {
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
           <div className="relative mx-auto sm:mx-0">
             <img
-              alt="Dr. Sarah Johnson"
+              src={profile?.profileImage}
+              alt={profile?.name}
               className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-primary/20"
             />
             <div className="absolute -bottom-1 -right-1 sm:top-24 sm:right-2 bg-success rounded-full p-0.5 sm:p-1">
@@ -43,10 +60,10 @@ const TutorProfile = () => {
             <div className="flex relative flex-col sm:flex-row sm:flex-wrap items-center sm:items-start sm:justify-between gap-4">
               <div className="text-center sm:text-left">
                 <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-                  Dr. Sarah Johnson
+                  {profile?.name}
                 </h1>
                 <p className="text-lg sm:text-xl text-muted-foreground mb-3 sm:mb-2">
-                  Mathematics & Physics Expert
+                  {profile?.expertiseAreas?.join(" & ")}
                 </p>
 
                 <div className="flex flex-col flex-wrap sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
@@ -70,8 +87,10 @@ const TutorProfile = () => {
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge variant="secondary">PhD Mathematics</Badge>
-                  <Badge variant="secondary">10+ Years Experience</Badge>
+                  <Badge variant="secondary">{profile?.education}</Badge>
+                  <Badge variant="secondary">
+                    {profile?.experienceYears}+ Years Experience
+                  </Badge>
                   <Badge variant="secondary">500+ Students</Badge>
                   <Badge variant="outline">Verified</Badge>
                 </div>
