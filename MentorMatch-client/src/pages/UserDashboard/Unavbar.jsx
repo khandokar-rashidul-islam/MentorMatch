@@ -88,11 +88,6 @@ const Unavbar = () => {
     ],
     mentor: [
       {
-        label: "Home",
-        path: "/dashboard/mentor/overview",
-        icon: <Home size={16} />,
-      },
-      {
         label: "Community",
         path: "/dashboard/mentor/community",
         icon: <MessageSquareText size={16} />,
@@ -105,7 +100,7 @@ const Unavbar = () => {
       <div className="w-11/12 mx-auto  py-4 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center">
-          <Link to="/" className="hidden sm:block ">
+          <Link to="/dashboard/mentor/overview" className="hidden sm:block ">
             <div className="flex items-center">
               <span>
                 <svg
@@ -260,7 +255,7 @@ const Unavbar = () => {
                         </AvatarFallback>
                       )}
                     </Avatar>
-                  { user?.name }
+                    {user?.name}
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />

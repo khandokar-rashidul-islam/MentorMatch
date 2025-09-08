@@ -20,7 +20,7 @@ export default function RegistrationForm() {
   const methods = useForm({ mode: "onTouched" });
   const [step, setStep] = useState(0);
   const CurrentStep = steps[step];
-  const progress = ((step + 1) / steps.length) * 100;
+  const progress = ((step + 1-1) / steps.length) * 100;
 
  const [profileImage, setProfileImage] = useState(null);
 const [register, { isLoading }] = useRegisterMutation();
