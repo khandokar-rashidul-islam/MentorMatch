@@ -106,15 +106,15 @@ export const logoutUser = async (res: Response) => {
 
   res.clearCookie("accessToken", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    secure: config.NODE_ENV === "production", // false in dev
+    sameSite: config.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
   });
 
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    secure: config.NODE_ENV === "production", // false in dev
+    sameSite: config.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
   });
 
