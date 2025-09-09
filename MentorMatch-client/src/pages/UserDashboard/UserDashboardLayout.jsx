@@ -38,8 +38,7 @@ const UserDashboard = () => {
         <Outlet />
       </div>
       <div>
-        {" "}
-        <Ufooter />{" "}
+        <Ufooter />
       </div>
     </>
   );

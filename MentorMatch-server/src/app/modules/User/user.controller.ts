@@ -5,7 +5,7 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 
-//*user registration and login
+//*-----------------user registration and login-----------------------
 
 export const registerUser = catchAsync(async (req, res) => {
   const registrationData = req.body as RegisterData;
@@ -44,7 +44,7 @@ export const registerUser = catchAsync(async (req, res) => {
   });
 });
 
-//* Admin approval for mentor
+//* ---------------------Admin approval for mentor---------------------
 
 export const approveMentor = catchAsync(async (req, res) => {
   const authReq = req as AuthRequest;
@@ -65,7 +65,7 @@ export const approveMentor = catchAsync(async (req, res) => {
   });
 });
 
-//* Admin rejection for mentor
+//* ------------------------Admin rejection for mentor--------------------
 
 export const rejectMentor = catchAsync(async (req, res) => {
   const authReq = req as AuthRequest;
@@ -85,7 +85,7 @@ export const rejectMentor = catchAsync(async (req, res) => {
   });
 });
 
-//* Role switch (learner <-> mentor)
+//* --------------------Role switch (learner <-> mentor)------------------------
 
 export const toggleActiveRole = catchAsync(async (req, res) => {
   const authReq = req as AuthRequest;
