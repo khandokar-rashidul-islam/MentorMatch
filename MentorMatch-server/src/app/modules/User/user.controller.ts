@@ -100,8 +100,8 @@ export const toggleActiveRole = catchAsync(async (req, res) => {
   // Update cookie with new access token
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
-    secure: config.NODE_ENV === "production",
-    sameSite: "none",
+    secure: config.NODE_ENV === "production", // false in dev
+    sameSite: config.NODE_ENV === "production" ? "none" : "lax",
     maxAge: 15 * 60 * 1000, // 15 minutes
     path: "/",
   });
@@ -110,7 +110,7 @@ export const toggleActiveRole = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: `Active role switched to ${user.activeRole}`,
-    data: { user, accessToken },
+    data: { user},
   });
 });
 

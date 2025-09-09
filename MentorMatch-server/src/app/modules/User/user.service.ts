@@ -154,7 +154,7 @@ export const registerUser = async (data: RegisterData) => {
       config.jwt_refresh_expires_in as string
     );
 
-  const { _id,role: userRoles, activeRole } = createdUser.toObject();
+    const { _id, role: userRoles, activeRole } = createdUser.toObject();
 
     // Attach common fields (name + image)
     const userWithProfile = {
@@ -271,7 +271,33 @@ export const toggleActiveRole = async (userId: string) => {
     config.jwt_access_expires_in as string
   );
 
-  return { user, accessToken: newAccessToken };
+  // active role profile data
+  let name = "",
+    profileImage: string | undefined;
+  if (user.activeRole === USER_ROLES.LEARNER) {
+    const profile = await LearnerProfileModel.findOne({ user: user._id });
+    if (profile) {
+      name = profile.name;
+      profileImage = profile.profileImage;
+    }
+  } else if (user.activeRole === USER_ROLES.MENTOR) {
+    const profile = await MentorProfileModel.findOne({ user: user._id });
+    if (profile) {
+      name = profile.name;
+      profileImage = profile.profileImage;
+    }
+  }
+
+  return {
+    accessToken: newAccessToken,
+    user: {
+      _id: user._id,
+      name,
+      activeRole: user.activeRole,
+      role: user.role,
+      profileImage,
+    },
+  };
 };
 
 // * -------------------- Get user profile based on active role --------------------

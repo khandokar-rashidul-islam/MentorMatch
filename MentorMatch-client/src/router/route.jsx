@@ -104,7 +104,7 @@ const router = createBrowserRouter([
   //* User dashboard routes
   {
     path: "/dashboard",
-    element: (<UserDashboardLayout />),
+    element: <UserDashboardLayout />,
     children: [
       //mentor dashboard
       {
@@ -141,8 +141,8 @@ const router = createBrowserRouter([
           { path: "bookmarks", element: <Bookmarks /> },
           { path: "search-mentor", element: <SearchMentor /> },
           { path: "notification", element: <Notify /> },
-          { path: "learner-profile", element: <LearnerProfile /> },
-          { path: "edit-profile", element: <EditProfile /> },
+          { path: "learner-profile/:id", element: <LearnerProfile /> },
+          { path: "learner-profile/:id/edit", element: <EditProfile /> },
         ],
       },
     ],

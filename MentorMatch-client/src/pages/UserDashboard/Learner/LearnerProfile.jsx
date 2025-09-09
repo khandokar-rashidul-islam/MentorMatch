@@ -157,7 +157,7 @@ const LearnerProfile = () => {
   };
 
   return (
-    <div className='w-11/12 mx-auto pt-24'>
+    <div className="w-11/12 mx-auto pt-24">
       <div className="max-w-5xl mx-auto p-4 space-y-6">
         {/* Profile Header */}
         <motion.div
@@ -178,7 +178,13 @@ const LearnerProfile = () => {
                   MERN Stack Enthusiast | Passionate Problem Solver
                 </p>
               </div>
-              <Button variant="default" className="ml-4 hidden md:block"  onClick={() => navigate(`/dashboard/learner/edit-profile`)}>
+              <Button
+                variant="default"
+                className="ml-4 hidden md:block"
+                onClick={() =>
+                  navigate(`/dashboard/learner/learner-profile/:id/edit`)
+                }
+              >
                 Edit
               </Button>
             </div>
@@ -192,9 +198,15 @@ const LearnerProfile = () => {
               <span className="bg-green-100 text-green-800 px-3 flex items-center justify-center rounded-full text-sm">
                 MongoDB
               </span>
-
             </div>
-            <Button variant="default" className="mt-4 md:hidden"  onClick={() => navigate(`/dashboard/learner/edit-profile`)}> edit</Button>
+            <Button
+              variant="default"
+              className="mt-4 md:hidden"
+              onClick={() => navigate(`/dashboard/learner/edit-profile`)}
+            >
+              {" "}
+              edit
+            </Button>
           </div>
         </motion.div>
 
@@ -214,8 +226,8 @@ const LearnerProfile = () => {
               <CardContent className="space-y-3">
                 <p>
                   Hello! I'm a dedicated learner with a focus on full-stack web
-                  development. I enjoy creating clean, user-friendly applications
-                  and continuously improving my skills.
+                  development. I enjoy creating clean, user-friendly
+                  applications and continuously improving my skills.
                 </p>
                 <ul className="list-disc list-inside">
                   <li>🎯 Solved 200+ coding problems</li>
@@ -248,9 +260,11 @@ const LearnerProfile = () => {
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            className={`w-4 h-4 ${i < r.rating
-                              ? "text-yellow-400 fill-yellow-400"
-                              : "text-gray-300"}`}
+                            className={`w-4 h-4 ${
+                              i < r.rating
+                                ? "text-yellow-400 fill-yellow-400"
+                                : "text-gray-300"
+                            }`}
                           />
                         ))}
                       </div>
@@ -264,7 +278,9 @@ const LearnerProfile = () => {
                         onClick={() => toggleReplies(r.id)}
                         className="text-sm text-blue-500 hover:underline mb-2"
                       >
-                        {r.showReplies ? "Hide Replies" : `View Replies (${r.replies.length})`}
+                        {r.showReplies
+                          ? "Hide Replies"
+                          : `View Replies (${r.replies.length})`}
                       </button>
                     )}
 
@@ -293,17 +309,21 @@ const LearnerProfile = () => {
                     {/* Show Reply Button */}
                     <button
                       onClick={() =>
-                        setReviews(reviews.map(item =>
-                          item.id === r.id
-                            ? { ...item, showReplyInput: !item.showReplyInput }
-                            : item
-                        ))
+                        setReviews(
+                          reviews.map((item) =>
+                            item.id === r.id
+                              ? {
+                                  ...item,
+                                  showReplyInput: !item.showReplyInput,
+                                }
+                              : item
+                          )
+                        )
                       }
                       className="text-xs text-gray-500 hover:text-purple-500 ml-2 mt-2"
                     >
                       {r.showReplyInput ? "Cancel" : "Reply"}
                     </button>
-
 
                     {/* Reply Input (Hidden Initially) */}
                     {r.showReplyInput && (
@@ -314,12 +334,15 @@ const LearnerProfile = () => {
                           onChange={(e) =>
                             setReplyText({
                               ...replyText,
-                              [r.id]: e.target.value
+                              [r.id]: e.target.value,
                             })
                           }
                           className="h-8"
                         />
-                        <Button onClick={() => handleReply(r.id)} variant="secondary">
+                        <Button
+                          onClick={() => handleReply(r.id)}
+                          variant="secondary"
+                        >
                           Reply
                         </Button>
                       </div>
@@ -335,10 +358,11 @@ const LearnerProfile = () => {
                       <Star
                         key={i}
                         onClick={() => setRating(i + 1)}
-                        className={`w-6 h-6 cursor-pointer ${i < rating
-                          ? "text-yellow-400 fill-yellow-400"
-                          : "text-gray-300"
-                          }`}
+                        className={`w-6 h-6 cursor-pointer ${
+                          i < rating
+                            ? "text-yellow-400 fill-yellow-400"
+                            : "text-gray-300"
+                        }`}
                       />
                     ))}
                   </div>
@@ -391,10 +415,11 @@ const LearnerProfile = () => {
                         className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-500 transition"
                       >
                         <Heart
-                          className={`w-5 h-5 ${post.liked
-                            ? "fill-red-500 text-red-500"
-                            : "text-gray-400"
-                            }`}
+                          className={`w-5 h-5 ${
+                            post.liked
+                              ? "fill-red-500 text-red-500"
+                              : "text-gray-400"
+                          }`}
                         />
                         {post.likes}
                       </button>
@@ -427,13 +452,17 @@ const LearnerProfile = () => {
                                   <AvatarFallback>{c.user[0]}</AvatarFallback>
                                 </Avatar>
                                 <div>
-                                  <p className="text-sm font-semibold">{c.user}</p>
+                                  <p className="text-sm font-semibold">
+                                    {c.user}
+                                  </p>
                                   <p className="text-sm">{c.text}</p>
                                 </div>
                               </div>
                             ))
                           ) : (
-                            <p className="text-sm text-gray-500">No comments yet.</p>
+                            <p className="text-sm text-gray-500">
+                              No comments yet.
+                            </p>
                           )}
 
                           {/* Add Comment */}
@@ -444,12 +473,14 @@ const LearnerProfile = () => {
                               onChange={(e) =>
                                 setCommentText({
                                   ...commentText,
-                                  [post.id]: e.target.value
+                                  [post.id]: e.target.value,
                                 })
                               }
                               className="min-h-[40px]"
                             />
-                            <Button onClick={() => addComment(post.id)}>Post</Button>
+                            <Button onClick={() => addComment(post.id)}>
+                              Post
+                            </Button>
                           </div>
                         </motion.div>
                       )}
@@ -462,7 +493,7 @@ const LearnerProfile = () => {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default LearnerProfile

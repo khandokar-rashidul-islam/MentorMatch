@@ -39,15 +39,15 @@ const schema = z.object({
 // Default learner data
 const defaultLearner = {
   image: "https://i.pravatar.cc/150?img=12",
-  username: "Suraiya Jahan",
+  username: "student",
   bio: "MERN Stack Enthusiast | Passionate Problem Solver",
-  email: "suraiya@example.com",
+  email: "student@example.com",
   phone: "01712345678",
   birthdate: "2000-08-15",
   nid: "1234567890123",
   bankAccount: "9876543210",
   address: "Dhaka, Bangladesh",
-  gender: "Female",
+  gender: "male",
   about:
     "I am a passionate learner and developer with strong problem-solving skills and interest in full-stack development.",
   education:

@@ -15,7 +15,7 @@ import {
   Search,
   Home,
 } from "lucide-react";
-import { Link, NavLink, useNavigate,} from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,26 +25,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ModeToggle } from "../../components/mode-toggle";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { useLogoutMutation } from "../../redux/features/auth/authApi";
+import {
+  useLogoutMutation,
+  useToggleRoleMutation,
+} from "../../redux/features/auth/authApi";
 import { logout } from "../../redux/features/auth/authSlice";
 
 const Unavbar = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [logoutApi] = useLogoutMutation();
+  const [toggleRole, { isLoading }] = useToggleRoleMutation();
 
   // Get user from Redux
   const user = useAppSelector((state) => state.auth.user);
   const role = user?.activeRole || "learner"; // fallback role
+  const roles = user?.role;
 
   const handleSignOut = async () => {
     try {
       // Call backend logout to clear httpOnly cookies
       await logoutApi().unwrap();
-      
+
       // Clear Redux state
       dispatch(logout());
       // Redirect to login page
@@ -54,10 +60,14 @@ const Unavbar = () => {
     }
   };
 
-  const handleToggle = () => {
-    // Navigate to the appropriate dashboard route
+  const handleToggle = async () => {
+    try {
+      await toggleRole().unwrap();
+    } catch (err) {
+      console.error("Failed to toggle role:", err);
+    }
   };
-
+  const canToggle = roles.includes("mentor");
   const navLinks = {
     learner: [
       {
@@ -167,7 +177,7 @@ const Unavbar = () => {
           </Link>
         </div>
         {/* learner and mentor links */}
-        <div className="hidden md:flex items-center gap-3 justify-evenly">
+        <div className="hidden md:flex items-center gap-3 md:gap-8 justify-evenly">
           {navLinks[role].map((link) => (
             <NavLink
               key={link.path}
@@ -204,23 +214,29 @@ const Unavbar = () => {
           <ModeToggle />
           {/* dropdown manu */}
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Avatar className="cursor-pointer">
-                {user?.profileImage ? (
-                  <AvatarImage src={user.profileImage} />
-                ) : (
-                  <AvatarFallback>
-                    {user?.name
-                      ? user.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                      : "CN"}
-                  </AvatarFallback>
-                )}
-              </Avatar>
-            </DropdownMenuTrigger>
-
+            <div className="relative inline-block">
+              <DropdownMenuTrigger asChild>
+                <Avatar className="cursor-pointer border-2 border-green-600 ">
+                  {user?.profileImage ? (
+                    <AvatarImage src={user.profileImage} />
+                  ) : (
+                    <AvatarFallback>
+                      {user?.name
+                        ? user.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                        : "CN"}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+              </DropdownMenuTrigger>
+              {role && (
+                <span className=" absolute -bottom-0 -right-1 flex items-center justify-center w-3 h-3 text-[8px] font-bold rounded-full text-white bg-green-600">
+                  {role.charAt(0).toUpperCase()}
+                </span>
+              )}
+            </div>
             {/* dropdown content */}
             <DropdownMenuContent
               className=" flex flex-col mt-4 lg:w-80 py-2 px-2  "
@@ -234,7 +250,7 @@ const Unavbar = () => {
                       role === "mentor"
                         ? "/dashboard/mentor/mentor-profile/:id"
                         : role === "learner"
-                        ? "/dashboard/learner/learner-profile"
+                        ? "/dashboard/learner/learner-profile/:id"
                         : " "
                     }
                     className={
@@ -263,10 +279,11 @@ const Unavbar = () => {
                   <Button
                     onClick={handleToggle}
                     variant="outline"
+                    disabled={!canToggle || isLoading}
                     className=" px-8 py-2  w-full text-primary cursor-pointer hover:text-primary"
                   >
-                    <UserCheck className="text-primary" /> Switch to{" "}
-                    {role === "learner" ? "Mentor" : "Learner"} Mode
+                    <UserCheck className="text-primary" />
+                    {isLoading ? "Switching..." : `Switch to ${ role === "learner" ? "Mentor" : "Learner"} Mode`}
                   </Button>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />

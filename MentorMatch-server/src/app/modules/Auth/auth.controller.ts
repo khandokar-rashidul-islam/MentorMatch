@@ -87,7 +87,7 @@ export const refreshTokenController = catchAsync(async (req, res) => {
   });
 
   sendResponse(res, {
-    statusCode: 200,
+    statusCode: httpStatus.OK,
     success: true,
     message: "Access token refreshed successfully",
     data: { user: result.user },
