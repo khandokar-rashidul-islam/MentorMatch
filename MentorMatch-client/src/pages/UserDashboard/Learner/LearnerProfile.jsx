@@ -4,13 +4,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { motion, AnimatePresence } from "framer-motion";
 import { Star } from "lucide-react";
 import { Heart, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useGetActiveProfileQuery } from "../../../redux/features/user/userApi";
 
 const LearnerProfile = () => {
    const navigate = useNavigate();
+
+const { data, isLoading, isError } = useGetActiveProfileQuery();
+
+
+
+
+
   const [reviews, setReviews] = useState([
     {
       id: 1,
@@ -85,24 +92,6 @@ const LearnerProfile = () => {
     );
   };
 
-  // const addComment = (id) => {
-  //   if (!commentText.trim()) return;
-  //   setPosts(
-  //     posts.map((p) =>
-  //       p.id === id
-  //         ? {
-  //           ...p,
-  //           comments: [
-  //             ...p.comments,
-  //             { id: Date.now(), user: "You", text: commentText },
-  //           ],
-  //         }
-  //         : p
-  //     )
-  //   );
-  //   setCommentText("");
-  // };
-
   const addComment = (id) => {
     if (!commentText[id]?.trim()) return;
 
@@ -156,26 +145,43 @@ const LearnerProfile = () => {
     ));
   };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error loading profile</div>;
+  }
+
+ const user = data?.data?.user;
+ const profile = user?.profile;
+
+
+
   return (
     <div className="w-11/12 mx-auto pt-24">
       <div className="max-w-5xl mx-auto p-4 space-y-6">
         {/* Profile Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="flex flex-col md:flex-row items-center gap-6 bg-white dark:bg-gray-900 shadow-lg rounded-xl p-6"
-        >
+        <div className="flex flex-col md:flex-row items-center gap-6 bg-white dark:bg-gray-900 shadow-lg rounded-xl p-6">
           <Avatar className="w-24 h-24 border-4 border-purple-500">
-            <AvatarImage src="https://i.pravatar.cc/150?img=12" />
-            <AvatarFallback>LS</AvatarFallback>
+            {profile?.profileImage ? (
+              <AvatarImage src={profile.profileImage} />
+            ) : (
+              <AvatarFallback>
+                {profile?.name
+                  ? profile.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                  : "CN"}
+              </AvatarFallback>
+            )}
           </Avatar>
           <div className="flex-1 flex flex-col md:items-start text-center md:text-left">
             <div className="w-full flex items-start justify-between">
               <div>
-                <h1 className="text-3xl font-bold">Learner Name</h1>
+                <h1 className="text-3xl font-bold"> {profile?.name}</h1>
                 <p className="text-gray-500 dark:text-gray-400">
-                  MERN Stack Enthusiast | Passionate Problem Solver
+                  {profile?.profession}
                 </p>
               </div>
               <Button
@@ -208,7 +214,7 @@ const LearnerProfile = () => {
               edit
             </Button>
           </div>
-        </motion.div>
+        </div>
 
         {/* Tabs */}
         <Tabs defaultValue="about" className="w-full">
@@ -247,7 +253,7 @@ const LearnerProfile = () => {
               <CardContent className="space-y-4">
                 {/* Reviews List */}
                 {reviews.map((r) => (
-                  <motion.div
+                  <div
                     key={r.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -285,15 +291,9 @@ const LearnerProfile = () => {
                     )}
 
                     {/* Replies */}
-                    <AnimatePresence>
+                    <div>
                       {r.showReplies && r.replies.length > 0 && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="ml-4 mt-2 space-y-1 border-l-2 border-purple-400 pl-3"
-                        >
+                        <div className="ml-4 mt-2 space-y-1 border-l-2 border-purple-400 pl-3">
                           {r.replies.map((reply) => (
                             <p
                               key={reply.id}
@@ -302,9 +302,9 @@ const LearnerProfile = () => {
                               <strong>{reply.user}:</strong> {reply.text}
                             </p>
                           ))}
-                        </motion.div>
+                        </div>
                       )}
-                    </AnimatePresence>
+                    </div>
 
                     {/* Show Reply Button */}
                     <button
@@ -347,7 +347,7 @@ const LearnerProfile = () => {
                         </Button>
                       </div>
                     )}
-                  </motion.div>
+                  </div>
                 ))}
 
                 {/* Add Review */}
@@ -385,12 +385,7 @@ const LearnerProfile = () => {
           <h2 className="text-xl font-bold mb-4">Posts</h2>
           <div className="space-y-4">
             {posts.map((post) => (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-              >
+              <div key={post.id}>
                 <Card>
                   <CardHeader className="flex flex-row items-center gap-3">
                     <Avatar>
@@ -433,15 +428,9 @@ const LearnerProfile = () => {
                     </div>
 
                     {/* Comments Section */}
-                    <AnimatePresence>
+                    <div>
                       {post.showComments && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="space-y-2 mt-3"
-                        >
+                        <div className="space-y-2 mt-3">
                           {post.comments.length > 0 ? (
                             post.comments.map((c) => (
                               <div
@@ -482,12 +471,12 @@ const LearnerProfile = () => {
                               Post
                             </Button>
                           </div>
-                        </motion.div>
+                        </div>
                       )}
-                    </AnimatePresence>
+                    </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
