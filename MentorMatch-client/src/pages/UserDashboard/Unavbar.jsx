@@ -67,7 +67,8 @@ const Unavbar = () => {
       console.error("Failed to toggle role:", err);
     }
   };
-  const canToggle = roles.includes("mentor");
+  const canToggle = roles?.includes("mentor");
+  console.log(canToggle)
   const navLinks = {
     learner: [
       {
