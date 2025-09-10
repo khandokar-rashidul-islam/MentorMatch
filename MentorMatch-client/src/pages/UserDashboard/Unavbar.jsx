@@ -67,7 +67,7 @@ const Unavbar = () => {
       console.error("Failed to toggle role:", err);
     }
   };
-  const canToggle = roles.includes("mentor");
+  
   const navLinks = {
     learner: [
       {
@@ -104,6 +104,8 @@ const Unavbar = () => {
       },
     ],
   };
+
+  const canToggle = roles?.includes("mentor");
 
   return (
     <div className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50 animate-fade-in">
