@@ -14,16 +14,16 @@ import { useNavigate } from "react-router";
 const steps = [StepRole, StepOne, StepTwo, StepThree]; // Add more as needed
 
 export default function RegistrationForm() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [init, setInit] = useState(false);
   const { theme } = useTheme();
   const methods = useForm({ mode: "onTouched" });
   const [step, setStep] = useState(0);
   const CurrentStep = steps[step];
-  const progress = ((step + 1-1) / steps.length) * 100;
+  const progress = ((step + 1 - 1) / steps.length) * 100;
 
- const [profileImage, setProfileImage] = useState(null);
-const [register, { isLoading }] = useRegisterMutation();
+  const [profileImage, setProfileImage] = useState(null);
+  const [register, { isLoading }] = useRegisterMutation();
 
 
 
@@ -72,41 +72,41 @@ const [register, { isLoading }] = useRegisterMutation();
   });
 
   // onSubmit function
-const onSubmit = methods.handleSubmit(async (data) => {
-  try {
-    const payload = {
-      role: data.role,
-      user: { email: data.email, password: data.password },
-      ...(data.role === "learner"
-        ? { learnerProfile: LearnerProfile(data) }
-        : { mentorProfile: MentorProfile(data) }),
-    };
+  const onSubmit = methods.handleSubmit(async (data) => {
+    try {
+      const payload = {
+        role: data.role,
+        user: { email: data.email, password: data.password },
+        ...(data.role === "learner"
+          ? { learnerProfile: LearnerProfile(data) }
+          : { mentorProfile: MentorProfile(data) }),
+      };
 
-    const formData = new FormData();
-    formData.append("data", JSON.stringify(payload));
-    if (profileImage) formData.append("profileImage", profileImage);
+      const formData = new FormData();
+      formData.append("data", JSON.stringify(payload));
+      if (profileImage) formData.append("profileImage", profileImage);
 
-    const result = await register(formData).unwrap();
+      const result = await register(formData).unwrap();
 
-    console.log("Raw registration response:", result); // <-- DEBUG
+      console.log("Raw registration response:", result); // <-- DEBUG
 
-    const user = result?.data?.user;
+      const user = result?.data?.user;
 
-    if (!user) throw new Error("User data is missing from response");
+      if (!user) throw new Error("User data is missing from response");
 
-    toast.success("User registered and logged in successfully!");
+      toast.success("User registered and logged in successfully!");
 
-    const role = user.activeRole;
-    if (role === "mentor") navigate("/dashboard/mentor/overview");
-    else if (role === "learner") navigate("/dashboard/learner/all-gigs");
-    else navigate("/");
+      const role = user.activeRole;
+      if (role === "mentor") navigate("/dashboard/mentor/overview");
+      else if (role === "learner") navigate("/dashboard/learner/all-gigs");
+      else navigate("/");
 
-  } catch (err) {
-    console.error("Registration failed:", err);
-    toast.error(err?.data?.message || err.message || "Registration failed");
-  }
-});
-  
+    } catch (err) {
+      console.error("Registration failed:", err);
+      toast.error(err?.data?.message || err.message || "Registration failed");
+    }
+  });
+
   return (
     <FormProvider {...methods}>
       <div className="w-11/12 min-h-screen mx-auto flex flex-col justify-center items-center p-4">
@@ -167,11 +167,10 @@ const onSubmit = methods.handleSubmit(async (data) => {
           <div className=" lg:w-[45%] lg:rounded-l-xl bg-primary text-secondary p-10 flex flex-col justify-between">
             <div>
               <h2 className="text-2xl font-bold mb-4">
-                Professional Registration
+                Connect & Share Your Expertise
               </h2>
               <p className="text-sm mb-6">
-                Create your professional profile and join our community of
-                experts
+               Just a few steps to unlock your profile and connect with others.”
               </p>
 
               <div className="flex flex-col items-start relative  space-y-8 mt-4">
@@ -192,26 +191,26 @@ const onSubmit = methods.handleSubmit(async (data) => {
                       {/* Step circle */}
                       <div
                         className={`h-6 w-6 rounded-full flex items-center justify-center border-2  text-xs font-medium
-                ${
-                  isCompleted
-                    ? "bg-teal-900 border-teal-500 text-teal-500 dark:text-teal-300"
-                    : isActive
-                    ? "bg-white border-teal-300 text-teal-800 dark:text-teal-800 dark:border-teal-800"
-                    : "bg-white border-red-600 text-red-500"
-                }`}
+                ${isCompleted
+                            ? "dark:text-white dark:border-white"
+                            : isActive
+                              ? "bg-white border-teal-500 text-teal-800 dark:text-teal-800 dark:border-teal-800"
+                              : "bg-white border-primary/50 text-primary/70 dark:border-secondary/50 dark:text-secondary/50"
+                          }`}
                       >
                         {isCompleted ? "✓" : index + 1}
                       </div>
 
+                      {isCompleted && <div className={`absolute left-3 top-6 w-[2px] h-6 bg-white my-1`}/>}
+
                       {/* Step label */}
                       <div
-                        className={`ml-3 text-sm ${
-                          isCompleted
-                            ? "text-teal-500 dark:text-teal-900"
-                            : isActive
+                        className={`ml-3 text-sm ${isCompleted
+                          ? "text-teal-500 dark:text-blue-800 font-medium"
+                          : isActive
                             ? "text-white font-semibold"
                             : "text-gray-400 dark:text-gray-600 font-semibold"
-                        }`}
+                          }`}
                       >
                         {label}
                       </div>

@@ -33,7 +33,7 @@ const StepTwo = ({ onNext, onBack, isLast }) => {
           <Select
             onValueChange={(val) =>
               setValue("profession", val, { shouldValidate: true })
-            }
+            } required
           >
             <SelectTrigger>
               <SelectValue placeholder="Select profession" />
@@ -54,7 +54,7 @@ const StepTwo = ({ onNext, onBack, isLast }) => {
           <Select
             onValueChange={(val) =>
               setValue("education", val, { shouldValidate: true })
-            }
+            } required
           >
             <SelectTrigger>
               <SelectValue placeholder="Select education" />
