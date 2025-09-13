@@ -30,6 +30,7 @@ import LearnerProfile from "../pages/UserDashboard/Learner/LearnerProfile";
 import EditTutorProfile from "../pages/UserDashboard/Tutor/TutorProfile/EditTutorProfile";
 import EditProfile from "../pages/UserDashboard/Learner/EditProfile";
 import PublicRoute from "./PublicRoute";
+import ApplyForMentor from "../pages/UserDashboard/Learner/ApplyForMentor";
 
 const router = createBrowserRouter([
   {
@@ -143,6 +144,7 @@ const router = createBrowserRouter([
           { path: "notification", element: <Notify /> },
           { path: "learner-profile/:id", element: <LearnerProfile /> },
           { path: "learner-profile/:id/edit", element: <EditProfile /> },
+          { path: "mentor-apply", element: <ApplyForMentor/> }
         ],
       },
     ],
