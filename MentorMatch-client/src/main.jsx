@@ -19,7 +19,7 @@ createRoot(document.getElementById("root")).render(
           <RouterProvider router={router}>
             <BootstrapApp />
           </RouterProvider>
-          <Toaster />
+          <Toaster richColors position="top-right" />
         </PersistGate>
       </Provider>
     </ThemeProvider>
