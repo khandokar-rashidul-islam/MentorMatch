@@ -46,14 +46,14 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useState } from "react";
+//import { useState } from "react";
 
 const Unavbar = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [logoutApi] = useLogoutMutation();
   const [toggleRole, { isLoading }] = useToggleRoleMutation();
-  const [open, setOpen] = useState(false);
+ // const [open, setOpen] = useState(false);
 
   // Get user from Redux
   const user = useAppSelector((state) => state.auth.user);

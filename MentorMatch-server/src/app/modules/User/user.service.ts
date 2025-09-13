@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import mongoose, { Types, ClientSession } from "mongoose";
+import mongoose, { Types, ClientSession, Model } from "mongoose";
 import bcrypt from "bcrypt";
 import config from "../../config";
 import { UserModel } from "./user.model";
@@ -338,71 +338,80 @@ export const getProfile = async (userId: string) => {
 
 //*----------------------- Edit profile based on role-------------------------------
 
+const PROTECTED_FIELDS = new Set([
+  "_id",
+  "id",
+  "user",
+  "__v",
+  "createdAt",
+  "updatedAt",
+  "approvalStatus",
+]);
+
+export function getAllowedFieldsFromModel<T>(model: Model<T>): string[] {
+  return Object.keys(model.schema.paths).filter(
+    (path) => !PROTECTED_FIELDS.has(path)
+  );
+}
+
 export const editProfile = async (
   userId: string,
   activeRole: "learner" | "mentor",
-  updateData: Partial<IMentorProfile & ILearnerProfile>,
+  updateData: Record<string, any>,
   file?: Express.Multer.File
 ) => {
-  // --- Handle profile image upload ---
+  if (activeRole === "mentor") {
+    const mentor = await MentorProfileModel.findOne({ user: userId });
+    if (!mentor) throw new Error("Mentor profile not found");
+    if (mentor.approvalStatus !== "approved")
+      throw new Error("Mentor profile not approved");
+
+    const allowedFields = getAllowedFieldsFromModel(MentorProfileModel);
+
+    const updateObj: Record<string, any> = {};
+    for (const [key, val] of Object.entries(updateData)) {
+      if (val !== undefined && allowedFields.includes(key))
+        updateObj[key] = val;
+    }
+
+    if (file) {
+      const uploaded = await sendImageToCloudinary(
+        `profile-${userId}-${Date.now()}`,
+        file.buffer
+      );
+      updateObj.profileImage = uploaded.secure_url;
+    }
+
+    return await MentorProfileModel.findOneAndUpdate(
+      { user: userId },
+      { $set: updateObj },
+      { new: true, runValidators: true }
+    );
+  }
+
+  // Learner
+  const learner = await LearnerProfileModel.findOne({ user: userId });
+  if (!learner) throw new Error("Learner profile not found");
+
+  const allowedFields = getAllowedFieldsFromModel(LearnerProfileModel);
+
+  const updateObj: Record<string, any> = {};
+  for (const [key, val] of Object.entries(updateData)) {
+    if (val !== undefined && allowedFields.includes(key)) updateObj[key] = val;
+  }
+
   if (file) {
     const uploaded = await sendImageToCloudinary(
       `profile-${userId}-${Date.now()}`,
       file.buffer
     );
-    updateData.profileImage = uploaded.secure_url;
+    updateObj.profileImage = uploaded.secure_url;
   }
 
-  if (activeRole === "mentor") {
-    const mentor = await MentorProfileModel.findOne({ user: userId });
-    if (!mentor)
-      throw new AppError(httpStatus.NOT_FOUND, "Mentor profile not found");
-
-    // Only allow editing if approved
-    if (mentor.approvalStatus !== "approved")
-      throw new AppError(
-        httpStatus.FORBIDDEN,
-        "Mentor profile not approved. Cannot edit."
-      );
-
-    // Filter only fields that exist in the Mentor model
-    const mentorFields = Object.keys(updateData).filter((key) =>
-      Object.keys(mentor.toObject()).includes(key)
-    );
-
-    const mentorUpdate: any = {};
-    mentorFields.forEach((key) => {
-      mentorUpdate[key] = updateData[key as keyof typeof updateData];
-    });
-
-    const updated = await MentorProfileModel.findOneAndUpdate(
-      { user: userId },
-      { $set: mentorUpdate },
-      { new: true }
-    );
-    return updated;
-  }
-
-  // Learner
-  const learner = await LearnerProfileModel.findOne({ user: userId });
-  if (!learner)
-    throw new AppError(httpStatus.NOT_FOUND, "Learner profile not found");
-
-  // Filter only fields that exist in the Learner model
-  const learnerFields = Object.keys(updateData).filter((key) =>
-    Object.keys(learner.toObject()).includes(key)
-  );
-
-  const learnerUpdate: any = {};
-  learnerFields.forEach((key) => {
-    learnerUpdate[key] = updateData[key as keyof typeof updateData];
-  });
-
-  const updated = await LearnerProfileModel.findOneAndUpdate(
+  return await LearnerProfileModel.findOneAndUpdate(
     { user: userId },
-    { $set: learnerUpdate },
-    { new: true }
+    { $set: updateObj },
+    { new: true, runValidators: true }
   );
-
-  return updated;
+  
 };

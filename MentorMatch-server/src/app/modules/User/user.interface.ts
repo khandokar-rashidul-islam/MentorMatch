@@ -5,10 +5,11 @@ import { IMentorProfile } from "../mentor/mentor.interface";
 import { TUserRole } from "./user.constant";
 import { Request } from "express";
 
+
 export interface IUser {
   _id?: Types.ObjectId;
   email: string;
-  password : string;
+  password: string;
   role: TUserRole[];
   activeRole: "learner" | "mentor"; // currently active role
   status: "in-progress" | "blocked";
@@ -31,11 +32,11 @@ export interface MentorSpecificData {
 
 // Common type for req.user
 export interface AuthUserPayload {
-  id: string;            // _id of user/admin
+  id: string; // _id of user/admin
   email?: string;
   name?: string;
-  role?: TUserRole[];         // array of roles
-  activeRole?: TUserRole | string; 
+  role?: TUserRole[]; // array of roles
+  activeRole?: TUserRole | string;
 }
 
 // Updated AuthRequest
@@ -43,7 +44,7 @@ export interface AuthRequest<
   P = any,
   ResBody = any,
   ReqBody = any,
-  ReqQuery = any
+  ReqQuery = any,
 > extends Request<P, ResBody, ReqBody, ReqQuery> {
   user?: AuthUserPayload;
 }

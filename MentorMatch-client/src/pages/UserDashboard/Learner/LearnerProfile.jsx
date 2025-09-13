@@ -230,11 +230,7 @@ const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
                 <CardTitle>About</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <p>
-                  Hello! I'm a dedicated learner with a focus on full-stack web
-                  development. I enjoy creating clean, user-friendly
-                  applications and continuously improving my skills.
-                </p>
+                <p>Hello! {profile?.about}</p>
                 <ul className="list-disc list-inside">
                   <li>🎯 Solved 200+ coding problems</li>
                   <li>🏆 Completed MERN Stack Bootcamp</li>

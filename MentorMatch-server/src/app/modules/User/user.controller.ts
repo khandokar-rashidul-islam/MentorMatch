@@ -5,7 +5,6 @@ import config from "../../config";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
-import AppError from "../../errors/AppError";
 
 //*-----------------user registration and login-----------------------
 
@@ -136,25 +135,27 @@ export const getProfile = catchAsync(async (req, res) => {
 //*----------------------- Edit profile based on role-------------------------------
 
 export const editProfileController = catchAsync(async (req, res) => {
-  const authReq = req as any;
-  const userId = authReq.user?.id;
-  if (!userId) throw new AppError(404, "User not found");
+    const userId = (req as any).user?.id;
+    const activeRole = (req as any).user?.activeRole as "learner" | "mentor";
 
-  const activeRole = authReq.user?.activeRole as "mentor" | "learner";
-  const updateData = req.body;
-  const file = req.file;
+     if (!userId) throw new Error("User not found in request");;
 
-  const updatedProfile = await userService.editProfile(
-    userId,
-    activeRole,
-    updateData,
-    file
-  );
+    // Extract update data from request body
+    const updateData = req.body;
+    const file = req.file;
 
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: `${activeRole} Profile updated successfully`,
-    data: updatedProfile,
-  });
-});
+    const updatedProfile = await userService.editProfile(
+      userId,
+      activeRole,
+      updateData,
+      file
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Profile updated successfully",
+      data: updatedProfile,
+    });
+  }
+);

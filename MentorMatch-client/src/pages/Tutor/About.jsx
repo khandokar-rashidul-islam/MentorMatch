@@ -1,8 +1,16 @@
 import React from 'react'
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useGetActiveProfileQuery } from '../../redux/features/user/userApi';
 
 const About = () => {
+
+const { data } = useGetActiveProfileQuery(null, {
+  refetchOnMountOrArgChange: true,
+});
+ const user = data?.data?.user;
+ const profile = user?.profile;
+
   const subjects = [
     "Algebra",
     "Calculus",
@@ -20,10 +28,7 @@ const About = () => {
         <div className="mt-6 sm:mt-8">
           <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">About</h3>
           <p className="text-muted-foreground leading-relaxed">
-            With over 10 years of experience in education, I specialize in making complex mathematical
-            and physics concepts accessible and engaging. I hold a PhD in Applied Mathematics from MIT
-            and have helped over 500 students achieve their academic goals. My teaching approach focuses
-            on building strong foundations and developing problem-solving skills that last a lifetime.
+             {profile?.about}
           </p>
         </div>
 
