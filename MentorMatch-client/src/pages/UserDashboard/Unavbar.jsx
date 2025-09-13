@@ -246,8 +246,8 @@ const Unavbar = () => {
                 </Avatar>
               </DropdownMenuTrigger>
               {role && (
-                <span className=" absolute -bottom-0 -right-1 flex items-center justify-center w-3 h-3 text-[8px] font-bold rounded-full text-white bg-green-600">
-                  {role.charAt(0).toUpperCase()}
+                <span className=" absolute -bottom-1.5 -right-[2px] -z-10 flex items-center justify-center w-9 h-2 text-[7px] font-bold rounded-xs text-white bg-green-600">
+                  {role}
                 </span>
               )}
             </div>
