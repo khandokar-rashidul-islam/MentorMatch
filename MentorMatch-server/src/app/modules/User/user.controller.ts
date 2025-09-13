@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as userService from "./user.service";
 import { AuthRequest, RegisterData } from "./user.interface";
 import config from "../../config";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
+import AppError from "../../errors/AppError";
 
 //*-----------------user registration and login-----------------------
 
@@ -110,7 +112,7 @@ export const toggleActiveRole = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: `Active role switched to ${user.activeRole}`,
-    data: { user},
+    data: { user },
   });
 });
 
@@ -128,5 +130,31 @@ export const getProfile = catchAsync(async (req, res) => {
     success: true,
     message: "Active role profile fetched successfully",
     data: profile,
+  });
+});
+
+//*----------------------- Edit profile based on role-------------------------------
+
+export const editProfileController = catchAsync(async (req, res) => {
+  const authReq = req as any;
+  const userId = authReq.user?.id;
+  if (!userId) throw new AppError(404, "User not found");
+
+  const activeRole = authReq.user?.activeRole as "mentor" | "learner";
+  const updateData = req.body;
+  const file = req.file;
+
+  const updatedProfile = await userService.editProfile(
+    userId,
+    activeRole,
+    updateData,
+    file
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: `${activeRole} Profile updated successfully`,
+    data: updatedProfile,
   });
 });

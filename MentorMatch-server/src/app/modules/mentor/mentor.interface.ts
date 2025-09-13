@@ -1,7 +1,8 @@
 import { Types } from "mongoose";
+import { TApproval }  from "../user/user.constant";
 
-export interface IMentorProfile {
-  _id?: Types.ObjectId;
+// Core mentor fields (used for registration)
+export interface IMentorProfileCore {
   user: Types.ObjectId;
   profileImage?: string;
   name: string;
@@ -18,6 +19,20 @@ export interface IMentorProfile {
   bio?: string;
   experienceYears?: number;
   portfolioLink?: string;
-  approvalStatus: "pending" | "approved" | "rejected";
+  approvalStatus: TApproval;
 }
 
+// Edit-time extra fields
+export interface IMentorProfileExtra {
+  about?: string;
+  certifications?: string[];
+  tutoringPlans?: string[];
+  educationQualifications?: string[];
+  frequentlyAskedQuestions?: { question: string; answer: string }[];
+}
+
+// Full mentor profile
+export type IMentorProfile = IMentorProfileCore &
+  IMentorProfileExtra & {
+    _id?: Types.ObjectId;
+  };

@@ -218,7 +218,7 @@ const Unavbar = () => {
           <DropdownMenu>
             <div className="relative inline-block">
               <DropdownMenuTrigger asChild>
-                <Avatar className="cursor-pointer border-2 border-green-600 ">
+                <Avatar className="cursor-pointer border-2 border-primary ">
                   {user?.profileImage ? (
                     <AvatarImage src={user.profileImage} />
                   ) : (
@@ -234,7 +234,7 @@ const Unavbar = () => {
                 </Avatar>
               </DropdownMenuTrigger>
               {role && (
-                <span className=" absolute -bottom-1.5 -right-[2px] -z-10 flex items-center justify-center w-9 h-2 text-[7px] font-bold rounded-xs text-white bg-green-600">
+                <span className=" absolute -bottom-1.5 -right-[2px] -z-10 flex items-center justify-center w-9 h-2 text-[7px] font-bold rounded-xs text-white bg-primary">
                   {role}
                 </span>
               )}

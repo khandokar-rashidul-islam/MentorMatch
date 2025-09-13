@@ -19,3 +19,4 @@ export const USER_STATUS = {
 // export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
 // Type for all user roles
 export type TUserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
+export type TApproval = typeof APPROVAL_STATUS[keyof typeof APPROVAL_STATUS]

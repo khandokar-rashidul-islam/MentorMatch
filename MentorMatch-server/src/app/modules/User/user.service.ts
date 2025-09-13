@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Types, ClientSession } from "mongoose";
 import bcrypt from "bcrypt";
 import config from "../../config";
@@ -333,4 +334,75 @@ export const getProfile = async (userId: string) => {
       profile: profileData, // full active role profile
     },
   };
+};
+
+//*----------------------- Edit profile based on role-------------------------------
+
+export const editProfile = async (
+  userId: string,
+  activeRole: "learner" | "mentor",
+  updateData: Partial<IMentorProfile & ILearnerProfile>,
+  file?: Express.Multer.File
+) => {
+  // --- Handle profile image upload ---
+  if (file) {
+    const uploaded = await sendImageToCloudinary(
+      `profile-${userId}-${Date.now()}`,
+      file.buffer
+    );
+    updateData.profileImage = uploaded.secure_url;
+  }
+
+  if (activeRole === "mentor") {
+    const mentor = await MentorProfileModel.findOne({ user: userId });
+    if (!mentor)
+      throw new AppError(httpStatus.NOT_FOUND, "Mentor profile not found");
+
+    // Only allow editing if approved
+    if (mentor.approvalStatus !== "approved")
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        "Mentor profile not approved. Cannot edit."
+      );
+
+    // Filter only fields that exist in the Mentor model
+    const mentorFields = Object.keys(updateData).filter((key) =>
+      Object.keys(mentor.toObject()).includes(key)
+    );
+
+    const mentorUpdate: any = {};
+    mentorFields.forEach((key) => {
+      mentorUpdate[key] = updateData[key as keyof typeof updateData];
+    });
+
+    const updated = await MentorProfileModel.findOneAndUpdate(
+      { user: userId },
+      { $set: mentorUpdate },
+      { new: true }
+    );
+    return updated;
+  }
+
+  // Learner
+  const learner = await LearnerProfileModel.findOne({ user: userId });
+  if (!learner)
+    throw new AppError(httpStatus.NOT_FOUND, "Learner profile not found");
+
+  // Filter only fields that exist in the Learner model
+  const learnerFields = Object.keys(updateData).filter((key) =>
+    Object.keys(learner.toObject()).includes(key)
+  );
+
+  const learnerUpdate: any = {};
+  learnerFields.forEach((key) => {
+    learnerUpdate[key] = updateData[key as keyof typeof updateData];
+  });
+
+  const updated = await LearnerProfileModel.findOneAndUpdate(
+    { user: userId },
+    { $set: learnerUpdate },
+    { new: true }
+  );
+
+  return updated;
 };

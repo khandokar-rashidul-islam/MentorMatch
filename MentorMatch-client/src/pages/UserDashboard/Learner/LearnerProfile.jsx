@@ -12,9 +12,9 @@ import { useGetActiveProfileQuery } from "../../../redux/features/user/userApi";
 const LearnerProfile = () => {
    const navigate = useNavigate();
 
-const { data, isLoading, isError } = useGetActiveProfileQuery();
-
-
+const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
+  refetchOnMountOrArgChange: true,
+});
 
 
 

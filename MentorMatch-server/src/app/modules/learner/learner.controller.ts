@@ -6,7 +6,6 @@ import { AuthRequest } from "../user/user.interface";
 import AppError from "../../errors/AppError";
 
 
-
 //* learner -> apply to become mentor (later)
 export const applyLearnerToMentor = catchAsync(async (req, res) => {
 

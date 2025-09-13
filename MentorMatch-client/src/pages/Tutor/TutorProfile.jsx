@@ -18,7 +18,9 @@ import { useGetActiveProfileQuery } from "../../redux/features/user/userApi";
 
 const TutorProfile = () => {
 
-const { data, isLoading, isError } = useGetActiveProfileQuery();
+const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
+  refetchOnMountOrArgChange: true,
+});
 
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(247);

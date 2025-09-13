@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { ILearnerProfile } from "./learner.interface.js";
+import { ILearnerProfile } from "./learner.interface";
 
 const learnerProfileSchema = new Schema<ILearnerProfile>(
   {
@@ -10,20 +10,26 @@ const learnerProfileSchema = new Schema<ILearnerProfile>(
       required: true,
     },
     profileImage: String,
-    name: { type: String, required: [true, "Name is required"], unique: true },
-    phone: {
-      type: String,
-      required: [true, "phone number is required"],
-      unique: true,
-    },
+    name: { type: String, required: true, unique: true },
+    phone: { type: String, required: true, unique: true },
     birthDate: String,
-    nidOrBirthCertId: { type: String, unique: true },
+    nidOrBirthCertId: String,
     bankAccountNo: String,
     gender: String,
     address: String,
     education: String,
     educationInstitute: String,
     profession: String,
+
+    // Optional edit-time fields
+    about: { type: String, default: undefined },
+    certifications: { type: [String], default: undefined },
+    tutoringPlans: { type: [String], default: undefined },
+    educationQualifications: { type: [String], default: undefined },
+    frequentlyAskedQuestions: {
+      type: [{ question: String, answer: String }],
+      default: undefined,
+    },
   },
   { timestamps: true }
 );

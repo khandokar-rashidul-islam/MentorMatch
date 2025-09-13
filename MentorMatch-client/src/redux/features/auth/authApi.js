@@ -66,6 +66,7 @@ export const authApi = baseApi.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           dispatch(setUser({ user: data.data.user }));
+          dispatch(baseApi.util.invalidateTags(["UserProfile"]));
         } catch {
           await clearPersistedAuth();
           dispatch(logout());
