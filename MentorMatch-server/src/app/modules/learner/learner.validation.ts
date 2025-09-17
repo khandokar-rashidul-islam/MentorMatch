@@ -2,7 +2,6 @@ import { z } from "zod";
 
 // Base schema for registration
 export const learnerProfileSchema = z.object({
-  profileImage: z.string().optional(),
   name: z.string().min(1, { message: "Name is required" }),
   phone: z.string(),
   birthDate: z
@@ -20,5 +19,6 @@ export const learnerProfileSchema = z.object({
 
 // Edit schema for update — all fields optional + extra edit-time fields
 export const learnerEditSchema = learnerProfileSchema.partial().extend({
+  profileImage: z.string().optional(),
   about: z.string().optional(),
 });
