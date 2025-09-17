@@ -80,6 +80,7 @@ const EditProfile = () => {
 
     await editProfile(formData).unwrap();
     toast.success("Profile updated successfully!");
+    navigate("/dashboard/learner/learner-profile");
     setEditable(false);
   };
 
