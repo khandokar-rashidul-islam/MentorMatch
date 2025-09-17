@@ -38,23 +38,6 @@ const schema = z.object({
   educationInstitute: z.string().optional()
 });
 
-// Default learner data
-const defaultLearner = {
-  profileImage: "https://i.pravatar.cc/150?img=12",
-  name: "student",
-  profession: "MERN Stack Enthusiast | Passionate Problem Solver",
-  phone: "01712345678",
-  birthDate: "2000-08-15",
-  nidOrBirthCertId: "1234567890123",
-  bankAccountNo: "9876543210",
-  address: "Dhaka, Bangladesh",
-  gender: "male",
-  about:
-    "I am a passionate learner and developer with strong problem-solving skills and interest in full-stack development.",
-  education:
-    "B.Sc. in Computer Science & Engineering, 8th Semester, Example University",
-  educationInstitute: "standford university"
-};
 
 const EditProfile = () => {
   const navigate = useNavigate();
@@ -70,8 +53,7 @@ const EditProfile = () => {
   const [editable, setEditable] = useState(false);
 
   const form = useForm({
-    resolver: zodResolver(schema),
-    defaultValues: defaultLearner
+    resolver: zodResolver(schema)
   });
 
   const onSubmit = async (data) => {
