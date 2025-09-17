@@ -162,7 +162,7 @@ const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
       <div className="max-w-5xl mx-auto p-4 space-y-6">
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row items-center gap-6 bg-white dark:bg-gray-900 shadow-lg rounded-xl p-6">
-          <Avatar className="w-24 h-24 border-4 border-purple-500">
+          <Avatar className="w-24 h-24 border-4 border-primary">
             {profile?.profileImage ? (
               <AvatarImage src={profile.profileImage} />
             ) : (

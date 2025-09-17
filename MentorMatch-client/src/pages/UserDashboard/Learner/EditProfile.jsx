@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import { useEditActiveProfileMutation, useGetActiveProfileQuery } from "../../../redux/features/user/userApi";
 
 const schema = z.object({
-  image: z.any(),
+  profileImage: z.any(),
   name: z.string().min(2, "Name is required"),
   profession: z.string().optional(),
   phone: z.string().min(10),
@@ -35,6 +35,7 @@ const schema = z.object({
   gender: z.any(),
   about: z.string().optional(),
   education: z.string().optional(),
+  educationInstitute: z.string().optional()
 });
 
 // Default learner data
@@ -52,6 +53,7 @@ const defaultLearner = {
     "I am a passionate learner and developer with strong problem-solving skills and interest in full-stack development.",
   education:
     "B.Sc. in Computer Science & Engineering, 8th Semester, Example University",
+  educationInstitute: "standford university"
 };
 
 const EditProfile = () => {
@@ -60,16 +62,16 @@ const EditProfile = () => {
   const [preview, setPreview] = useState(null);
   // fetch old data
   const { data, isLoading } = useGetActiveProfileQuery();
-  //console.log(data)
+  console.log(data)
   const profile = data?.data?.user?.profile;
-  //console.log(profile)
+  console.log(profile)
   // mutation
   const [editProfile, { isLoading: isSaving }] = useEditActiveProfileMutation();
   const [editable, setEditable] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(schema),
-    defaultValues: (profile) ? profile : defaultLearner,
+    defaultValues: defaultLearner
   });
 
   const onSubmit = async (data) => {
@@ -82,7 +84,7 @@ const EditProfile = () => {
 
     // Append image if changed
     if (selectedImage) {
-      formData.append("profileImage", selectedImage);
+      formData.append("profileImage", selectedImage); // field name must match backend
     }
 
 
@@ -92,6 +94,24 @@ const EditProfile = () => {
     setEditable(false);
   };
 
+  useEffect(() => {
+    if (profile) {
+      form.reset({
+        profileImage: profile.profileImage || "",
+        name: profile.name || "",
+        profession: profile.profession || "",
+        phone: profile.phone || "",
+        birthDate: profile.birthDate || "",
+        nidOrBirthCertId: profile.nidOrBirthCertId || "",
+        bankAccountNo: profile.bankAccountNo || "",
+        address: profile.address || "",
+        gender: profile.gender || "Other",
+        about: profile.about || "",
+        educationInstitute: profile.educationInstitute || "",
+        education: profile.education || "",
+      });
+    }
+  }, [profile, form]);
   useEffect(() => {
     if (!selectedImage) {
       setPreview(null);
@@ -159,7 +179,6 @@ const EditProfile = () => {
                               onChange={(e) => {
                                 if (e.target.files && e.target.files[0]) {
                                   setSelectedImage(e.target.files[0]);
-                                  form.setValue("profileImage", e.target.files[0]);
                                 }
                               }} />
                           </FormControl>
@@ -277,12 +296,24 @@ const EditProfile = () => {
 
                 <FormField
                   control={form.control}
-                  name="about"
+                  name="education"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
-                      <FormLabel>About</FormLabel>
+                      <FormLabel>Highest Completed Degree</FormLabel>
                       <FormControl>
-                        <Textarea {...field} disabled={!editable} />
+                        <Input {...field} disabled={!editable} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="educationInstitute"
+                  render={({ field }) => (
+                    <FormItem className="col-span-2">
+                      <FormLabel>Institution Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} disabled={!editable} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -290,10 +321,10 @@ const EditProfile = () => {
 
                 <FormField
                   control={form.control}
-                  name="education"
+                  name="about"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
-                      <FormLabel>Education</FormLabel>
+                      <FormLabel>About</FormLabel>
                       <FormControl>
                         <Textarea {...field} disabled={!editable} />
                       </FormControl>
