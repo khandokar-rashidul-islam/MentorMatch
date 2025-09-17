@@ -19,10 +19,6 @@ export interface ILearnerProfileCore {
 // Edit-time extra fields
 export interface ILearnerProfileExtra {
   about?: string;
-  certifications?: string[];
-  tutoringPlans?: string[];
-  educationQualifications?: string[];
-  frequentlyAskedQuestions?: { question: string; answer: string }[];
 }
 
 // Full learner profile

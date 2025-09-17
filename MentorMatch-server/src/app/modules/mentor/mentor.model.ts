@@ -11,7 +11,7 @@ import { APPROVAL_STATUS } from "../user/user.constant";
       required: true,
     },
     profileImage: String,
-    name: { type: String, required: true, unique: true },
+    name: { type: String, required: true},
     phone: { type: String, required: true, unique: true },
     birthDate: String,
     nidOrBirthCertId: String,

@@ -10,7 +10,7 @@ const learnerProfileSchema = new Schema<ILearnerProfile>(
       required: true,
     },
     profileImage: String,
-    name: { type: String, required: true, unique: true },
+    name: { type: String, required: true},
     phone: { type: String, required: true, unique: true },
     birthDate: String,
     nidOrBirthCertId: String,
@@ -20,16 +20,8 @@ const learnerProfileSchema = new Schema<ILearnerProfile>(
     education: String,
     educationInstitute: String,
     profession: String,
-
     // Optional edit-time fields
     about: { type: String, default: undefined },
-    certifications: { type: [String], default: undefined },
-    tutoringPlans: { type: [String], default: undefined },
-    educationQualifications: { type: [String], default: undefined },
-    frequentlyAskedQuestions: {
-      type: [{ question: String, answer: String }],
-      default: undefined,
-    },
   },
   { timestamps: true }
 );
