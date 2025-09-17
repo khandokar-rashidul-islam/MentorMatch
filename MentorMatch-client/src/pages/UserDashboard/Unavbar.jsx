@@ -262,9 +262,9 @@ const Unavbar = () => {
                   <NavLink
                     to={
                       role === "mentor"
-                        ? "/dashboard/mentor/mentor-profile/:id"
+                        ? "/dashboard/mentor/mentor-profile/"
                         : role === "learner"
-                          ? "/dashboard/learner/learner-profile/:id"
+                          ? "/dashboard/learner/learner-profile/"
                           : " "
                     }
                     className={

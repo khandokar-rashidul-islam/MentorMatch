@@ -17,270 +17,179 @@ import {
   Camera,
   HelpCircle,
 } from "lucide-react";
-
-const defaultValues = {
-  name: "Dr. Sarah Johnson",
-  email: "sarah.johnson@mentormatch.com",
-  phone: "+1 (555) 123-4567",
-  address: "San Francisco, CA",
-  specialization: "Computer Science & Mathematics",
-  gender: "Female",
-  birthdate: "2000-01-01",
-  nid: "1234567890",
-  bankAccount: "9876543210",
-  about:
-    "Passionate educator with over 8 years of experience in computer science and mathematics. I specialize in making complex concepts accessible and engaging for students of all levels. My teaching philosophy focuses on building confidence through practical problem-solving and real-world applications.",
-  skills: [
-    "JavaScript",
-    "Python",
-    "React",
-    "Node.js",
-    "Machine Learning",
-    "Data Structures",
-    "Algorithms",
-    "Mathematics",
-    "Statistics",
-    "Web Development",
-  ],
-  certifications: [
-    {
-      name: "Certified Computer Science Educator",
-      organization: "IEEE Computer Society",
-      year: "2023",
-      credentialId: "CSE-2023-4567",
-    },
-    {
-      name: "Machine Learning Professional Certificate",
-      organization: "Stanford University",
-      year: "2022",
-      credentialId: "ML-PROF-2022-891",
-    },
-    {
-      name: "Advanced Teaching Methods",
-      organization: "Education Excellence Institute",
-      year: "2021",
-      credentialId: "ATM-2021-234",
-    },
-  ],
-  education: [
-    {
-      degree: "Ph.D. in Computer Science",
-      institution: "Stanford University",
-      year: "2018",
-      gpa: "3.9/4.0",
-    },
-    {
-      degree: "M.S. in Computer Science",
-      institution: "MIT",
-      year: "2014",
-      gpa: "3.8/4.0",
-    },
-    {
-      degree: "B.S. in Computer Science & Mathematics",
-      institution: "UC Berkeley",
-      year: "2012",
-      gpa: "3.9/4.0",
-    },
-  ],
-  plans: {
-    instant: {
-      price: 25,
-      description: "Quick problem-solving session",
-      features: [
-        "One-on-one session",
-        "Immediate help",
-        "30-60 minutes",
-        "Screen sharing",
-      ],
-    },
-    weekly: {
-      basic: {
-        price: 120,
-        description: "Essential weekly support",
-        features: [
-          "2 sessions per week",
-          "Homework help",
-          "Progress tracking",
-          "Email support",
-        ],
-      },
-      intensive: {
-        price: 200,
-        description: "Comprehensive weekly program",
-        features: [
-          "4 sessions per week",
-          "Custom study plan",
-          "24/7 messaging",
-          "Mock tests",
-          "Video resources",
-        ],
-      },
-    },
-    monthly: {
-      standard: {
-        price: 450,
-        description: "Complete monthly mentorship",
-        features: [
-          "8 sessions per month",
-          "Personalized curriculum",
-          "Progress reports",
-          "Parent updates",
-        ],
-      },
-      premium: {
-        price: 750,
-        description: "Premium monthly package",
-        features: [
-          "12 sessions per month",
-          "Advanced projects",
-          "Career guidance",
-          "Certification prep",
-          "Priority support",
-        ],
-      },
-      elite: {
-        price: 1200,
-        description: "Elite comprehensive program",
-        features: [
-          "Unlimited sessions",
-          "Personal study plan",
-          "Interview prep",
-          "Industry connections",
-          "Guaranteed results",
-          "24/7 priority support",
-        ],
-      },
-    },
-  },
-  faqs: [
-    {
-      question: "How do I update my profile picture?",
-      answer:
-        "Click on the camera icon on your profile picture and select 'Upload New Photo'. We recommend using a square image of at least 400x400 pixels for the best quality.",
-    },
-    {
-      question: "Can I edit my tutoring plans after publishing?",
-      answer:
-        "Yes, you can edit your tutoring plans at any time. Changes will be reflected immediately on your profile. However, existing bookings will maintain their original pricing.",
-    },
-    {
-      question: "How many skills should I add to my profile?",
-      answer:
-        "We recommend adding 5-15 skills that best represent your expertise. Focus on the subjects and technologies you're most confident teaching.",
-    },
-    {
-      question: "Are certifications required?",
-      answer:
-        "Certifications are not mandatory but highly recommended. They help build trust with students and can increase your booking rate significantly.",
-    },
-  ],
-};
+import {
+  useEditActiveProfileMutation,
+  useGetActiveProfileQuery,
+} from "../../../../redux/features/user/userApi";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import EditPlan from "./EditPlan";
 
 export default function EditTutorProfile() {
   const navigate = useNavigate();
+
+  // fetch old data
+  const { data, isLoading } = useGetActiveProfileQuery();
+  const profile = data?.data?.user?.profile;
+
+  // mutation
+  const [editProfile, { isLoading: isSaving }] = useEditActiveProfileMutation();
+
+  // local preview state for image
+  const [previewImage, setPreviewImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+
   const {
     control,
     register,
     handleSubmit,
+    reset,
     watch,
     setValue,
-    formState: { errors, isSubmitting },
+    getValues,
+    formState: { errors },
   } = useForm({
-    defaultValues,
+    defaultValues: {
+      name: "",
+      phone: "",
+      birthDate: "",
+      nidOrBirthCertId: "",
+      bankAccountNo: "",
+      gender: "",
+      address: "",
+      education: "",
+      educationInstitute: "",
+      profession: "",
+      expertiseAreas: [],
+      bio: "",
+      experienceYears: "",
+      about: "",
+      skills: [],
+      certifications: [],
+      educationDetails: [],
+      plans: {
+        instant: { price: 0, description: "", features: [] },
+        weekly: {
+          basic: { price: 0, description: "", features: [] },
+          intensive: { price: 0, description: "", features: [] },
+        },
+        monthly: {
+          standard: { price: 0, description: "", features: [] },
+          premium: { price: 0, description: "", features: [] },
+          elite: { price: 0, description: "", features: [] },
+        },
+      },
+      faqs: [],
+    },
   });
 
-  // For skills, we'll use regular state since it's just strings
-  const skills = watch("skills") || [];
-
-  const addSkillToForm = (skill) => {
-    if (skill.trim() && !skills.includes(skill.trim())) {
-      setValue("skills", [...skills, skill.trim()]);
+  // hydrate form with old data
+  useEffect(() => {
+    if (profile) {
+      reset(profile);
+      setPreviewImage(profile.profileImage);
     }
-  };
+  }, [profile, reset]);
 
-  const removeSkillFromForm = (index) => {
-    setValue(
-      "skills",
-      skills.filter((_, i) => i !== index)
-    );
-  };
+
+//skills
+const skills = watch("skills") || [];
+
+const addSkill = (value) => {
+  if (value && !skills.includes(value)) {
+    setValue("skills", [...skills, value], { shouldValidate: true });
+  }
+};
+
+const removeSkill = (index) => {
+  const updated = [...skills];
+  updated.splice(index, 1);
+  setValue("skills", updated, { shouldValidate: true });
+};
+
+  // dynamic fields
 
   const {
     fields: certificationFields,
-    append: appendCertification,
-    remove: removeCertification,
-  } = useFieldArray({
-    control,
-    name: "certifications",
-  });
+    append: addCert,
+    remove: removeCert,
+  } = useFieldArray({ control, name: "certifications" });
 
   const {
     fields: educationFields,
-    append: appendEducation,
+    append: addEducation,
     remove: removeEducation,
-  } = useFieldArray({
-    control,
-    name: "education",
-  });
+  } = useFieldArray({ control, name: "educationDetails" });
 
   const {
     fields: faqFields,
-    append: appendFaq,
+    append: addFaq,
     remove: removeFaq,
-  } = useFieldArray({
-    control,
-    name: "faqs",
-  });
+  } = useFieldArray({ control, name: "faqs" });
 
-  const watchedName = watch("name");
-
-  const onSubmit = async (data) => {
-    try {
-      // In real app, this would make an API call
-      console.log("Profile data:", data);
-
-      // toast({
-      //   title: "Profile Updated",
-      //   description: "Your profile has been successfully updated.",
-      // });
-
-      navigate("/dashboard/mentor/mentor-profile/:id");
-    } catch (error) {
-      // toast({
-      //   title: "Error",
-      //   description: "Failed to update profile. Please try again.",
-      //   variant: "destructive"
-      // });
-      console.log(error);
+  // image handling
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setPreviewImage(URL.createObjectURL(file));
     }
   };
 
-  const addFeatureToField = (path, feature) => {
-    const currentFeatures = watch(path) || [];
-    setValue(path, [...currentFeatures, feature]);
+  const watchedName = watch("name");
+
+  // Add feature to a field
+  const addFeatureToField = (fieldName, feature) => {
+    const current = getValues(fieldName) || [];
+    setValue(fieldName, [...current, feature], {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
   };
 
-  const removeFeatureFromField = (path, index) => {
-    const currentFeatures = watch(path) || [];
-    setValue(
-      path,
-      currentFeatures.filter((_, i) => i !== index)
-    );
+  // Remove feature from a field
+  const removeFeatureFromField = (fieldName, index) => {
+    const current = getValues(fieldName) || [];
+    const updated = current.filter((_, i) => i !== index);
+    setValue(fieldName, updated, { shouldValidate: true, shouldDirty: true });
   };
 
+  const onSubmit = async (formData) => {
+    try {
+      const body = new FormData();
+
+      // attach JSON fields
+      body.append("data", JSON.stringify(formData));
+
+      // attach image if changed
+      if (imageFile) {
+        body.append("profileImage", imageFile);
+      }
+
+      await editProfile(body).unwrap();
+
+      toast.success("Profile updated successfully");
+      navigate("/dashboard/mentor/mentor-profile");
+    } catch (err) {
+      toast.error("Failed to update profile");
+      console.error(err);
+    }
+  };
+
+  if (isLoading) return <p>Loading profile...</p>;
   return (
     <div className="pt-28 w-11/12 mx-auto">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className=" space-y-6 animate-fade-in"
       >
-        {/* Header Actions */}
+        {/*-------------------Header Actions------------------------------ */}
         <div className="flex items-center justify-between flex-wrap gap-3">
           <NavLink to="/dashboard/mentor/mentor-profile/:id/edit">
             <Button
               type="button"
               variant="outline"
-              //   onClick={() => navigate(`/dashboard/mentor/mentor-profile/${id}`)}
+              // onClick={() => navigate(`/dashboard/mentor/mentor-profile`)}
               onClick={() => navigate(-1)}
               className="hover:bg-muted"
             >
@@ -290,24 +199,34 @@ export default function EditTutorProfile() {
           </NavLink>
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSaving}
             className="gradient-primary hover:shadow-hover"
           >
             <Save className="h-4 w-4 mr-2" />
-            {isSubmitting ? "Saving..." : "Save Changes"}
+            {isSaving ? "Saving..." : "Save Changes"}
           </Button>
         </div>
 
-        {/* Profile Picture Section */}
+        {/*-------------------- Profile Picture Section -----------------*/}
+
         <Card className="dashboard-card">
           <CardHeader>
-            <CardTitle>Profile Picture</CardTitle>
+            <CardTitle className="text-primary font-bold text-2xl">
+              Profile Picture
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-6 flex-wrap">
               <div className="relative">
                 <Avatar className="h-24 w-24 ring-4 ring-primary/10">
-                  <AvatarImage src="/placeholder.svg" alt="Profile" />
+                  <AvatarImage
+                    src={
+                      previewImage ||
+                      profile?.profileImage ||
+                      "/placeholder.svg"
+                    }
+                    alt="Profile"
+                  />
                   <AvatarFallback className="text-xl font-semibold bg-primary/10 text-primary">
                     {watchedName
                       ?.split(" ")
@@ -315,10 +234,22 @@ export default function EditTutorProfile() {
                       .join("") || "U"}
                   </AvatarFallback>
                 </Avatar>
+
+                {/* Camera button triggers file input click */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="profileImageInput"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
                 <Button
                   type="button"
                   size="icon"
                   className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full gradient-primary"
+                  onClick={() =>
+                    document.getElementById("profileImageInput").click()
+                  }
                 >
                   <Camera className="h-4 w-4" />
                 </Button>
@@ -328,6 +259,9 @@ export default function EditTutorProfile() {
                   type="button"
                   variant="outline"
                   className="hover:bg-muted"
+                  onClick={() =>
+                    document.getElementById("profileImageInput").click()
+                  }
                 >
                   <Upload className="h-4 w-4 mr-2" />
                   Upload New Photo
@@ -340,155 +274,96 @@ export default function EditTutorProfile() {
           </CardContent>
         </Card>
 
-        {/* Basic Information */}
+        {/*--------------- Basic Information -------------------*/}
         <Card className="dashboard-card">
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
+            <CardTitle className="text-primary font-bold text-2xl">
+              Basic Information
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  {...register("name")}
-                  className="bg-background"
-                />
-                {errors.name && (
-                  <p className="text-sm text-destructive">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  {...register("email")}
-                  className="bg-background"
-                />
-                {errors.email && (
-                  <p className="text-sm text-destructive">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="name">Gender</Label>
-                <Input
-                  id="gender"
-                  {...register("gender")}
-                  className="bg-background"
-                />
-                {errors.gender && (
-                  <p className="text-sm text-destructive">
-                    {errors.gender.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="birthdate">Birthdate</Label>
-                <Input
-                  id="birthdate"
-                  type="date"
-                  {...register("birthdate")}
-                  className="bg-background"
-                />
-                {errors.birthdate && (
-                  <p className="text-sm text-destructive">
-                    {errors.birthdate.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
-                <Input
-                  id="phone"
-                  {...register("phone")}
-                  className="bg-background"
-                />
-                {errors.phone && (
-                  <p className="text-sm text-destructive">
-                    {errors.phone.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Input
-                  id="address"
-                  {...register("address")}
-                  className="bg-background"
-                />
-                {errors.address && (
-                  <p className="text-sm text-destructive">
-                    {errors.address.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="nid">N_ID/Birth_ID</Label>
-                <Input
-                  id="nid"
-                  {...register("nid")}
-                  className="bg-background"
-                />
-                {errors.nid && (
-                  <p className="text-sm text-destructive">
-                    {errors.nid.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="bankAccount">Bank Account No.</Label>
-                <Input
-                  id="bankAccount"
-                  {...register("bankAccount")}
-                  className="bg-background"
-                />
-                {errors.bankAccount && (
-                  <p className="text-sm text-destructive">
-                    {errors.bankAccount.message}
-                  </p>
-                )}
-              </div>
+              {[
+                { id: "name", label: "Full Name", type: "text" },
+                { id: "phone", label: "Phone", type: "text" },
+                { id: "birthDate", label: "Birthdate", type: "date" },
+                {
+                  id: "nidOrBirthCertId",
+                  label: "N_ID/Birth_ID",
+                  type: "text",
+                },
+                {
+                  id: "bankAccountNo",
+                  label: "Bank Account No.",
+                  type: "text",
+                },
+                { id: "gender", label: "Gender", type: "text" },
+                { id: "address", label: "Address", type: "text" },
+                {
+                  id: "education",
+                  label: "Highest education",
+                  type: "text",
+                },
+                {
+                  id: "educationInstitute",
+                  label: "Education Institute",
+                  type: "text",
+                },
+                { id: "profession", label: "Profession", type: "text" },
+              ].map((field) => (
+                <div key={field.id} className="space-y-2">
+                  <Label htmlFor={field.id}>{field.label}</Label>
+                  <Input
+                    id={field.id}
+                    type={field.type}
+                    {...register(field.id)}
+                    className="bg-background"
+                  />
+                  {errors[field.id] && (
+                    <p className="text-sm text-destructive">
+                      {errors[field.id].message}
+                    </p>
+                  )}
+                </div>
+              ))}
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="specialization">Area of Specialization</Label>
+              <Label htmlFor="expertiseAreas">Area of Specialization</Label>
               <Input
-                id="specialization"
-                {...register("specialization")}
+                id="expertiseAreas"
+                {...register("expertiseAreas")}
+                placeholder="e.g., Math, Physics, Web Development..."
                 className="bg-background"
-                placeholder="e.g., Computer Science & Mathematics, Physics & Engineering..."
               />
-              {errors.specialization && (
+              {errors.expertiseAreas && (
                 <p className="text-sm text-destructive">
-                  {errors.specialization.message}
+                  {errors.expertiseAreas.message}
                 </p>
               )}
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="about">About Me</Label>
+              <Label htmlFor="bio">About Me</Label>
               <Textarea
-                id="about"
-                {...register("about")}
-                className="bg-background min-h-[120px]"
+                id="bio"
+                {...register("bio")}
                 placeholder="Tell students about your teaching style and experience..."
+                className="bg-background min-h-[120px]"
               />
-              {errors.about && (
-                <p className="text-sm text-destructive">
-                  {errors.about.message}
-                </p>
+              {errors.bio && (
+                <p className="text-sm text-destructive">{errors.bio.message}</p>
               )}
             </div>
           </CardContent>
         </Card>
 
-        {/* Skills Section */}
+        {/*------------------ Skills and Expertise Section------------------------ */}
         <Card className="dashboard-card">
           <CardHeader>
-            <CardTitle>Skills & Expertise</CardTitle>
+            <CardTitle className="text-primary font-bold text-2xl">
+              Skills & Expertise
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex gap-2">
@@ -498,26 +373,31 @@ export default function EditTutorProfile() {
                 onKeyPress={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
-                    const target = e.target;
-                    addSkillToForm(target.value);
-                    target.value = "";
+                    const value = e.target.value.trim();
+                    if (value) {
+                      addSkill(value);
+                      e.target.value = "";
+                    }
                   }
                 }}
               />
               <Button
                 type="button"
+                variant="outline"
                 onClick={(e) => {
-                  const input = e.target.parentElement?.querySelector("input");
-                  if (input) {
-                    addSkillToForm(input.value);
+                  const input = e.target.parentElement.querySelector("input");
+                  const value = input?.value.trim();
+                  if (value) {
+                    addSkill(value);
                     input.value = "";
                   }
                 }}
-                variant="outline"
               >
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
+
+            {/* Skill badges */}
             <div className="flex flex-wrap gap-2">
               {skills.map((skill, index) => (
                 <Badge
@@ -531,30 +411,34 @@ export default function EditTutorProfile() {
                     variant="ghost"
                     size="sm"
                     className="h-4 w-4 p-0 ml-1 hover:bg-destructive/20"
-                    onClick={() => removeSkillFromForm(index)}
+                    onClick={() => removeSkill(index)}
                   >
                     <X className="h-3 w-3" />
                   </Button>
                 </Badge>
               ))}
             </div>
+
+            {/* Error message */}
             {errors.skills && (
-              <p className="text-sm text-destructive">
+              <p className="text-sm text-destructive mt-1">
                 {errors.skills.message}
               </p>
             )}
           </CardContent>
         </Card>
 
-        {/* Certifications Section */}
+        {/*------------------------- Certifications Section-------------------- */}
         <Card className="dashboard-card">
           <CardHeader>
             <div className="flex items-center justify-between gap-4 flex-wrap">
-              <CardTitle>Certifications</CardTitle>
+              <CardTitle className="text-primary font-bold text-2xl">
+                Certifications
+              </CardTitle>
               <Button
                 type="button"
                 onClick={() =>
-                  appendCertification({
+                  addCert({
                     name: "",
                     organization: "",
                     year: "",
@@ -564,8 +448,7 @@ export default function EditTutorProfile() {
                 variant="outline"
                 size="sm"
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Certification
+                <Plus className="h-4 w-4 mr-2" /> Add Certification
               </Button>
             </div>
           </CardHeader>
@@ -581,58 +464,67 @@ export default function EditTutorProfile() {
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeCertification(index)}
+                    onClick={() => removeCert(index)}
                     className="text-destructive hover:bg-destructive/10"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <Label>Certification Name</Label>
                     <Input
-                      {...register(`certifications.${index}.name`)}
+                      {...register(`certifications.${index}.name`, {
+                        required: "Name is required",
+                      })}
                       className="bg-background"
                     />
                     {errors.certifications?.[index]?.name && (
                       <p className="text-sm text-destructive">
-                        {errors.certifications[index]?.name?.message}
+                        {errors.certifications[index].name.message}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label>Organization</Label>
                     <Input
-                      {...register(`certifications.${index}.organization`)}
+                      {...register(`certifications.${index}.organization`, {
+                        required: "Organization is required",
+                      })}
                       className="bg-background"
                     />
                     {errors.certifications?.[index]?.organization && (
                       <p className="text-sm text-destructive">
-                        {errors.certifications[index]?.organization?.message}
+                        {errors.certifications[index].organization.message}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label>Year</Label>
                     <Input
-                      {...register(`certifications.${index}.year`)}
+                      {...register(`certifications.${index}.year`, {
+                        required: "Year is required",
+                      })}
                       className="bg-background"
                     />
                     {errors.certifications?.[index]?.year && (
                       <p className="text-sm text-destructive">
-                        {errors.certifications[index]?.year?.message}
+                        {errors.certifications[index].year.message}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label>Credential ID</Label>
                     <Input
-                      {...register(`certifications.${index}.credentialId`)}
+                      {...register(`certifications.${index}.credentialId`, {
+                        required: "Credential ID is required",
+                      })}
                       className="bg-background"
                     />
                     {errors.certifications?.[index]?.credentialId && (
                       <p className="text-sm text-destructive">
-                        {errors.certifications[index]?.credentialId?.message}
+                        {errors.certifications[index].credentialId.message}
                       </p>
                     )}
                   </div>
@@ -642,15 +534,17 @@ export default function EditTutorProfile() {
           </CardContent>
         </Card>
 
-        {/* Education Section */}
+        {/*-------------------------- Education Section -------------------------*/}
         <Card className="dashboard-card">
           <CardHeader>
             <div className="flex items-center justify-between gap-4 flex-wrap">
-              <CardTitle>Education Qualifications</CardTitle>
+              <CardTitle className="text-primary font-bold text-2xl">
+                Education Details
+              </CardTitle>
               <Button
                 type="button"
                 onClick={() =>
-                  appendEducation({
+                  addEducation({
                     degree: "",
                     institution: "",
                     year: "",
@@ -660,8 +554,7 @@ export default function EditTutorProfile() {
                 variant="outline"
                 size="sm"
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Education
+                <Plus className="h-4 w-4 mr-2" /> Add Education
               </Button>
             </div>
           </CardHeader>
@@ -683,52 +576,61 @@ export default function EditTutorProfile() {
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <Label>Degree</Label>
                     <Input
-                      {...register(`education.${index}.degree`)}
+                      {...register(`educationDetails.${index}.degree`, {
+                        required: "Degree is required",
+                      })}
                       className="bg-background"
                     />
-                    {errors.education?.[index]?.degree && (
+                    {errors.educationDetails?.[index]?.degree && (
                       <p className="text-sm text-destructive">
-                        {errors.education[index]?.degree?.message}
+                        {errors.educationDetails[index].degree.message}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label>Institution</Label>
                     <Input
-                      {...register(`education.${index}.institution`)}
+                      {...register(`educationDetails.${index}.institution`, {
+                        required: "Institution is required",
+                      })}
                       className="bg-background"
                     />
-                    {errors.education?.[index]?.institution && (
+                    {errors.educationDetails?.[index]?.institution && (
                       <p className="text-sm text-destructive">
-                        {errors.education[index]?.institution?.message}
+                        {errors.educationDetails[index].institution.message}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label>Year</Label>
                     <Input
-                      {...register(`education.${index}.year`)}
+                      {...register(`educationDetails.${index}.year`, {
+                        required: "Year is required",
+                      })}
                       className="bg-background"
                     />
-                    {errors.education?.[index]?.year && (
+                    {errors.educationDetails?.[index]?.year && (
                       <p className="text-sm text-destructive">
-                        {errors.education[index]?.year?.message}
+                        {errors.educationDetails[index].year.message}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label>GPA</Label>
                     <Input
-                      {...register(`education.${index}.gpa`)}
+                      {...register(`educationDetails.${index}.gpa`, {
+                        required: "GPA is required",
+                      })}
                       className="bg-background"
                     />
-                    {errors.education?.[index]?.gpa && (
+                    {errors.educationDetails?.[index]?.gpa && (
                       <p className="text-sm text-destructive">
-                        {errors.education[index]?.gpa?.message}
+                        {errors.educationDetails[index].gpa.message}
                       </p>
                     )}
                   </div>
@@ -738,277 +640,99 @@ export default function EditTutorProfile() {
           </CardContent>
         </Card>
 
-        {/* Tutoring Plans Section */}
+        {/*----------- Tutoring Plans Section -------------------------------------*/}
         <Card className="dashboard-card">
           <CardHeader>
-            <CardTitle>Tutoring Plans</CardTitle>
+            <CardTitle className="text-primary font-bold text-2xl">
+              Tutoring Plans
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Instant Plan */}
-            <div className="p-4 bg-muted/30 rounded-lg border border-border/50 space-y-4">
-              <h3 className="font-semibold text-lg text-primary">
-                Instant Session
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Price ($)</Label>
-                  <Controller
-                    name="plans.instant.price"
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        type="number"
-                        {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                        className="bg-background"
-                      />
-                    )}
-                  />
-                  {errors.plans?.instant?.price && (
-                    <p className="text-sm text-destructive">
-                      {errors.plans.instant.price.message}
-                    </p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label>Description</Label>
-                  <Input
-                    {...register("plans.instant.description")}
-                    className="bg-background"
-                  />
-                  {errors.plans?.instant?.description && (
-                    <p className="text-sm text-destructive">
-                      {errors.plans.instant.description.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="space-y-3">
-                <Label>Features</Label>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Add a feature..."
-                    className="bg-background"
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        const target = e.target;
-                        if (target.value.trim()) {
-                          addFeatureToField(
-                            "plans.instant.features",
-                            target.value
-                          );
-                          target.value = "";
-                        }
-                      }
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    onClick={(e) => {
-                      const input =
-                        e.target.parentElement?.querySelector("input");
-                      if (input?.value.trim()) {
-                        addFeatureToField(
-                          "plans.instant.features",
-                          input.value
-                        );
-                        input.value = "";
-                      }
-                    }}
-                    variant="outline"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  {watch("plans.instant.features")?.map((feature, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between p-2 bg-background rounded border"
-                    >
-                      <span className="text-sm">{feature}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          removeFeatureFromField("plans.instant.features", idx)
-                        }
-                        className="text-destructive hover:bg-destructive/10"
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            {/* --- Instant Plan --- */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-primary">Instant Plans</h3>
+              <EditPlan
+                title="Instant Session"
+                planPath="plans.instant"
+                control={control}
+                register={register}
+                errors={errors}
+                watch={watch}
+                addFeature={addFeatureToField}
+                removeFeature={removeFeatureFromField}
+              />
+            </div>
+            {/* --- Weekly Plans --- */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-primary">Weekly Plans</h3>
+
+              {["basic", "intensive"].map((key) => (
+                <EditPlan
+                  key={key}
+                  title={key.charAt(0).toUpperCase() + key.slice(1) + " Weekly"}
+                  planPath={`plans.weekly.${key}`}
+                  control={control}
+                  register={register}
+                  errors={errors}
+                  watch={watch}
+                  addFeature={addFeatureToField}
+                  removeFeature={removeFeatureFromField}
+                />
+              ))}
             </div>
 
-            {/* Weekly Plans */}
+            {/* --- Monthly Plans --- */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg text-primary">
-                Weekly Plans
-              </h3>
-
-              {/* Basic Weekly */}
-              <div className="p-4 bg-muted/30 rounded-lg border border-border/50 space-y-4">
-                <h4 className="font-medium">Basic Weekly</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Price ($)</Label>
-                    <Controller
-                      name="plans.weekly.basic.price"
-                      control={control}
-                      render={({ field }) => (
-                        <Input
-                          type="number"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
-                          className="bg-background"
-                        />
-                      )}
-                    />
-                    {errors.plans?.weekly?.basic?.price && (
-                      <p className="text-sm text-destructive">
-                        {errors.plans.weekly.basic.price.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Description</Label>
-                    <Input
-                      {...register("plans.weekly.basic.description")}
-                      className="bg-background"
-                    />
-                    {errors.plans?.weekly?.basic?.description && (
-                      <p className="text-sm text-destructive">
-                        {errors.plans.weekly.basic.description.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                {/* Features for Basic Weekly - similar pattern as instant */}
-              </div>
-
-              {/* Intensive Weekly */}
-              <div className="p-4 bg-muted/30 rounded-lg border border-border/50 space-y-4">
-                <h4 className="font-medium">Intensive Weekly</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Price ($)</Label>
-                    <Controller
-                      name="plans.weekly.intensive.price"
-                      control={control}
-                      render={({ field }) => (
-                        <Input
-                          type="number"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
-                          className="bg-background"
-                        />
-                      )}
-                    />
-                    {errors.plans?.weekly?.intensive?.price && (
-                      <p className="text-sm text-destructive">
-                        {errors.plans.weekly.intensive.price.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Description</Label>
-                    <Input
-                      {...register("plans.weekly.intensive.description")}
-                      className="bg-background"
-                    />
-                    {errors.plans?.weekly?.intensive?.description && (
-                      <p className="text-sm text-destructive">
-                        {errors.plans.weekly.intensive.description.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Monthly Plans */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg text-primary">
-                Monthly Plans
-              </h3>
-
-              {["standard", "premium", "elite"].map((planKey) => (
-                <div
-                  key={planKey}
-                  className="p-4 bg-muted/30 rounded-lg border border-border/50 space-y-4"
-                >
-                  <h4 className="font-medium capitalize">{planKey} Monthly</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Price ($)</Label>
-                      <Controller
-                        name={`plans.monthly.${planKey}.price`}
-                        control={control}
-                        render={({ field }) => (
-                          <Input
-                            type="number"
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
-                            }
-                            className="bg-background"
-                          />
-                        )}
-                      />
-                      {errors.plans?.monthly?.[planKey]?.price && (
-                        <p className="text-sm text-destructive">
-                          {errors.plans.monthly[planKey]?.price?.message}
-                        </p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Description</Label>
-                      <Input
-                        {...register(`plans.monthly.${planKey}.description`)}
-                        className="bg-background"
-                      />
-                      {errors.plans?.monthly?.[planKey]?.description && (
-                        <p className="text-sm text-destructive">
-                          {errors.plans.monthly[planKey]?.description?.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
+              <h3 className="font-semibold text-primary">Monthly Plans</h3>
+              {["standard", "premium", "elite"].map((key) => (
+                <EditPlan
+                  key={key}
+                  title={
+                    key.charAt(0).toUpperCase() + key.slice(1) + " Monthly"
+                  }
+                  planPath={`plans.monthly.${key}`}
+                  control={control}
+                  register={register}
+                  errors={errors}
+                  watch={watch}
+                  addFeature={addFeatureToField}
+                  removeFeature={removeFeatureFromField}
+                />
               ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* FAQ Section */}
+        {/*----------------------- FAQ Section -----------------------------------------*/}
         <Card className="dashboard-card">
           <CardHeader>
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <div className="flex items-center gap-2">
                 <HelpCircle className="h-5 w-5 text-primary" />
-                <CardTitle>Frequently Asked Questions</CardTitle>
+                <CardTitle className="text-primary font-bold text-2xl">
+                  Frequently Asked Questions
+                </CardTitle>
               </div>
               <Button
                 type="button"
-                onClick={() => appendFaq({ question: "", answer: "" })}
+                onClick={() => addFaq({ question: "", answer: "" })}
                 variant="outline"
                 size="sm"
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Add FAQ
+                <Plus className="h-4 w-4 mr-2" /> Add FAQ
               </Button>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
+            {faqFields.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                <HelpCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <p>
+                  No FAQs added yet. Click "Add FAQ" to create your first
+                  question and answer.
+                </p>
+              </div>
+            )}
             {faqFields.map((field, index) => (
               <div
                 key={field.id}
@@ -1030,41 +754,36 @@ export default function EditTutorProfile() {
                   <div className="space-y-2">
                     <Label>Question</Label>
                     <Input
-                      {...register(`faqs.${index}.question`)}
+                      {...register(`faqs.${index}.question`, {
+                        required: "Question is required",
+                      })}
                       className="bg-background"
                       placeholder="Enter your frequently asked question..."
                     />
                     {errors.faqs?.[index]?.question && (
                       <p className="text-sm text-destructive">
-                        {errors.faqs[index]?.question?.message}
+                        {errors.faqs[index].question.message}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label>Answer</Label>
                     <Textarea
-                      {...register(`faqs.${index}.answer`)}
+                      {...register(`faqs.${index}.answer`, {
+                        required: "Answer is required",
+                      })}
                       className="bg-background min-h-[80px]"
-                      placeholder="Provide a helpful answer to this question..."
+                      placeholder="Provide a helpful answer..."
                     />
                     {errors.faqs?.[index]?.answer && (
                       <p className="text-sm text-destructive">
-                        {errors.faqs[index]?.answer?.message}
+                        {errors.faqs[index].answer.message}
                       </p>
                     )}
                   </div>
                 </div>
               </div>
             ))}
-            {faqFields.length === 0 && (
-              <div className="text-center py-8 text-muted-foreground">
-                <HelpCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p>
-                  No FAQs added yet. Click "Add FAQ" to create your first
-                  question and answer.
-                </p>
-              </div>
-            )}
           </CardContent>
         </Card>
 
@@ -1080,11 +799,11 @@ export default function EditTutorProfile() {
           </Button>
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSaving}
             className="gradient-primary hover:shadow-hover"
           >
             <Save className="h-4 w-4 mr-2" />
-            {isSubmitting ? "Saving..." : "Save Changes"}
+            {isSaving ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </form>

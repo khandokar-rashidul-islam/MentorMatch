@@ -141,7 +141,7 @@ const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
               <Button variant="default" size="sm" className="sm:size-lg">
                 Book Trial Lesson
               </Button>
-              <NavLink to="/dashboard/mentor/mentor-profile/:id/edit">
+              <NavLink to="/dashboard/mentor/mentor-profile/edit">
                 <Button variant="outline" size="sm" className="sm:size-lg">
                   Edit Profile
                 </Button>

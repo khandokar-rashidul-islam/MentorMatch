@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { APPROVAL_STATUS } from "../user/user.constant";
 
-// Registration schema
+// Core fields for registration (no extra edit fields)
 export const mentorProfileSchema = z.object({
   name: z.string().min(1),
-  phone: z.string(),
+  phone: z.string().min(5),
   birthDate: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -29,14 +29,90 @@ export const mentorProfileSchema = z.object({
     .optional(),
 });
 
-// Edit schema for update — all fields optional + extra edit-time fields
+// Edit/update schema (all fields optional, includes extra edit fields)
 export const mentorEditSchema = mentorProfileSchema.partial().extend({
   profileImage: z.string().optional(),
   about: z.string().optional(),
-  certifications: z.array(z.string()).optional(),
-  tutoringPlans: z.array(z.string()).optional(),
-  educationQualifications: z.array(z.string()).optional(),
-  frequentlyAskedQuestions: z
-    .array(z.object({ question: z.string(), answer: z.string() }))
+  skills: z.array(z.string()).optional(),
+  certifications: z
+    .array(
+      z.object({
+        name: z.string(),
+        organization: z.string(),
+        year: z.string(),
+        credentialId: z.string(),
+      })
+    )
+    .optional(),
+  educationDetails: z
+    .array(
+      z.object({
+        degree: z.string(),
+        institution: z.string(),
+        year: z.string(),
+        gpa: z.string(),
+      })
+    )
+    .optional(),
+  plans: z.object({
+      instant: z
+        .object({
+          price: z.number(),
+          description: z.string(),
+          features: z.array(z.string()),
+        })
+        .optional(),
+      weekly: z
+        .object({
+          basic: z
+            .object({
+              price: z.number(),
+              description: z.string(),
+              features: z.array(z.string()),
+            })
+            .optional(),
+          intensive: z
+            .object({
+              price: z.number(),
+              description: z.string(),
+              features: z.array(z.string()),
+            })
+            .optional(),
+        })
+        .optional(),
+      monthly: z
+        .object({
+          standard: z
+            .object({
+              price: z.number(),
+              description: z.string(),
+              features: z.array(z.string()),
+            })
+            .optional(),
+          premium: z
+            .object({
+              price: z.number(),
+              description: z.string(),
+              features: z.array(z.string()),
+            })
+            .optional(),
+          elite: z
+            .object({
+              price: z.number(),
+              description: z.string(),
+              features: z.array(z.string()),
+            })
+            .optional(),
+        })
+        .optional(),
+    })
+    .optional(),
+  faqs: z
+    .array(
+      z.object({
+        question: z.string(),
+        answer: z.string(),
+      })
+    )
     .optional(),
 });

@@ -135,27 +135,26 @@ export const getProfile = catchAsync(async (req, res) => {
 //*----------------------- Edit profile based on role-------------------------------
 
 export const editProfileController = catchAsync(async (req, res) => {
-    const userId = (req as any).user?.id;
-    const activeRole = (req as any).user?.activeRole as "learner" | "mentor";
+  const userId = (req as any).user?.id;
+  const activeRole = (req as any).user?.activeRole as "learner" | "mentor";
 
-     if (!userId) throw new Error("User not found in request");;
+  if (!userId) throw new Error("User not found in request");
 
-    // Extract update data from request body
-    const updateData = req.body;
-    const file = req.file;
+  // Extract update data from request body
+  const updateData = req.body;
+  const file = req.file;
 
-    const updatedProfile = await userService.editProfile(
-      userId,
-      activeRole,
-      updateData,
-      file
-    );
+  const { user } = await userService.editProfile(
+    userId,
+    activeRole,
+    updateData,
+    file
+  );
 
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Profile updated successfully",
-      data: updatedProfile,
-    });
-  }
-);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `${activeRole} Profile updated successfully`,
+    data: { user },
+  });
+});

@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 import { IMentorProfile } from "./mentor.interface";
 import { APPROVAL_STATUS } from "../user/user.constant";
 
-const mentorProfileSchema = new Schema<IMentorProfile>(
+ const mentorProfileSchema = new Schema<IMentorProfile>(
   {
     user: {
       type: Schema.Types.ObjectId,
@@ -31,15 +31,67 @@ const mentorProfileSchema = new Schema<IMentorProfile>(
       default: APPROVAL_STATUS.PENDING,
     },
 
-    // Optional edit-time fields
-    about: { type: String, default: undefined },
-    certifications: { type: [String], default: undefined },
-    tutoringPlans: { type: [String], default: undefined },
-    educationQualifications: { type: [String], default: undefined },
-    frequentlyAskedQuestions: {
-      type: [{ question: String, answer: String }],
-      default: undefined,
+    // Edit-time extra fields
+    about: String,
+    skills: [String],
+    certifications: [
+      {
+        name: String,
+        organization: String,
+        year: String,
+        credentialId: String,
+      },
+    ],
+    educationDetails: [
+      {
+        degree: String,
+        institution: String,
+        year: String,
+        gpa: String,
+      },
+    ],
+    plans: {
+      instant: {
+        price: Number,
+        description: String,
+        features: [String],
+      },
+      weekly: {
+        basic: {
+          price: Number,
+          description: String,
+          features: [String],
+        },
+        intensive: {
+          price: Number,
+          description: String,
+          features: [String],
+        },
+      },
+      monthly: {
+        standard: {
+          price: Number,
+          description: String,
+          features: [String],
+        },
+        premium: {
+          price: Number,
+          description: String,
+          features: [String],
+        },
+        elite: {
+          price: Number,
+          description: String,
+          features: [String],
+        },
+      },
     },
+    faqs: [
+      {
+        question: String,
+        answer: String,
+      },
+    ],
   },
   { timestamps: true }
 );

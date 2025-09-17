@@ -188,7 +188,7 @@ const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
                 variant="default"
                 className="ml-4 hidden md:block"
                 onClick={() =>
-                  navigate(`/dashboard/learner/learner-profile/:id/edit`)
+                  navigate(`/dashboard/learner/learner-profile/edit`)
                 }
               >
                 Edit

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import mongoose, { Types, ClientSession, Model } from "mongoose";
+import mongoose, { Types, ClientSession} from "mongoose";
 import bcrypt from "bcrypt";
 import config from "../../config";
 import { UserModel } from "./user.model";
@@ -15,6 +15,7 @@ import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
 import { v2 as cloudinary } from "cloudinary";
 import AppError from "../../errors/AppError";
 import httpStatus from "http-status";
+import { mentorEditSchema } from "../mentor/mentor.validation";
 //import AppError from "../../errors/AppError";
 
 // -- helpers --
@@ -338,6 +339,7 @@ export const getProfile = async (userId: string) => {
 
 //*----------------------- Edit profile based on role-------------------------------
 
+// Fields that should never be updated manually
 const PROTECTED_FIELDS = new Set([
   "_id",
   "id",
@@ -348,30 +350,68 @@ const PROTECTED_FIELDS = new Set([
   "approvalStatus",
 ]);
 
-export function getAllowedFieldsFromModel<T>(model: Model<T>): string[] {
-  return Object.keys(model.schema.paths).filter(
-    (path) => !PROTECTED_FIELDS.has(path)
-  );
-}
-
 export const editProfile = async (
   userId: string,
   activeRole: "learner" | "mentor",
   updateData: Record<string, any>,
   file?: Express.Multer.File
 ) => {
+  const user = await UserModel.findById(userId);
+  if (!user) throw new AppError(httpStatus.NOT_FOUND, "User not found");
+
+  let profile: any;
+
   if (activeRole === "mentor") {
     const mentor = await MentorProfileModel.findOne({ user: userId });
-    if (!mentor) throw new Error("Mentor profile not found");
-    if (mentor.approvalStatus !== "approved")
-      throw new Error("Mentor profile not approved");
+    if (!mentor)
+      throw new AppError(httpStatus.NOT_FOUND, "Mentor profile not found");
 
-    const allowedFields = getAllowedFieldsFromModel(MentorProfileModel);
+    if (mentor.approvalStatus !== "approved")
+      throw new AppError(httpStatus.FORBIDDEN, "Mentor profile not approved");
+
+    // Validate data with Zod
+    const parsedData = mentorEditSchema.parse(updateData);
+
+    // Build update object
+    const updateObj: Record<string, any> = {};
+    for (const [key, val] of Object.entries(parsedData)) {
+      if (val !== undefined && !PROTECTED_FIELDS.has(key)) {
+        // Handle nested objects and arrays
+        if (Array.isArray(val)) {
+          updateObj[key] = [...val];
+        } else if (val && typeof val === "object") {
+          updateObj[key] = { ...val };
+        } else {
+          updateObj[key] = val;
+        }
+      }
+    }
+
+    // Upload profile image if provided
+    if (file) {
+      const uploaded = await sendImageToCloudinary(
+        `profile-${userId}-${Date.now()}`,
+        file.buffer
+      );
+      updateObj.profileImage = uploaded.secure_url;
+    }
+
+    profile = await MentorProfileModel.findOneAndUpdate(
+      { user: userId },
+      { $set: updateObj },
+      { new: true, runValidators: true }
+    );
+  } else {
+    // Learner updates
+    const learner = await LearnerProfileModel.findOne({ user: userId });
+    if (!learner)
+      throw new AppError(httpStatus.NOT_FOUND, "Learner profile not found");
 
     const updateObj: Record<string, any> = {};
     for (const [key, val] of Object.entries(updateData)) {
-      if (val !== undefined && allowedFields.includes(key))
+      if (val !== undefined && !PROTECTED_FIELDS.has(key)) {
         updateObj[key] = val;
+      }
     }
 
     if (file) {
@@ -382,36 +422,20 @@ export const editProfile = async (
       updateObj.profileImage = uploaded.secure_url;
     }
 
-    return await MentorProfileModel.findOneAndUpdate(
+    profile = await LearnerProfileModel.findOneAndUpdate(
       { user: userId },
       { $set: updateObj },
       { new: true, runValidators: true }
     );
   }
 
-  // Learner
-  const learner = await LearnerProfileModel.findOne({ user: userId });
-  if (!learner) throw new Error("Learner profile not found");
-
-  const allowedFields = getAllowedFieldsFromModel(LearnerProfileModel);
-
-  const updateObj: Record<string, any> = {};
-  for (const [key, val] of Object.entries(updateData)) {
-    if (val !== undefined && allowedFields.includes(key)) updateObj[key] = val;
-  }
-
-  if (file) {
-    const uploaded = await sendImageToCloudinary(
-      `profile-${userId}-${Date.now()}`,
-      file.buffer
-    );
-    updateObj.profileImage = uploaded.secure_url;
-  }
-
-  return await LearnerProfileModel.findOneAndUpdate(
-    { user: userId },
-    { $set: updateObj },
-    { new: true, runValidators: true }
-  );
-  
+  return {
+    user: {
+      _id: user._id,
+      name: profile?.name,
+      activeRole: user.activeRole,
+      role: user.role,
+      profileImage: profile?.profileImage,
+    },
+  };
 };

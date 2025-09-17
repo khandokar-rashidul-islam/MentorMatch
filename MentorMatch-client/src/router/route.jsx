@@ -126,8 +126,8 @@ const router = createBrowserRouter([
           { path: "settings", element: <Settings /> },
           { path: "notification", element: <Notify /> },
           { path: "learner-profile", element: <LearnerProfile /> },
-          { path: "mentor-profile/:id", element: <TutorDetails /> },
-          { path: "mentor-profile/:id/edit", element: <EditTutorProfile /> },
+          { path: "mentor-profile", element: <TutorDetails /> },
+          { path: "mentor-profile/edit", element: <EditTutorProfile /> },
         ],
       },
       //learner
@@ -142,8 +142,8 @@ const router = createBrowserRouter([
           { path: "bookmarks", element: <Bookmarks /> },
           { path: "search-mentor", element: <SearchMentor /> },
           { path: "notification", element: <Notify /> },
-          { path: "learner-profile/:id", element: <LearnerProfile /> },
-          { path: "learner-profile/:id/edit", element: <EditProfile /> },
+          { path: "learner-profile", element: <LearnerProfile /> },
+          { path: "learner-profile/edit", element: <EditProfile /> },
           { path: "mentor-apply", element: <ApplyForMentor/> }
         ],
       },
