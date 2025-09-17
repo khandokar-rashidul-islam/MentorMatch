@@ -3,12 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,7 +16,10 @@ import {
 } from "@/components/ui/form";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { useEditActiveProfileMutation, useGetActiveProfileQuery } from "../../../redux/features/user/userApi";
+import {
+  useEditActiveProfileMutation,
+  useGetActiveProfileQuery,
+} from "../../../redux/features/user/userApi";
 
 const schema = z.object({
   profileImage: z.any(),
@@ -35,47 +33,57 @@ const schema = z.object({
   gender: z.any(),
   about: z.string().optional(),
   education: z.string().optional(),
-  educationInstitute: z.string().optional()
+  educationInstitute: z.string().optional(),
 });
-
 
 const EditProfile = () => {
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
   const [preview, setPreview] = useState(null);
+
   // fetch old data
   const { data, isLoading } = useGetActiveProfileQuery();
-  console.log(data)
   const profile = data?.data?.user?.profile;
-  console.log(profile)
+
   // mutation
   const [editProfile, { isLoading: isSaving }] = useEditActiveProfileMutation();
   const [editable, setEditable] = useState(false);
 
   const form = useForm({
-    resolver: zodResolver(schema)
+    resolver: zodResolver(schema),
+    defaultValues: {
+      profileImage: "",
+      name: "",
+      profession: "",
+      phone: "",
+      birthDate: "",
+      nidOrBirthCertId: "",
+      bankAccountNo: "",
+      address: "",
+      gender: "Other",
+      about: "",
+      education: "",
+      educationInstitute: "",
+    },
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (formValues) => {
     const formData = new FormData();
 
-    // Append text fields
-    Object.keys(data).forEach((key) => {
-      formData.append(key, data[key]);
+    Object.keys(formValues).forEach((key) => {
+      formData.append(key, formValues[key]);
     });
 
-    // Append image if changed
     if (selectedImage) {
-      formData.append("profileImage", selectedImage); // field name must match backend
+      formData.append("profileImage", selectedImage);
     }
 
-
     await editProfile(formData).unwrap();
-    console.log("Updated Data:", data);
     toast.success("Profile updated successfully!");
     setEditable(false);
   };
 
+  // Reset with profile data when loaded
   useEffect(() => {
     if (profile) {
       form.reset({
@@ -94,6 +102,8 @@ const EditProfile = () => {
       });
     }
   }, [profile, form]);
+
+  // Preview selected image
   useEffect(() => {
     if (!selectedImage) {
       setPreview(null);
@@ -101,17 +111,16 @@ const EditProfile = () => {
     }
     const objectUrl = URL.createObjectURL(selectedImage);
     setPreview(objectUrl);
-
-    // Cleanup
     return () => URL.revokeObjectURL(objectUrl);
   }, [selectedImage]);
+
   if (isLoading) {
-    console.log("loading...")
-    return <div className="pt-20 min-h-screen text-center">loading....</div>
+    return <div className="pt-20 min-h-screen text-center">loading....</div>;
   }
+
   return (
-    <div className='min-h-screen pt-28 w-11/12 mx-auto'>
-      <div className="max-w-4xl mx-auto pb-8 ">
+    <div className="min-h-screen pt-28 w-11/12 mx-auto">
+      <div className="max-w-4xl mx-auto pb-8">
         {/* Back Button */}
         <div className="flex items-center gap-2 mb-4">
           <Button
@@ -146,31 +155,35 @@ const EditProfile = () => {
                 {/* Profile Image */}
                 <div className="col-span-2 flex flex-col items-center gap-3">
                   <img
-                    src={preview || profile.profileImage}
+                    src={preview || profile?.profileImage}
                     alt="Profile"
                     className="w-32 h-32 rounded-full object-cover border"
                   />
-                  {editable && <>
+                  {editable && (
                     <FormField
                       control={form.control}
                       name="profileImage"
-                      render={({ field }) => (
+                      render={() => (
                         <FormItem>
                           <FormControl>
-                            <Input type="file" className="max-w-sm" accept="image/*"
+                            <Input
+                              type="file"
+                              className="max-w-sm"
+                              accept="image/*"
                               onChange={(e) => {
-                                if (e.target.files && e.target.files[0]) {
+                                if (e.target.files?.[0]) {
                                   setSelectedImage(e.target.files[0]);
                                 }
-                              }} />
+                              }}
+                            />
                           </FormControl>
                         </FormItem>
                       )}
                     />
-
-                  </>}
+                  )}
                 </div>
 
+                {/* All text fields */}
                 <FormField
                   control={form.control}
                   name="name"
@@ -196,7 +209,6 @@ const EditProfile = () => {
                     </FormItem>
                   )}
                 />
-
 
                 <FormField
                   control={form.control}
@@ -288,6 +300,7 @@ const EditProfile = () => {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="educationInstitute"
@@ -325,8 +338,9 @@ const EditProfile = () => {
             </Form>
           </CardContent>
         </Card>
-      </div></div>
-  )
-}
+      </div>
+    </div>
+  );
+};
 
-export default EditProfile
+export default EditProfile;
