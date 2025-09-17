@@ -84,15 +84,10 @@ export const registerUser = async (data: RegisterData) => {
       Number(config.bcrypt_salt_rounds)
     );
 
-    // 3) Build roles array
+    // 3) Build roles array role is always "learner" first
     const role: IUser["role"] = [USER_ROLES.LEARNER];
-    // If user selected mentor, add "mentor" to roles array
-    if (data.role.includes(USER_ROLES.MENTOR)) {
-      role.push(USER_ROLES.MENTOR);
-    }
 
     // 4) Create user
-
     const [createdUser] = await UserModel.create(
       [
         {
@@ -111,13 +106,16 @@ export const registerUser = async (data: RegisterData) => {
     let commonName = "";
     let commonProfileImage = profileImageUrl;
 
-    // Attach profile image to profile data if exists
+    //handle learner profile
     if (role.includes(USER_ROLES.LEARNER) && learnerProfile) {
       if (profileImageUrl) learnerProfile.profileImage = profileImageUrl;
       await createLearnerProfile(createdUser._id, learnerProfile, session);
       commonName = learnerProfile.name;
       commonProfileImage = learnerProfile.profileImage;
-    } else if (role.includes(USER_ROLES.MENTOR)) {
+    }
+
+    // mentor profile only if user selected mentor during registration
+    if (data.role.includes(USER_ROLES.MENTOR)) {
       if (!mentorProfile) throw new Error("Mentor profile required");
       if (profileImageUrl) mentorProfile.profileImage = profileImageUrl;
       await createMentorProfile(

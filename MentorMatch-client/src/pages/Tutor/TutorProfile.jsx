@@ -30,17 +30,15 @@ const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
     setIsLiked(!isLiked);
   };
  
-  if(isLoading){
-    return <div>Loading...</div>
-  }
-  if(isError){
-    return <div>Error loading profile</div>
-  }
-
  const user = data?.data?.user;
  const profile = user?.profile;
 
-
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error loading profile</div>;
+  }
 
   return (
     <Card className="overflow-hidden">

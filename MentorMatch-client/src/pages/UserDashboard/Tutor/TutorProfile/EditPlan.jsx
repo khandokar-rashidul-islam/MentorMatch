@@ -28,7 +28,7 @@ const EditPlan = ({
 
   return (
     <div className="p-4 bg-muted/30 rounded-lg border border-border/50 space-y-4">
-      <h4 className="font-medium ">{title}</h4>
+      <h4 className="font-medium">{title}</h4>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Price */}
@@ -37,7 +37,10 @@ const EditPlan = ({
           <Controller
             name={`${planPath}.price`}
             control={control}
-            rules={{ required: "Price is required" }}
+            rules={{
+              min: { value: 0, message: "Price cannot be negative" },
+              max: { value: 10000, message: "Price too high" },
+            }}
             render={({ field }) => (
               <Input
                 type="number"
@@ -59,7 +62,8 @@ const EditPlan = ({
           <Label>Description</Label>
           <Input
             {...register(`${planPath}.description`, {
-              required: "Description is required",
+              minLength: { value: 5, message: "Description too short" },
+              maxLength: { value: 100, message: "Description too long" },
             })}
             className="bg-background"
           />

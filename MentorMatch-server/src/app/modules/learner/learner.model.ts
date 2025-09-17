@@ -11,7 +11,7 @@ const learnerProfileSchema = new Schema<ILearnerProfile>(
     },
     profileImage: String,
     name: { type: String, required: true},
-    phone: { type: String, required: true, unique: true },
+    phone: { type: String, required: true},
     birthDate: String,
     nidOrBirthCertId: String,
     bankAccountNo: String,

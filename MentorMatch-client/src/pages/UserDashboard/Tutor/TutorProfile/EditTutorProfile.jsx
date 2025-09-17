@@ -327,12 +327,21 @@ const removeSkill = (index) => {
                 </div>
               ))}
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="expertiseAreas">Area of Specialization</Label>
               <Input
                 id="expertiseAreas"
-                {...register("expertiseAreas")}
+                {...register("expertiseAreas", {
+                  setValueAs: (val) => {
+                    if (typeof val === "string") {
+                      return val
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean); // return array
+                    }
+                    return Array.isArray(val) ? val : []; // fallback if val is already array or undefined
+                  },
+                })}
                 placeholder="e.g., Math, Physics, Web Development..."
                 className="bg-background"
               />
