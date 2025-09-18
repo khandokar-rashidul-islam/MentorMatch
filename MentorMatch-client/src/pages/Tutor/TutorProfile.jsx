@@ -17,10 +17,12 @@ import { NavLink } from "react-router";
 import { useGetActiveProfileQuery } from "../../redux/features/user/userApi";
 
 const TutorProfile = () => {
-
-const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
-  refetchOnMountOrArgChange: true,
-});
+  const { data,isLoading, isError } = useGetActiveProfileQuery(
+    null,
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
 
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(247);
@@ -29,9 +31,9 @@ const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
     setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
     setIsLiked(!isLiked);
   };
- 
- const user = data?.data?.user;
- const profile = user?.profile;
+
+  const user = data?.data?.user;
+  const profile = user?.profile;
 
   if (isLoading) {
     return <div>Loading...</div>;

@@ -7,7 +7,8 @@ export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getActiveProfile: builder.query({
       query: () => "/users/profile",
-      providesTags: ["UserProfile"]
+      providesTags: ["UserProfile"],
+      keepUnusedDataFor: 0, // remove cache immediately when not used
     }),
 
     editActiveProfile: builder.mutation({

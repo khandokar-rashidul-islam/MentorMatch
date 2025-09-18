@@ -9,13 +9,9 @@ export const useBootstrapAuth = () => {
   const user = useAppSelector((state) => state.auth.user);
 
   const { data, isLoading, isError } = authApi.useGetMeQuery(null, {
-    skip: !!user, // skip query if user already in Redux
+    skip: false, // always run query to get fresh user info
+    refetchOnMountOrArgChange: true, // ensures fresh fetch on remount
   });
-
-//   console.log("useBootstrapAuth hook running");
-//   console.log("user from Redux:", user);
-//   console.log("isLoading:", isLoading);
-//   console.log("isError:", isError);
 
   useEffect(() => {
     if (data?.data?.user) {

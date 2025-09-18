@@ -4,7 +4,7 @@ import { setUser, logout } from "./authSlice";
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // Bootstrap /auth/me
+    //* Bootstrap /auth/me
     getMe: builder.query({
       query: () => "/auth/me",
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
@@ -18,13 +18,14 @@ export const authApi = baseApi.injectEndpoints({
       },
     }),
 
-    // login
+    //* login
     login: builder.mutation({
       query: (body) => ({ url: "/auth/login", method: "POST", body }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
           dispatch(setUser({ user: data.data.user }));
+          dispatch(baseApi.util.resetApiState());
         } catch {
           await clearPersistedAuth();
           dispatch(logout());
@@ -32,7 +33,7 @@ export const authApi = baseApi.injectEndpoints({
       },
     }),
 
-    // register
+    //* register
     register: builder.mutation({
       query: (formData) => ({
         url: "/users/register",
@@ -43,6 +44,7 @@ export const authApi = baseApi.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           dispatch(setUser({ user: data.data.user }));
+          dispatch(baseApi.util.resetApiState());
         } catch {
           await clearPersistedAuth();
           dispatch(logout());
@@ -50,16 +52,26 @@ export const authApi = baseApi.injectEndpoints({
       },
     }),
 
-    // logout
+    //* logout
     logout: builder.mutation({
       query: () => ({ url: "/auth/logout", method: "POST" }),
-      async onQueryStarted(_, { dispatch }) {
-        await clearPersistedAuth();
-        dispatch(logout());
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled; // call backend logout
+        } catch (err) {
+          console.error("Logout request failed:", err);
+        } finally {
+          // 1. Clear persisted auth
+          await clearPersistedAuth();
+          // 2. Remove user from Redux
+          dispatch(logout());
+          // 3. Reset all RTK Query caches
+          dispatch(baseApi.util.resetApiState());
+        }
       },
     }),
 
-    // toggle role
+    //* toggle role
     toggleRole: builder.mutation({
       query: () => ({ url: "/users/active-role/toggle", method: "PATCH" }),
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
