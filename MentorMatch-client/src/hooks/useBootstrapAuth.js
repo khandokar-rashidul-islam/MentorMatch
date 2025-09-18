@@ -8,7 +8,7 @@ export const useBootstrapAuth = () => {
   const user = useAppSelector((state) => state.auth.user);
 
   const { data, isLoading, isError } = authApi.useGetMeQuery(null, {
-    skip: !user,
+    skip: false, // always run query to get fresh user info
     refetchOnMountOrArgChange: true, // ensures fresh fetch on remount
   });
 
