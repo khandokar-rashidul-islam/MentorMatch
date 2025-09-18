@@ -1,21 +1,20 @@
-import React from 'react'
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useGetActiveProfileQuery } from '../../redux/features/user/userApi';
+import { useGetActiveProfileQuery } from "../../redux/features/user/userApi";
 
 const About = () => {
-
-const { data } = useGetActiveProfileQuery(null, {
-  refetchOnMountOrArgChange: true,
-});
- const user = data?.data?.user;
- const profile = user?.profile;
+  
+  const { data } = useGetActiveProfileQuery(null, {
+    refetchOnMountOrArgChange: true,
+  });
+  const profile = data?.data?.user?.profile;
 
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-4 sm:p-6">
         {/* About section */}
-        <div className="mt-6 sm:mt-8">
+        <div className="">
           <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
             About
           </h3>
@@ -77,6 +76,6 @@ const { data } = useGetActiveProfileQuery(null, {
       </CardContent>
     </Card>
   );
-}
+};
 
-export default About
+export default About;
