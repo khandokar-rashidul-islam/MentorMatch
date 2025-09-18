@@ -78,7 +78,7 @@ const TutorProfile = () => {
                   </div>
                   <div className="flex items-center justify-center sm:justify-start gap-1 text-muted-foreground">
                     <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
-                    <span className="text-sm sm:text-base">New York, NY</span>
+                    <span className="text-sm sm:text-base">{profile.address }</span>
                   </div>
                   <div className="flex items-center justify-center sm:justify-start gap-1 text-muted-foreground">
                     <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
