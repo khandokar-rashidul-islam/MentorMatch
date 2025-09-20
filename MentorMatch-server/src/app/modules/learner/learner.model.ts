@@ -22,6 +22,7 @@ const learnerProfileSchema = new Schema<ILearnerProfile>(
     profession: String,
     // Optional edit-time fields
     about: { type: String, default: undefined },
+    topics:[String]
   },
   { timestamps: true }
 );

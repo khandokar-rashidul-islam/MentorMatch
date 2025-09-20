@@ -19,6 +19,7 @@ export interface ILearnerProfileCore {
 // Edit-time extra fields
 export interface ILearnerProfileExtra {
   about?: string;
+  topics?:string[];
 }
 
 // Full learner profile

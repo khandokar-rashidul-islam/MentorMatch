@@ -34,6 +34,7 @@ const schema = z.object({
   about: z.string().optional(),
   education: z.string().optional(),
   educationInstitute: z.string().optional(),
+  topics: z.array(z.string()).optional()
 });
 
 const EditProfile = () => {
@@ -41,9 +42,16 @@ const EditProfile = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [preview, setPreview] = useState(null);
 
+
   // fetch old data
   const { data, isLoading } = useGetActiveProfileQuery();
   const profile = data?.data?.user?.profile;
+  const [topicInputText, setTopicInputText] = useState("");
+
+  const [topicInput, setTopicInput] = useState([]);
+
+  console.log(topicInputText, topicInput)
+
 
   // mutation
   const [editProfile, { isLoading: isSaving }] = useEditActiveProfileMutation();
@@ -64,6 +72,7 @@ const EditProfile = () => {
       about: "",
       education: "",
       educationInstitute: "",
+      topics: []
     },
   });
 
@@ -71,7 +80,13 @@ const EditProfile = () => {
     const formData = new FormData();
 
     Object.keys(formValues).forEach((key) => {
-      formData.append(key, formValues[key]);
+      if (key === "topics") {
+        formValues.topics.forEach((topic) => {
+          formData.append("topics[]", topic); // ✅ array handling
+        });
+      } else {
+        formData.append(key, formValues[key]);
+      }
     });
 
     if (selectedImage) {
@@ -100,6 +115,7 @@ const EditProfile = () => {
         about: profile.about || "",
         educationInstitute: profile.educationInstitute || "",
         education: profile.education || "",
+        topics: profile.topics || [],
       });
     }
   }, [profile, form]);
@@ -314,6 +330,145 @@ const EditProfile = () => {
                     </FormItem>
                   )}
                 />
+                {/*                 <FormField
+                  control={form.control}
+                  name="topics"
+                  render={() => (
+                    <FormItem className="col-span-2">
+                      <FormLabel>Favourite Topics</FormLabel>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Enter topics (comma separated)"
+                          disabled={!editable}
+                          onChange={(e) => {
+                            const values = e.target.value
+                              .split(",")
+                              .map((t) => t.trim())
+                              .filter((t) => t !== "");
+                            setTopicInput(values);
+                          }}
+                        />
+
+                        {editable && (
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              if (topicInput.length > 0) {
+                                const updatedTopics = [
+                                  ...(form.getValues("topics") || []),
+                                  ...topicInput,
+                                ];
+                                form.setValue("topics", updatedTopics);
+                                setTopicInput(updatedTopics); // ✅ keep local state in sync
+                              }
+                            }}
+                          >
+                            Add
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {(form.watch("topics") || []).map((topic, index) => (
+                          <span
+                            key={index}
+                            className="px-3 py-1 border rounded-full flex items-center gap-2"
+                          >
+                            {topic}
+                            {editable && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const updatedTopics = form
+                                    .getValues("topics")
+                                    .filter((_, i) => i !== index);
+                                  form.setValue("topics", updatedTopics);
+                                  setTopicInput(updatedTopics); // ✅ update local state too
+                                }}
+                                className="text-red-500 text-sm"
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </span>
+                        ))}
+                      </div>
+                    </FormItem>
+                  )}
+                /> */}
+
+                <FormField
+                  control={form.control}
+                  name="topics"
+                  render={() => (
+                    <FormItem className="col-span-2">
+                      <FormLabel>Favourite Topics</FormLabel>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Enter topics (comma separated)"
+                          disabled={!editable}
+                          value={topicInputText}
+                          onChange={(e) => setTopicInputText(e.target.value)}
+                        />
+                        {editable && (
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              const values = topicInputText
+                                .split(",")
+                                .map((t) => t.trim())
+                                .filter((t) => t !== "");
+                              if (values.length > 0) {
+                                const updatedTopics = [
+                                  ...(form.getValues("topics") || []),
+                                  ...values,
+                                ];
+                                form.setValue("topics", updatedTopics);
+                                setTopicInput(updatedTopics); 
+                                setTopicInputText(""); 
+                              }
+                            }}
+                          >
+                            Add
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {(form.watch("topics") || []).length > 0 ? (
+                          form.watch("topics").map((topic, index) => (
+                            <span
+                              key={index}
+                              className="px-3 py-1 border rounded-full flex items-center gap-2"
+                            >
+                              {topic}
+                              {editable && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                  {
+                                    const updatedTopics = form
+                                    .getValues("topics")
+                                    .filter((_, i) => i !== index);
+                                  form.setValue("topics", updatedTopics);
+                                  setTopicInput(updatedTopics); 
+                                  }
+                                  }
+                                  className="text-red-500 text-sm"
+                                >
+                                  ✕
+                                </button>
+                              )}
+                            </span>
+                          ))
+                        ) : (
+                          <p className="text-gray-500">No topics added yet.</p>
+                        )}
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
 
                 <FormField
                   control={form.control}

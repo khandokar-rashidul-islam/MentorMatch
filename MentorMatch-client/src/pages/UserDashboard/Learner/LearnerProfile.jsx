@@ -10,11 +10,11 @@ import { useNavigate } from "react-router";
 import { useGetActiveProfileQuery } from "../../../redux/features/user/userApi";
 
 const LearnerProfile = () => {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
-  refetchOnMountOrArgChange: true,
-});
+  const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
+    refetchOnMountOrArgChange: true,
+  });
 
 
 
@@ -152,13 +152,16 @@ const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
     return <div>Error loading profile</div>;
   }
 
- const user = data?.data?.user;
- const profile = user?.profile;
+  const user = data?.data?.user;
+  const profile = user?.profile;
+  console.log(profile)
+  const topics = profile?.topics
+  console.log(topics)
 
 
 
   return (
-    <div className="w-11/12 mx-auto pt-24">
+    <div className="w-11/12 mx-auto pt-24 min-h-screen">
       <div className="max-w-5xl mx-auto p-4 space-y-6">
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row items-center gap-6 bg-white dark:bg-gray-900 shadow-lg rounded-xl p-6">
@@ -169,9 +172,9 @@ const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
               <AvatarFallback>
                 {profile?.name
                   ? profile.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
                   : "CN"}
               </AvatarFallback>
             )}
@@ -195,20 +198,17 @@ const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
               </Button>
             </div>
             <div className="flex flex-wrap gap-2 mt-3 justify-center md:justify-start">
-              <span className="bg-purple-100 text-purple-800 px-3  rounded-full text-sm flex items-center justify-center">
-                React
-              </span>
-              <span className="bg-blue-100 text-blue-800 px-3 flex items-center justify-center  rounded-full text-sm">
-                Tailwind CSS
-              </span>
-              <span className="bg-green-100 text-green-800 px-3 flex items-center justify-center rounded-full text-sm">
-                MongoDB
-              </span>
+              {
+                topics.map((topic, id) => (
+                  <span key={id} className="bg-purple-100 text-purple-800 px-3  rounded-full text-sm flex items-center justify-center">
+                    {topic}
+                  </span>))
+              }
             </div>
             <Button
               variant="default"
               className="mt-4 md:hidden"
-              onClick={() => navigate(`/dashboard/learner/edit-profile`)}
+              onClick={() => navigate(`/dashboard/learner/learner-profile/edit`)}
             >
               {" "}
               edit
@@ -232,9 +232,11 @@ const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
               <CardContent className="space-y-3">
                 <p>Hello! {profile?.about}</p>
                 <ul className="list-disc list-inside">
-                  <li>🎯 Solved 200+ coding problems</li>
-                  <li>🏆 Completed MERN Stack Bootcamp</li>
-                  <li>💡 Strong problem-solving and teamwork skills</li>
+                  {profile.address && <li>📍 {profile.address}</li>}
+                  {profile.birthDate && <li>🎂 {new Date(profile.birthDate).toLocaleDateString()}</li>}
+                  {profile.gender && <li>⚧ {profile.gender}</li>}
+                  {profile.education && <li>🎓 {profile.education} at {profile.educationInstitute}</li>}
+                  {profile.phone && <li>📞 {profile.phone}</li>}
                 </ul>
               </CardContent>
             </Card>
@@ -262,11 +264,10 @@ const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            className={`w-4 h-4 ${
-                              i < r.rating
+                            className={`w-4 h-4 ${i < r.rating
                                 ? "text-yellow-400 fill-yellow-400"
                                 : "text-gray-300"
-                            }`}
+                              }`}
                           />
                         ))}
                       </div>
@@ -309,9 +310,9 @@ const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
                           reviews.map((item) =>
                             item.id === r.id
                               ? {
-                                  ...item,
-                                  showReplyInput: !item.showReplyInput,
-                                }
+                                ...item,
+                                showReplyInput: !item.showReplyInput,
+                              }
                               : item
                           )
                         )
@@ -354,11 +355,10 @@ const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
                       <Star
                         key={i}
                         onClick={() => setRating(i + 1)}
-                        className={`w-6 h-6 cursor-pointer ${
-                          i < rating
+                        className={`w-6 h-6 cursor-pointer ${i < rating
                             ? "text-yellow-400 fill-yellow-400"
                             : "text-gray-300"
-                        }`}
+                          }`}
                       />
                     ))}
                   </div>
@@ -406,11 +406,10 @@ const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
                         className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-500 transition"
                       >
                         <Heart
-                          className={`w-5 h-5 ${
-                            post.liked
+                          className={`w-5 h-5 ${post.liked
                               ? "fill-red-500 text-red-500"
                               : "text-gray-400"
-                          }`}
+                            }`}
                         />
                         {post.likes}
                       </button>
