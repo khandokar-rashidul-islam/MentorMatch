@@ -154,9 +154,6 @@ const LearnerProfile = () => {
 
   const user = data?.data?.user;
   const profile = user?.profile;
-  console.log(profile)
-  const topics = profile?.topics
-  console.log(topics)
 
 
 
@@ -172,9 +169,9 @@ const LearnerProfile = () => {
               <AvatarFallback>
                 {profile?.name
                   ? profile.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
                   : "CN"}
               </AvatarFallback>
             )}
@@ -198,17 +195,21 @@ const LearnerProfile = () => {
               </Button>
             </div>
             <div className="flex flex-wrap gap-2 mt-3 justify-center md:justify-start">
-              {
-                topics.map((topic, id) => (
-                  <span key={id} className="bg-purple-100 text-purple-800 px-3  rounded-full text-sm flex items-center justify-center">
-                    {topic}
-                  </span>))
-              }
+              {profile?.topics.map((topic, id) => (
+                <span
+                  key={id}
+                  className="bg-purple-100 text-purple-800 px-3  rounded-full text-sm flex items-center justify-center"
+                >
+                  {topic}
+                </span>
+              ))}
             </div>
             <Button
               variant="default"
               className="mt-4 md:hidden"
-              onClick={() => navigate(`/dashboard/learner/learner-profile/edit`)}
+              onClick={() =>
+                navigate(`/dashboard/learner/learner-profile/edit`)
+              }
             >
               {" "}
               edit
@@ -233,9 +234,17 @@ const LearnerProfile = () => {
                 <p>Hello! {profile?.about}</p>
                 <ul className="list-disc list-inside">
                   {profile.address && <li>📍 {profile.address}</li>}
-                  {profile.birthDate && <li>🎂 {new Date(profile.birthDate).toLocaleDateString()}</li>}
+                  {profile.birthDate && (
+                    <li>
+                      🎂 {new Date(profile.birthDate).toLocaleDateString()}
+                    </li>
+                  )}
                   {profile.gender && <li>⚧ {profile.gender}</li>}
-                  {profile.education && <li>🎓 {profile.education} at {profile.educationInstitute}</li>}
+                  {profile.education && (
+                    <li>
+                      🎓 {profile.education} at {profile.educationInstitute}
+                    </li>
+                  )}
                   {profile.phone && <li>📞 {profile.phone}</li>}
                 </ul>
               </CardContent>
@@ -264,10 +273,11 @@ const LearnerProfile = () => {
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            className={`w-4 h-4 ${i < r.rating
+                            className={`w-4 h-4 ${
+                              i < r.rating
                                 ? "text-yellow-400 fill-yellow-400"
                                 : "text-gray-300"
-                              }`}
+                            }`}
                           />
                         ))}
                       </div>
@@ -310,9 +320,9 @@ const LearnerProfile = () => {
                           reviews.map((item) =>
                             item.id === r.id
                               ? {
-                                ...item,
-                                showReplyInput: !item.showReplyInput,
-                              }
+                                  ...item,
+                                  showReplyInput: !item.showReplyInput,
+                                }
                               : item
                           )
                         )
@@ -355,10 +365,11 @@ const LearnerProfile = () => {
                       <Star
                         key={i}
                         onClick={() => setRating(i + 1)}
-                        className={`w-6 h-6 cursor-pointer ${i < rating
+                        className={`w-6 h-6 cursor-pointer ${
+                          i < rating
                             ? "text-yellow-400 fill-yellow-400"
                             : "text-gray-300"
-                          }`}
+                        }`}
                       />
                     ))}
                   </div>
@@ -406,10 +417,11 @@ const LearnerProfile = () => {
                         className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-500 transition"
                       >
                         <Heart
-                          className={`w-5 h-5 ${post.liked
+                          className={`w-5 h-5 ${
+                            post.liked
                               ? "fill-red-500 text-red-500"
                               : "text-gray-400"
-                            }`}
+                          }`}
                         />
                         {post.likes}
                       </button>

@@ -21,4 +21,5 @@ export const learnerProfileSchema = z.object({
 export const learnerEditSchema = learnerProfileSchema.partial().extend({
   profileImage: z.string().optional(),
   about: z.string().optional(),
+  topics: z.array(z.string()).optional(),
 });
