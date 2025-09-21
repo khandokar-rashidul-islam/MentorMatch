@@ -14,7 +14,7 @@ import {
   Link,
 } from "lucide-react";
 import { NavLink } from "react-router";
-import { useGetActiveProfileQuery } from "../../redux/features/user/userApi";
+//import { useGetActiveProfileQuery } from "../../redux/features/user/userApi";
 
 const TutorProfile = ({data}) => {
   // const { data,isLoading, isError } = useGetActiveProfileQuery(

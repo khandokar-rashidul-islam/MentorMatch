@@ -1,15 +1,11 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useGetActiveProfileQuery } from "../../redux/features/user/userApi";
+
 
 const About = ({data}) => {
 
-  // const { data } = useGetActiveProfileQuery(null, {
-  //   refetchOnMountOrArgChange: true,
-  // });
   const profile = data?.data?.user?.profile;
-  // console.log(profile)
 
   return (
     <Card className="overflow-hidden">

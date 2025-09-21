@@ -35,6 +35,7 @@ const TutorDetails = () => {
       refetchOnMountOrArgChange: true,
     }
   );
+
   if (isLoading) return <div className="min-h-screen text-center pt-20">Loading....</div>
   if (isError) return <div className="min-h-screen text-center pt-55 text-red-500">Error loading profile!</div>
 
@@ -52,7 +53,6 @@ const TutorDetails = () => {
 
           <div className="xl:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
             <TutorProfile data={data} />
-
             <Tabs defaultValue="about" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="about" className="flex items-center gap-2">
@@ -72,8 +72,10 @@ const TutorDetails = () => {
               <TabsContent value="about" className="mt-4">
                 <div className="space-y-4 sm:space-y-6">
                   {/* About Me */}
-                  <About data={data}/>
-                  <Certifications certifications={data?.data?.user?.profile?.certifications} />
+                  <About data={data} />
+                  <Certifications
+                    certifications={data?.data?.user?.profile?.certifications}
+                  />
                 </div>
               </TabsContent>
 
@@ -94,7 +96,10 @@ const TutorDetails = () => {
                   <h3 className="font-semibold mb-3 sm:mb-4">Availability</h3>
                   <div className="space-y-3">
                     {days.map(({ day, time }) => (
-                      <div className="flex justify-between items-center" key={day}>
+                      <div
+                        className="flex justify-between items-center"
+                        key={day}
+                      >
                         <span className="text-muted-foreground">{day}</span>
                         <span className="text-sm">{time}</span>
                       </div>
@@ -103,10 +108,12 @@ const TutorDetails = () => {
                 </CardContent>
               </Card>
             </div>
-
-
+            {/* REVIEWS */}
             <ReviewSection />
-            <FAQSection />
+            {/* FAQ */}
+            <FAQSection
+              faqs={data?.data?.user?.profile?.faqs}
+            />
           </div>
 
           {/* Sidebar */}
@@ -120,7 +127,10 @@ const TutorDetails = () => {
                 <h3 className="font-semibold mb-3 sm:mb-4">Availability</h3>
                 <div className="space-y-3">
                   {days.map(({ day, time }) => (
-                    <div className="flex justify-between items-center" key={day}>
+                    <div
+                      className="flex justify-between items-center"
+                      key={day}
+                    >
                       <span className="text-muted-foreground">{day}</span>
                       <span className="text-sm">{time}</span>
                     </div>
@@ -131,8 +141,6 @@ const TutorDetails = () => {
           </div>
         </div>
       </main>
-
-
     </div>
   );
 };

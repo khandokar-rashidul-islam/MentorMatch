@@ -6,13 +6,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useGetActiveProfileQuery } from "../../redux/features/user/userApi";
 
-const FAQSection = () => {
-  const { data } = useGetActiveProfileQuery(null, {
-    refetchOnMountOrArgChange: true,
-  });
-  const profile = data?.data?.user?.profile;
+const FAQSection = ({ faqs }) => {
 
   return (
     <Card>
@@ -24,7 +19,7 @@ const FAQSection = () => {
       </CardHeader>
       <CardContent>
         <Accordion type="single" collapsible className="w-full">
-          {profile?.faqs.map((faq) => (
+          {faqs.map((faq) => (
             <AccordionItem key={faq._id} value={faq._id}>
               <AccordionTrigger className="text-left">
                 {faq.question}

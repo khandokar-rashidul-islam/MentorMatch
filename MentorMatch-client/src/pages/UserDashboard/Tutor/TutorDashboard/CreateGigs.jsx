@@ -7,8 +7,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Sparkles, Calendar, Award, PlusCircle, X, Star } from "lucide-react";
+import { Sparkles, Calendar, Award, PlusCircle, X, Star, HelpCircle, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+import CreateGigsPlans from "./CreateGigsPlans";
 
 function TagInput({
   label,
@@ -132,6 +133,9 @@ export default function CreateGigs() {
     handleSubmit,
     control,
     reset,
+    setValue,
+    getValues,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -140,22 +144,48 @@ export default function CreateGigs() {
       aboutGig: "",
       services: [],
       keywords: [],
-      bookingPlans: {
-        instant: { price: "", services: "" },
-        weeklyBasic: { price: "", services: "" },
-        weeklyIntensive: { price: "", services: "" },
-        monthlyStandard: { price: "", services: "" },
-        monthlyPremium: { price: "", services: "" },
-        monthlyElite: { price: "", services: "" },
+      plans: {
+        instant: { price: 0, description: "", features: [] },
+        weekly: {
+          basic: { price: 0, description: "", features: [] },
+          intensive: { price: 0, description: "", features: [] },
+        },
+        monthly: {
+          standard: { price: 0, description: "", features: [] },
+          premium: { price: 0, description: "", features: [] },
+          elite: { price: 0, description: "", features: [] },
+        },
       },
-      faq: [{ question: "", answer: "" }],
+      faqs: [],
     },
   });
 
   const relatedTopicsFA = useFieldArray({ control, name: "relatedTopics" });
   const keywordsFA = useFieldArray({ control, name: "keywords" });
   const servicesFA = useFieldArray({ control, name: "services" });
-  const faqFA = useFieldArray({ control, name: "faq" });
+
+  // Add feature to a field
+  const addFeatureToField = (fieldName, feature) => {
+    const current = getValues(fieldName) || [];
+    setValue(fieldName, [...current, feature], {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
+  // Remove feature from a field
+  const removeFeatureFromField = (fieldName, index) => {
+    const current = getValues(fieldName) || [];
+    const updated = current.filter((_, i) => i !== index);
+    setValue(fieldName, updated, { shouldValidate: true, shouldDirty: true });
+  };
+
+// faqs field array
+  const {
+    fields: faqFields,
+    append: addFaq,
+    remove: removeFaq,
+  } = useFieldArray({ control, name: "faqs" });
 
   const onSubmit = (data) => {
     console.log(data);
@@ -169,17 +199,17 @@ export default function CreateGigs() {
         {/* Basic Info */}
         <Card className="shadow-medium border-0 rounded-md ">
           <CardHeader className="bg-gradient-primary rounded-t-lg">
-            <CardTitle className="flex items-center gap-2 text-2xl font-bold text-primary ">
+            <CardTitle className="text-2xl font-bold text-primary ">
               Basic Information
             </CardTitle>
-            <p className="text-muted-foreground text-xs flex items-center gap-1">
-              <Sparkles size={10} className="h-5 w-5" /> Share your expertise
+            <small className="text-muted-foreground text-xs flex items-center gap-1">
+              <Sparkles size={10} className="h-3 w-3" /> Share your expertise
               and start earning by creating an amazing gig
-            </p>
+            </small>
           </CardHeader>
           <CardContent className="p-6 space-y-6">
             <div className="space-y-4">
-              <Label className="font-bold">Gig Title</Label>
+              <Label className="font-bold">Title</Label>
               <Input
                 {...register("gigTitle", { required: "Title is required" })}
                 placeholder="I will create a stunning website for your business"
@@ -287,86 +317,55 @@ export default function CreateGigs() {
 
               {/* Instant */}
               <TabsContent value="instant" className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-4">
-                    <Label>Price ($)</Label>
-                    <Input
-                      {...register("bookingPlans.instant.price", {
-                        required: true,
-                      })}
-                      type="number"
-                    />
-                  </div>
-                  <div className="space-y-4">
-                    <Label>Services</Label>
-                    <Input
-                      {...register("bookingPlans.instant.services")}
-                      placeholder="Comma separated"
-                    />
-                  </div>
-                </div>
+                {/* --- Instant Plan --- */}
+                <CreateGigsPlans
+                  title="Instant Session"
+                  planPath="plans.instant"
+                  control={control}
+                  register={register}
+                  errors={errors}
+                  watch={watch}
+                  addFeature={addFeatureToField}
+                  removeFeature={removeFeatureFromField}
+                />
               </TabsContent>
 
               {/* Weekly */}
               <TabsContent value="weekly" className="space-y-6 mt-6">
-                {["weeklyBasic", "weeklyIntensive"].map((plan, idx) => (
-                  <div key={idx} className="space-y-8">
-                    <h4 className="font-medium capitalize">
-                      {plan.replace(/([A-Z])/g, " $1")}
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-4">
-                        <Label>Price ($)</Label>
-                        <Input
-                          {...register(`bookingPlans.${plan}.price`, {
-                            required: true,
-                          })}
-                          type="number"
-                        />
-                      </div>
-                      <div className="space-y-4">
-                        <Label>Services</Label>
-                        <Input
-                          {...register(`bookingPlans.${plan}.services`)}
-                          placeholder="Comma separated"
-                        />
-                      </div>
-                    </div>
-                    {idx === 0 && <Separator />}
-                  </div>
+                {["basic", "intensive"].map((key) => (
+                  <CreateGigsPlans
+                    key={key}
+                    title={
+                      key.charAt(0).toUpperCase() + key.slice(1) + " Weekly"
+                    }
+                    planPath={`plans.weekly.${key}`}
+                    control={control}
+                    register={register}
+                    errors={errors}
+                    watch={watch}
+                    addFeature={addFeatureToField}
+                    removeFeature={removeFeatureFromField}
+                  />
                 ))}
               </TabsContent>
 
               {/* Monthly */}
               <TabsContent value="monthly" className="space-y-6 mt-6">
-                {["monthlyStandard", "monthlyPremium", "monthlyElite"].map(
-                  (plan, idx) => (
-                    <div key={idx} className="space-y-8">
-                      <h4 className="font-medium capitalize">
-                        {plan.replace(/([A-Z])/g, " $1")}
-                      </h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-4">
-                          <Label>Price ($)</Label>
-                          <Input
-                            {...register(`bookingPlans.${plan}.price`, {
-                              required: true,
-                            })}
-                            type="number"
-                          />
-                        </div>
-                        <div className="space-y-4">
-                          <Label>Services</Label>
-                          <Input
-                            {...register(`bookingPlans.${plan}.services`)}
-                            placeholder="Comma separated"
-                          />
-                        </div>
-                      </div>
-                      {idx < 2 && <Separator />}
-                    </div>
-                  )
-                )}
+                {["standard", "premium", "elite"].map((key) => (
+                  <CreateGigsPlans
+                    key={key}
+                    title={
+                      key.charAt(0).toUpperCase() + key.slice(1) + " Monthly"
+                    }
+                    planPath={`plans.monthly.${key}`}
+                    control={control}
+                    register={register}
+                    errors={errors}
+                    watch={watch}
+                    addFeature={addFeatureToField}
+                    removeFeature={removeFeatureFromField}
+                  />
+                ))}
               </TabsContent>
             </Tabs>
           </CardContent>
@@ -375,42 +374,84 @@ export default function CreateGigs() {
         {/* FAQ */}
         <Card className="shadow-medium border-0 rounded-md ">
           <CardHeader>
-            <CardTitle className="font-bold text-2xl ">
-              Frequently Asked Questions
-            </CardTitle>
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-2">
+                <HelpCircle className="h-5 w-5 text-primary" />
+                <CardTitle className="text-primary font-bold text-2xl">
+                  Frequently Asked Questions
+                </CardTitle>
+              </div>
+              <Button
+                type="button"
+                onClick={() => addFaq({ question: "", answer: "" })}
+                variant="outline"
+                size="sm"
+              >
+                <Plus className="h-4 w-4 mr-2" /> Add FAQ
+              </Button>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-8">
-            {faqFA.fields.map((item, index) => (
-              <div key={item.id} className="space-y-2 p-4 border rounded-lg">
-                <Input
-                  {...register(`faq.${index}.question`, { required: true })}
-                  placeholder="Question"
-                />
-                <Textarea
-                  {...register(`faq.${index}.answer`, { required: true })}
-                  placeholder="Provide a detailed answer..."
-                  className="min-h-[60px]"
-                />
-                <div className="flex justify-end">
+          <CardContent className="space-y-4">
+            {faqFields.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                <HelpCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <p>
+                  No FAQs added yet. Click "Add FAQ" to create your first
+                  question and answer.
+                </p>
+              </div>
+            )}
+            {faqFields.map((field, index) => (
+              <div
+                key={field.id}
+                className="p-4 bg-muted/30 rounded-lg border border-border/50 space-y-3"
+              >
+                <div className="flex justify-between items-start">
+                  <h3 className="font-medium">FAQ {index + 1}</h3>
                   <Button
                     type="button"
-                    variant="destructive"
-                    onClick={() => faqFA.remove(index)}
+                    variant="ghost"
                     size="sm"
+                    onClick={() => removeFaq(index)}
+                    className="text-destructive hover:bg-destructive/10"
                   >
-                    <X className="w-4 h-4" />
+                    <Trash2 className="h-4 w-4" />
                   </Button>
+                </div>
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label>Question</Label>
+                    <Input
+                      {...register(`faqs.${index}.question`, {
+                        required: "Question is required",
+                      })}
+                      className="bg-background"
+                      placeholder="Enter your frequently asked question..."
+                    />
+                    {errors.faqs?.[index]?.question && (
+                      <p className="text-sm text-destructive">
+                        {errors.faqs[index].question.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Answer</Label>
+                    <Textarea
+                      {...register(`faqs.${index}.answer`, {
+                        required: "Answer is required",
+                      })}
+                      className="bg-background min-h-[80px]"
+                      placeholder="Provide a helpful answer..."
+                    />
+                    {errors.faqs?.[index]?.answer && (
+                      <p className="text-sm text-destructive">
+                        {errors.faqs[index].answer.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => faqFA.append({ question: "", answer: "" })}
-              className="w-full"
-            >
-              <PlusCircle className="w-4 h-4 mr-2" /> Add FAQ
-            </Button>
           </CardContent>
         </Card>
 
