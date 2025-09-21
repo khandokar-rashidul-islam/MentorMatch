@@ -50,7 +50,7 @@ const EditProfile = () => {
 
   const [topicInput, setTopicInput] = useState([]);
 
-  console.log(topicInputText, topicInput)
+  //console.log(topicInputText, topicInput)
 
 
   // mutation

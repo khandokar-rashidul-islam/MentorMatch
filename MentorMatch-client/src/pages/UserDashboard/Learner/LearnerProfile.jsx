@@ -245,7 +245,7 @@ const LearnerProfile = () => {
                       🎓 {profile.education} at {profile.educationInstitute}
                     </li>
                   )}
-                  {profile.phone && <li>📞 {profile.phone}</li>}
+                  {/* {profile.phone && <li>📞 {profile.phone}</li>} */}
                 </ul>
               </CardContent>
             </Card>

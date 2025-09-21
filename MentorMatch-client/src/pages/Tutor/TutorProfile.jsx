@@ -16,13 +16,13 @@ import {
 import { NavLink } from "react-router";
 import { useGetActiveProfileQuery } from "../../redux/features/user/userApi";
 
-const TutorProfile = () => {
-  const { data,isLoading, isError } = useGetActiveProfileQuery(
-    null,
-    {
-      refetchOnMountOrArgChange: true,
-    }
-  );
+const TutorProfile = ({data}) => {
+  // const { data,isLoading, isError } = useGetActiveProfileQuery(
+  //   null,
+  //   {
+  //     refetchOnMountOrArgChange: true,
+  //   }
+  // );
 
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(247);
@@ -35,12 +35,12 @@ const TutorProfile = () => {
   const user = data?.data?.user;
   const profile = user?.profile;
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (isError) {
-    return <div>Error loading profile</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
+  // if (isError) {
+  //   return <div>Error loading profile</div>;
+  // }
 
   return (
     <Card className="overflow-hidden">

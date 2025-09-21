@@ -11,6 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import About from "./About";
 import Posts from "./Posts";
 import Gigs from "./Gigs";
+import { useGetActiveProfileQuery } from "../../redux/features/user/userApi";
+import Certifications from "./Certifications";
 
 const TutorDetails = () => {
   // const breadcrumbItems = [
@@ -27,6 +29,15 @@ const TutorDetails = () => {
     { day: "Friday", time: "9:00 AM - 4:00 PM" },
     { day: "Weekend", time: "By appointment" },
   ];
+  const { data, isLoading, isError } = useGetActiveProfileQuery(
+    null,
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
+  if (isLoading) return <div className="min-h-screen text-center pt-20">Loading....</div>
+  if (isError) return <div className="min-h-screen text-center pt-55 text-red-500">Error loading profile!</div>
+
 
   return (
     <div className="min-h-screen mt-20 bg-gradient-subtle">
@@ -40,7 +51,7 @@ const TutorDetails = () => {
           {/* Main Content */}
 
           <div className="xl:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
-            <TutorProfile />
+            <TutorProfile data={data} />
 
             <Tabs defaultValue="about" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
@@ -61,37 +72,38 @@ const TutorDetails = () => {
               <TabsContent value="about" className="mt-4">
                 <div className="space-y-4 sm:space-y-6">
                   {/* About Me */}
-                  <About />
+                  <About data={data}/>
+                  <Certifications certifications={data?.data?.user?.profile?.certifications} />
                 </div>
               </TabsContent>
-              
+
               {/* post tab */}
               <TabsContent value="posts" className="mt-4">
-                <Posts/>
+                <Posts />
               </TabsContent>
 
               {/* gigs tab */}
               <TabsContent value="gigs" className="mt-4">
-                <Gigs/>
+                <Gigs />
               </TabsContent>
             </Tabs>
             <div className="xl:hidden space-y-4 sm:space-y-6 ">
-              <BookingPlans />
+              <BookingPlans data={data} />
               <Card>
-              <CardContent className="p-4 sm:p-6">
-                <h3 className="font-semibold mb-3 sm:mb-4">Availability</h3>
-                <div className="space-y-3">
-                  {days.map(({ day, time }) => (
-                    <div className="flex justify-between items-center" key={day}>
-                      <span className="text-muted-foreground">{day}</span>
-                      <span className="text-sm">{time}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                <CardContent className="p-4 sm:p-6">
+                  <h3 className="font-semibold mb-3 sm:mb-4">Availability</h3>
+                  <div className="space-y-3">
+                    {days.map(({ day, time }) => (
+                      <div className="flex justify-between items-center" key={day}>
+                        <span className="text-muted-foreground">{day}</span>
+                        <span className="text-sm">{time}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-            
+
 
             <ReviewSection />
             <FAQSection />
@@ -100,9 +112,9 @@ const TutorDetails = () => {
           {/* Sidebar */}
           <div className="space-y-4 sm:space-y-6 hidden xl:block">
             <div className="">
-              <BookingPlans />
+              <BookingPlans data={data} />
             </div>
-            
+
             <Card>
               <CardContent className="p-4 sm:p-6">
                 <h3 className="font-semibold mb-3 sm:mb-4">Availability</h3>
