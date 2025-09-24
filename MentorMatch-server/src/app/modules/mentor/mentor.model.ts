@@ -1,7 +1,8 @@
 import { Schema, model } from "mongoose";
-import { IMentorProfile } from "./mentor.interface";
+import { GigDocument, IMentorProfile } from "./mentor.interface";
 import { APPROVAL_STATUS } from "../user/user.constant";
 
+// Mongoose schema definition for MentorProfile
  const mentorProfileSchema = new Schema<IMentorProfile>(
   {
     user: {
@@ -96,6 +97,65 @@ import { APPROVAL_STATUS } from "../user/user.constant";
   { timestamps: true }
 );
 
+// gig related schemas
+const GigSchema = new Schema<GigDocument>(
+  {
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    gigTitle: { type: String, required: true, trim: true },
+    aboutGig: { type: String, required: true },
+    relatedTopics: [{ type: String }],
+    services: [{ type: String }],
+    keywords: [{ type: String }],
+    plans: {
+      instant: {
+        price: Number,
+        description: String,
+        features: [String],
+      },
+      weekly: {
+        basic: {
+          price: Number,
+          description: String,
+          features: [String],
+        },
+        intensive: {
+          price: Number,
+          description: String,
+          features: [String],
+        },
+      },
+      monthly: {
+        standard: {
+          price: Number,
+          description: String,
+          features: [String],
+        },
+        premium: {
+          price: Number,
+          description: String,
+          features: [String],
+        },
+        elite: {
+          price: Number,
+          description: String,
+          features: [String],
+        },
+      },
+    },
+    faqs: [
+      {
+        question: { type: String, required: true },
+        answer: { type: String, required: true },
+      },
+    ],
+  },
+  { timestamps: true }
+);
+
+
+// gig model
+export const GigModel = model<GigDocument>("Gig", GigSchema);
+// MentorProfile model
 export const MentorProfileModel = model<IMentorProfile>(
   "MentorProfile",
   mentorProfileSchema

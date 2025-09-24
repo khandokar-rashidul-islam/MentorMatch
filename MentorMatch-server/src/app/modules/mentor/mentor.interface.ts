@@ -1,7 +1,8 @@
-import { Types } from "mongoose";
+import {Types } from "mongoose";
 import { TApproval } from "../user/user.constant";
 
-// Core mentor fields (used for registration)
+//* mentor Profile interfaces
+
 export interface IMentorProfileCore {
   user: Types.ObjectId;
   profileImage?: string;
@@ -22,7 +23,6 @@ export interface IMentorProfileCore {
   approvalStatus: TApproval;
 }
 
-// Edit-time extra fields
 export interface IMentorProfileExtra {
   about?: string;
   skills?: string[];
@@ -77,8 +77,48 @@ export interface IMentorProfileExtra {
   faqs?: { question: string; answer: string }[];
 }
 
-// Full mentor profile type
+//*gig related interfaces
+
+export interface GigFaq {
+  question: string;
+  answer: string;
+}
+
+export interface GigPlan {
+  price: number;
+  description: string;
+  features: string[];
+}
+
+export interface Gig {
+  user: Types.ObjectId; // owner of the gig
+  gigTitle: string;
+  aboutGig: string;
+  relatedTopics: string[];
+  services: string[];
+  keywords: string[];
+  plans: {
+    instant?: GigPlan;
+    weekly?: {
+      basic?: GigPlan;
+      intensive?: GigPlan;
+    };
+    monthly?: {
+      standard?: GigPlan;
+      premium?: GigPlan;
+      elite?: GigPlan;
+    };
+  };
+  faqs: GigFaq[];
+}
+
+//* gig document interface
+export interface GigDocument extends Gig, Document {}
+
+
+//* Full mentor profile type
 export type IMentorProfile = IMentorProfileCore &
   IMentorProfileExtra & {
     _id?: Types.ObjectId;
   };
+

@@ -7,9 +7,22 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Sparkles, Calendar, Award, PlusCircle, X, Star, HelpCircle, Plus, Trash2 } from "lucide-react";
+import {
+  Sparkles,
+  Calendar,
+  Award,
+  PlusCircle,
+  X,
+  Star,
+  HelpCircle,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
 import CreateGigsPlans from "./CreateGigsPlans";
+import { useCreateGigMutation } from "../../../../redux/features/mentor/mentor.api";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 function TagInput({
   label,
@@ -36,9 +49,7 @@ function TagInput({
     setFilteredSuggestions([]);
   };
 
-  const handleRemove = (index) => {
-    remove(index);
-  };
+  const handleRemove = (index) => remove(index);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -58,40 +69,31 @@ function TagInput({
             !fieldArray.some((t) => t.value.toLowerCase() === s.toLowerCase())
         )
       );
-    } else {
-      setFilteredSuggestions([]);
-    }
+    } else setFilteredSuggestions([]);
   };
 
   return (
     <div className="space-y-2 relative">
       <Label className="text-sm font-bold">{label}</Label>
-
-      {/* Tags list */}
       <div className="flex flex-wrap gap-2 mb-2">
         {fieldArray.map((field, index) => (
           <Badge
-            key={field.id} // Must use field.id
+            key={field.id}
             variant="secondary"
             onClick={() => handleRemove(index)}
             className="flex cursor-pointer items-center gap-1 px-2 py-1"
           >
-            {field.value}
-            <X
-              className="w-3 h-3 "
-            />
+            {field.value} <X className="w-3 h-3" />
           </Badge>
         ))}
       </div>
-
-      {/* Input + Add button */}
       <div className="flex">
         <Input
           value={inputValue}
           placeholder={placeholder}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          className="flex-1 border  focus:border-indigo-400 rounded-md px-3 py-2 text-sm placeholder:text-gray-400 outline-none"
+          className="flex-1 border focus:border-indigo-400 rounded-md px-3 py-2 text-sm placeholder:text-gray-400 outline-none"
         />
         <button
           type="button"
@@ -106,8 +108,6 @@ function TagInput({
           +
         </button>
       </div>
-
-      {/* Suggestions */}
       {filteredSuggestions.length > 0 && (
         <div className="absolute z-10 bg-secondary-foreground text-muted-foreground border rounded mt-1 shadow max-h-40 overflow-auto w-full">
           {filteredSuggestions.map((sug, idx) => (
@@ -125,9 +125,10 @@ function TagInput({
   );
 }
 
-
-
 export default function CreateGigs() {
+  const navigate = useNavigate();
+  const [createGig, { isLoading }] = useCreateGigMutation();
+
   const {
     register,
     handleSubmit,
@@ -162,9 +163,17 @@ export default function CreateGigs() {
 
   const relatedTopicsFA = useFieldArray({ control, name: "relatedTopics" });
   const keywordsFA = useFieldArray({ control, name: "keywords" });
-  const servicesFA = useFieldArray({ control, name: "services" });
+  const {
+    fields: serviceFields,
+    append: addService,
+    remove: removeService,
+  } = useFieldArray({ control, name: "services" });
+  const {
+    fields: faqFields,
+    append: addFaq,
+    remove: removeFaq,
+  } = useFieldArray({ control, name: "faqs" });
 
-  // Add feature to a field
   const addFeatureToField = (fieldName, feature) => {
     const current = getValues(fieldName) || [];
     setValue(fieldName, [...current, feature], {
@@ -173,33 +182,43 @@ export default function CreateGigs() {
     });
   };
 
-  // Remove feature from a field
   const removeFeatureFromField = (fieldName, index) => {
     const current = getValues(fieldName) || [];
-    const updated = current.filter((_, i) => i !== index);
-    setValue(fieldName, updated, { shouldValidate: true, shouldDirty: true });
+    setValue(
+      fieldName,
+      current.filter((_, i) => i !== index),
+      { shouldValidate: true, shouldDirty: true }
+    );
   };
 
-// faqs field array
-  const {
-    fields: faqFields,
-    append: addFaq,
-    remove: removeFaq,
-  } = useFieldArray({ control, name: "faqs" });
-
-  const onSubmit = (data) => {
-    console.log(data);
-    alert("Gig Created Successfully!");
-    reset();
+  const onSubmit = async (data) => {
+    try {
+      // Transform field arrays to simple arrays of values
+      const payload = {
+        ...data,
+        relatedTopics: data.relatedTopics.map((t) => t.value),
+        keywords: data.keywords.map((k) => k.value),
+        services: data.services.map((s) => s.value),
+      };
+      await createGig(payload).unwrap();
+      toast.success("Gig created successfully!");
+      navigate(`/dashboard/mentor/my-gigs`);
+      reset();
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error?.data?.message || "Failed to create gig. Please try again."
+      );
+    }
   };
 
   return (
-    <div className="w-11/12 mx-auto min-h-screen bg-gradient-secondary pt-20 mb-8 ">
+    <div className="w-11/12 mx-auto min-h-screen bg-gradient-secondary pt-20 mb-8">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         {/* Basic Info */}
-        <Card className="shadow-medium border-0 rounded-md ">
+        <Card className="shadow-medium border-0 rounded-md">
           <CardHeader className="bg-gradient-primary rounded-t-lg">
-            <CardTitle className="text-2xl font-bold text-primary ">
+            <CardTitle className="text-2xl font-bold text-primary">
               Basic Information
             </CardTitle>
             <small className="text-muted-foreground text-xs flex items-center gap-1">
@@ -223,9 +242,7 @@ export default function CreateGigs() {
             <div className="space-y-4">
               <Label className="font-bold">About This Gig </Label>
               <Textarea
-                {...register("aboutGig", {
-                  required: "About gig is required",
-                })}
+                {...register("aboutGig", { required: "About gig is required" })}
                 placeholder="Describe your gig in detail..."
                 className="min-h-[120px]"
               />
@@ -235,6 +252,7 @@ export default function CreateGigs() {
                 </p>
               )}
             </div>
+
             <TagInput
               label="Related Topics"
               fieldArray={relatedTopicsFA.fields}
@@ -261,35 +279,55 @@ export default function CreateGigs() {
         </Card>
 
         {/* Services */}
-        <Card className="shadow-medium border-0 rounded-md ">
-          <CardHeader>
+        <Card className="shadow-medium border-0 rounded-md">
+          <CardHeader className="flex items-center justify-between ">
             <CardTitle className="font-bold text-2xl text-primary">
               Services Provided
             </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 p-6">
-            {servicesFA.fields.map((field, index) => (
-              <Input
-                key={field.id}
-                {...register(`services.${index}.value`, { required: true })}
-                placeholder={`Service ${index + 1} *`}
-                className="w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500"
-              />
-            ))}
-
             <Button
               type="button"
               variant="outline"
-              onClick={() => servicesFA.append({ value: "" })}
-              className="w-full flex justify-center items-center gap-2 mt-2 py-3 border-dashed border border-gray-400"
+              onClick={() => addService({ value: "" })}
+              className="flex justify-center items-center gap-2 mt-2 py-3 border-dashed border border-gray-400"
             >
               <PlusCircle className="w-5 h-5" /> Add Service
             </Button>
+          </CardHeader>
+          <CardContent className="space-y-4 p-6">
+            {serviceFields.length === 0 && (
+              <div className="text-center py-2 text-muted-foreground">
+                <HelpCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <p>
+                  No Services added yet. Click "Add Service" to create your
+                  first service offering.
+                </p>
+              </div>
+            )}
+            {serviceFields.map((field, index) => (
+              <div key={field.id} className="flex items-center gap-2">
+                <Input
+                  {...register(`services.${index}.value`, {
+                    required: "Service is required",
+                  })}
+                  placeholder={`Service ${index + 1}`}
+                  className="flex-1 rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeService(index)}
+                  className="text-destructive hover:bg-destructive/10"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            ))}
           </CardContent>
         </Card>
 
         {/* Booking Plans */}
-        <Card className="shadow-medium border-0 rounded-md ">
+        <Card className="shadow-medium border-0 rounded-md">
           <CardHeader>
             <CardTitle className="font-bold text-2xl text-primary">
               Booking Plans
@@ -315,9 +353,7 @@ export default function CreateGigs() {
                 </TabsTrigger>
               </TabsList>
 
-              {/* Instant */}
               <TabsContent value="instant" className="mt-6">
-                {/* --- Instant Plan --- */}
                 <CreateGigsPlans
                   title="Instant Session"
                   planPath="plans.instant"
@@ -330,7 +366,6 @@ export default function CreateGigs() {
                 />
               </TabsContent>
 
-              {/* Weekly */}
               <TabsContent value="weekly" className="space-y-6 mt-6">
                 {["basic", "intensive"].map((key) => (
                   <CreateGigsPlans
@@ -349,7 +384,6 @@ export default function CreateGigs() {
                 ))}
               </TabsContent>
 
-              {/* Monthly */}
               <TabsContent value="monthly" className="space-y-6 mt-6">
                 {["standard", "premium", "elite"].map((key) => (
                   <CreateGigsPlans
@@ -372,24 +406,22 @@ export default function CreateGigs() {
         </Card>
 
         {/* FAQ */}
-        <Card className="shadow-medium border-0 rounded-md ">
-          <CardHeader>
-            <div className="flex items-center justify-between gap-4 flex-wrap">
-              <div className="flex items-center gap-2">
-                <HelpCircle className="h-5 w-5 text-primary" />
-                <CardTitle className="text-primary font-bold text-2xl">
-                  Frequently Asked Questions
-                </CardTitle>
-              </div>
-              <Button
-                type="button"
-                onClick={() => addFaq({ question: "", answer: "" })}
-                variant="outline"
-                size="sm"
-              >
-                <Plus className="h-4 w-4 mr-2" /> Add FAQ
-              </Button>
+        <Card className="shadow-medium border-0 rounded-md">
+          <CardHeader className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <HelpCircle className="h-5 w-5 text-primary" />
+              <CardTitle className="text-primary font-bold text-2xl">
+                Frequently Asked Questions
+              </CardTitle>
             </div>
+            <Button
+              type="button"
+              onClick={() => addFaq({ question: "", answer: "" })}
+              variant="outline"
+              size="sm"
+            >
+              <Plus className="h-4 w-4 mr-2" /> Add FAQ
+            </Button>
           </CardHeader>
           <CardContent className="space-y-4">
             {faqFields.length === 0 && (
@@ -455,13 +487,13 @@ export default function CreateGigs() {
           </CardContent>
         </Card>
 
-        {/* Submit */}
         <div className="flex justify-end">
           <Button
             type="submit"
-            className=" cursor-pointer hover:opacity-90 hover:text-white  px-8 py-3 text-lg font-medium shadow-lg"
+            className="cursor-pointer hover:opacity-90 hover:text-white px-8 py-3 text-lg font-medium shadow-lg"
+            disabled={isLoading}
           >
-            Create Gig
+            {isLoading ? "Creating..." : "Create Gig"}
           </Button>
         </div>
       </form>

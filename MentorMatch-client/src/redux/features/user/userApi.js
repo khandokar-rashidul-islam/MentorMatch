@@ -28,7 +28,7 @@ export const userApi = baseApi.injectEndpoints({
           dispatch(logout());
         }
       },
-    }),
+    }), 
   }),
   overrideExisting: false,
 });

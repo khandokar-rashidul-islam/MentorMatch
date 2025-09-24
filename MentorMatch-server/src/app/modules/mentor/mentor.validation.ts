@@ -29,7 +29,7 @@ export const mentorProfileSchema = z.object({
     .optional(),
 });
 
-// Edit/update schema (all fields optional, includes extra edit fields)
+// Edit schema (all fields optional, includes extra edit fields)
 export const mentorEditSchema = mentorProfileSchema.partial().extend({
   profileImage: z.string().optional(),
   about: z.string().optional(),
@@ -116,3 +116,88 @@ export const mentorEditSchema = mentorProfileSchema.partial().extend({
     )
     .optional(),
 });
+
+
+
+//*gig related validation schemas
+
+const planSchema = z.object({
+  price: z.number().nonnegative(),
+  description: z.string().optional(),
+  features: z.array(z.string()).default([]),
+});
+
+export const createGigSchema = z.object({
+  body: z.object({
+    gigTitle: z.string().min(3, "Gig title is required"),
+    aboutGig: z.string().min(10, "About gig must be at least 10 characters"),
+    relatedTopics: z.array(z.string()).optional(),
+    services: z.array(z.string()).optional(),
+    keywords: z.array(z.string()).optional(),
+    plans: z
+      .object({
+        instant: planSchema.optional(),
+        weekly: z
+          .object({
+            basic: planSchema.optional(),
+            intensive: planSchema.optional(),
+          })
+          .optional(),
+        monthly: z
+          .object({
+            standard: planSchema.optional(),
+            premium: planSchema.optional(),
+            elite: planSchema.optional(),
+          })
+          .optional(),
+      })
+      .optional(),
+    faqs: z
+      .array(
+        z.object({
+          question: z.string().min(1),
+          answer: z.string().min(1),
+        })
+      )
+      .optional(),
+  }),
+});
+
+//* gig update validation schema
+
+export const updateGigSchema = z.object({
+  body: z.object({
+    gigTitle: z.string().min(3).optional(),
+    aboutGig: z.string().min(10).optional(),
+    relatedTopics: z.array(z.string()).optional(),
+    services: z.array(z.string()).optional(),
+    keywords: z.array(z.string()).optional(),
+    plans: z
+      .object({
+        instant: planSchema.optional(),
+        weekly: z
+          .object({
+            basic: planSchema.optional(),
+            intensive: planSchema.optional(),
+          })
+          .optional(),
+        monthly: z
+          .object({
+            standard: planSchema.optional(),
+            premium: planSchema.optional(),
+            elite: planSchema.optional(),
+          })
+          .optional(),
+      })
+      .optional(),
+    faqs: z
+      .array(
+        z.object({
+          question: z.string().min(1).optional(),
+          answer: z.string().min(1).optional(),
+        })
+      )
+      .optional(),
+  }),
+});
+
