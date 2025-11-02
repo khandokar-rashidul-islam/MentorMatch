@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { User, BookOpen, Menu, X, MenuIcon } from "lucide-react";
 import { Link, NavLink } from "react-router";
@@ -81,12 +80,6 @@ const Navbar = () => {
             to="/"
             className="text-muted-foreground hover:text-foreground transition-all duration-300"
           >
-            Pricing
-          </NavLink>
-          <NavLink
-            to="/"
-            className="text-muted-foreground hover:text-foreground transition-all duration-300"
-          >
             About
           </NavLink>
         </nav>
@@ -130,9 +123,6 @@ const Navbar = () => {
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <NavLink to="/">How It Works</NavLink>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <NavLink to="/">Pricing</NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <NavLink to="/">About</NavLink>
