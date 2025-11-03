@@ -67,6 +67,7 @@ const ApplyForMentor = () => {
             return updated;
         });
     };
+   // console.log("apply for mentor")
 
     return (
         <div className="py-20 min-h-screen w-11/12 md:w-9/12 lg:w-7/12 mx-auto">

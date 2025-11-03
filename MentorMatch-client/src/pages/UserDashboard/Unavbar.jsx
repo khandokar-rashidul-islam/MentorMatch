@@ -13,7 +13,6 @@ import {
   MessageSquareText,
   BookMarked,
   Search,
-  Home,
 } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router";
 import {
@@ -25,7 +24,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ModeToggle } from "../../components/mode-toggle";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -34,26 +32,13 @@ import {
   useToggleRoleMutation,
 } from "../../redux/features/auth/authApi";
 import { logout } from "../../redux/features/auth/authSlice";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-//import { useState } from "react";
 
 const Unavbar = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [logoutApi] = useLogoutMutation();
   const [toggleRole, { isLoading }] = useToggleRoleMutation();
- // const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
 
   // Get user from Redux
   const user = useAppSelector((state) => state.auth.user);
@@ -300,11 +285,14 @@ const Unavbar = () => {
                     {isLoading ? "Switching..." : `Switch to ${role === "learner" ? "Mentor" : "Learner"} Mode`}
                   </Button>
                 </DropdownMenuItem>
-                <DropdownMenuItem >
-                  <Button variant="outline" onClick={() => {navigate('learner/mentor-apply')}} className="w-full">
-                    Apply for mentor
-                  </Button>
-                </DropdownMenuItem>
+                {role === "learner" &&
+                  (
+                    <DropdownMenuItem >
+                      <Button variant="outline" onClick={() => { navigate('learner/mentor-apply') }} className="w-full">
+                        Apply for mentor
+                      </Button>
+                    </DropdownMenuItem>
+                  )}
                 <DropdownMenuSeparator />
               </DropdownMenuGroup>
 
