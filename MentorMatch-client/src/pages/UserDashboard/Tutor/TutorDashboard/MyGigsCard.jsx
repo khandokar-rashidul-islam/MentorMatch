@@ -65,7 +65,7 @@ function MyGigsCard({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem onClick={() => onStatusToggle(gig.id)}>
+                <DropdownMenuItem onClick={() => onStatusToggle(gig._id)}>
                   {gig.status === "active" ? (
                     <Pause className="w-4 h-4 mr-2" />
                   ) : (
@@ -94,10 +94,10 @@ function MyGigsCard({
           </div>
           <div className="flex-1 flex flex-col">
             <CardTitle className="mt-0 font-semibold text-xl line-clamp-2">
-              {gig.title}
+              {gig.gigTitle}
             </CardTitle>
             <CardDescription className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
-              {gig.description}
+              {gig.aboutGig}
             </CardDescription>
           </div>
 
@@ -106,7 +106,7 @@ function MyGigsCard({
 
       <CardContent className="flex flex-col justify-between flex-grow mt-2">
         <div className="flex flex-wrap gap-2 text-xs mb-3">
-          {gig.skills.slice(0, 3).map((skill) => (
+          {gig.relatedTopics.slice(0,3).map((skill) => (
             <Badge
               key={skill}
               variant="outline"
@@ -115,12 +115,12 @@ function MyGigsCard({
               {skill}
             </Badge>
           ))}
-          {gig.skills.length > 3 && (
+          {gig.relatedTopics.length > 3 && (
             <Badge
               variant="outline"
               className="rounded-full px-3 py-1 text-xs sm:text-sm"
             >
-              +{gig.skills.length - 3}
+              +{gig.relatedTopics.length - 3}
             </Badge>
           )}
         </div>
@@ -129,15 +129,15 @@ function MyGigsCard({
           <div className="flex items-center flex-wrap gap-4">
             <div className="flex items-center gap-1">
               <Clock className="h-4 w-4" />
-              <span>{gig.duration}</span>
+              <span>{gig.duration||"30"}</span>
             </div>
             <div className="flex items-center gap-1">
               <Users className="h-4 w-4" />
-              <span>{gig.students}</span>
+              <span>{gig.students||"44"}</span>
             </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap text-right">
-            <div className="text-lg font-bold text-primary">${gig.price}</div>
+            <div className="text-lg font-bold text-primary">${gig.plans.instant.price}</div>
             <div className="text-xs text-gray-400">per session</div>
           </div>
         </div>

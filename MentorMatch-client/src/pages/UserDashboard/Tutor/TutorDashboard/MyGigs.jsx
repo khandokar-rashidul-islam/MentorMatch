@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,147 +24,159 @@ import {
 import { toast, Toaster } from "../../../../hooks/use-toast";
 import { Link } from "react-router";
 import MyGigsCard from "./MyGigsCard";
+import { useGetMyGigsQuery } from "../../../../redux/features/mentor/mentor.api";
+import { Spinner } from "@/components/ui/spinner"
 
-const myGigs = [
-  {
-    id: 1,
-    status: "active",
-    tutor: {
-      name: "Sarah Chen ",
-      avatar: "/placeholder.svg",
-      rating: 4.9,
-      reviews: 127,
-      badge: "Pro",
-    },
-    title: "Learn Python Programming from Scratch to Advanced ",
-    description:
-      "Master Python with hands-on projects, real-world examples, and personalized guidance. Perfect for beginners and intermediate learners.",
-    category: "Programming",
-    price: 45,
-    duration: "1 hour",
-    students: 89,
-    skills: ["Python", "Django", "Flask", "APIs"],
-    featured: true,
-  },
-  {
-    id: 2,
-    status: "active",
-    tutor: {
-      name: "Michael Rodriguez",
-      avatar: "/placeholder.svg",
-      rating: 4.8,
-      reviews: 203,
-      badge: "Expert",
-    },
-    title: "Conversational Spanish - Native Speaker",
-    description:
-      "Improve your Spanish fluency through natural conversations, cultural insights, and personalized practice sessions.",
-    category: "Languages",
-    price: 35,
-    duration: "1 hour",
-    students: 156,
-    skills: ["Spanish", "Conversation", "Grammar", "Culture"],
-    featured: false,
-  },
-  {
-    id: 3,
-    status: "active",
-    tutor: {
-      name: "Emma Thompson",
-      avatar: "/placeholder.svg",
-      rating: 5.0,
-      reviews: 78,
-      badge: "Pro",
-    },
-    title: "Guitar Lessons - Acoustic & Electric",
-    description:
-      "Learn guitar from a professional musician. Covers techniques, music theory, and your favorite songs.",
-    category: "Music",
-    price: 50,
-    duration: "1 hour",
-    students: 64,
-    skills: ["Guitar", "Music Theory", "Songwriting", "Performance"],
-    featured: true,
-  },
-  {
-    id: 4,
-    status: "active",
-    tutor: {
-      name: "Dr. James Wilson",
-      avatar: "/placeholder.svg",
-      rating: 4.9,
-      reviews: 341,
-      badge: "Expert",
-    },
-    title: "Advanced Mathematics & Calculus",
-    description:
-      "PhD in Mathematics offering comprehensive tutoring in calculus, linear algebra, and advanced mathematical concepts.",
-    category: "Mathematics",
-    price: 65,
-    duration: "1 hour",
-    students: 234,
-    skills: ["Calculus", "Linear Algebra", "Statistics", "Discrete Math"],
-    featured: false,
-  },
-  {
-    id: 5,
-    status: "active",
-    tutor: {
-      name: "Lisa Park",
-      avatar: "/placeholder.svg",
-      rating: 4.7,
-      reviews: 92,
-      badge: "Pro",
-    },
-    title: "UI/UX Design Fundamentals",
-    description:
-      "Learn modern design principles, prototyping, and user research from a senior product designer at tech companies.",
-    category: "Design",
-    price: 55,
-    duration: "1 hour",
-    students: 87,
-    skills: ["Figma", "Prototyping", "User Research", "Design Systems"],
-    featured: false,
-  },
-  {
-    id: 6,
-    status: "active",
-    tutor: {
-      name: "Ahmed Hassan",
-      avatar: "/placeholder.svg",
-      rating: 4.8,
-      reviews: 156,
-      badge: "Expert",
-    },
-    title: "Data Science & Machine Learning",
-    description:
-      "Master data analysis, visualization, and machine learning algorithms with real-world projects and datasets.",
-    category: "Data Science",
-    price: 70,
-    duration: "1 hour",
-    students: 178,
-    skills: ["Python", "TensorFlow", "Pandas", "Visualization"],
-    featured: true,
-  },
-];
+// const myGigs = [
+//   {
+//     id: 1,
+//     status: "active",
+//     tutor: {
+//       name: "Sarah Chen ",
+//       avatar: "/placeholder.svg",
+//       rating: 4.9,
+//       reviews: 127,
+//       badge: "Pro",
+//     },
+//     title: "Learn Python Programming from Scratch to Advanced ",
+//     description:
+//       "Master Python with hands-on projects, real-world examples, and personalized guidance. Perfect for beginners and intermediate learners.",
+//     category: "Programming",
+//     price: 45,
+//     duration: "1 hour",
+//     students: 89,
+//     skills: ["Python", "Django", "Flask", "APIs"],
+//     featured: true,
+//   },
+//   {
+//     id: 2,
+//     status: "active",
+//     tutor: {
+//       name: "Michael Rodriguez",
+//       avatar: "/placeholder.svg",
+//       rating: 4.8,
+//       reviews: 203,
+//       badge: "Expert",
+//     },
+//     title: "Conversational Spanish - Native Speaker",
+//     description:
+//       "Improve your Spanish fluency through natural conversations, cultural insights, and personalized practice sessions.",
+//     category: "Languages",
+//     price: 35,
+//     duration: "1 hour",
+//     students: 156,
+//     skills: ["Spanish", "Conversation", "Grammar", "Culture"],
+//     featured: false,
+//   },
+//   {
+//     id: 3,
+//     status: "active",
+//     tutor: {
+//       name: "Emma Thompson",
+//       avatar: "/placeholder.svg",
+//       rating: 5.0,
+//       reviews: 78,
+//       badge: "Pro",
+//     },
+//     title: "Guitar Lessons - Acoustic & Electric",
+//     description:
+//       "Learn guitar from a professional musician. Covers techniques, music theory, and your favorite songs.",
+//     category: "Music",
+//     price: 50,
+//     duration: "1 hour",
+//     students: 64,
+//     skills: ["Guitar", "Music Theory", "Songwriting", "Performance"],
+//     featured: true,
+//   },
+//   {
+//     id: 4,
+//     status: "active",
+//     tutor: {
+//       name: "Dr. James Wilson",
+//       avatar: "/placeholder.svg",
+//       rating: 4.9,
+//       reviews: 341,
+//       badge: "Expert",
+//     },
+//     title: "Advanced Mathematics & Calculus",
+//     description:
+//       "PhD in Mathematics offering comprehensive tutoring in calculus, linear algebra, and advanced mathematical concepts.",
+//     category: "Mathematics",
+//     price: 65,
+//     duration: "1 hour",
+//     students: 234,
+//     skills: ["Calculus", "Linear Algebra", "Statistics", "Discrete Math"],
+//     featured: false,
+//   },
+//   {
+//     id: 5,
+//     status: "active",
+//     tutor: {
+//       name: "Lisa Park",
+//       avatar: "/placeholder.svg",
+//       rating: 4.7,
+//       reviews: 92,
+//       badge: "Pro",
+//     },
+//     title: "UI/UX Design Fundamentals",
+//     description:
+//       "Learn modern design principles, prototyping, and user research from a senior product designer at tech companies.",
+//     category: "Design",
+//     price: 55,
+//     duration: "1 hour",
+//     students: 87,
+//     skills: ["Figma", "Prototyping", "User Research", "Design Systems"],
+//     featured: false,
+//   },
+//   {
+//     id: 6,
+//     status: "active",
+//     tutor: {
+//       name: "Ahmed Hassan",
+//       avatar: "/placeholder.svg",
+//       rating: 4.8,
+//       reviews: 156,
+//       badge: "Expert",
+//     },
+//     title: "Data Science & Machine Learning",
+//     description:
+//       "Master data analysis, visualization, and machine learning algorithms with real-world projects and datasets.",
+//     category: "Data Science",
+//     price: 70,
+//     duration: "1 hour",
+//     students: 178,
+//     skills: ["Python", "TensorFlow", "Pandas", "Visualization"],
+//     featured: true,
+//   },
+// ];
 
 export default function MyGigs() {
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState("list");
   const [activeTab, setActiveTab] = useState("all");
-  const [gigs, setGigs] = useState(myGigs);
   const [sortBy, setSortBy] = useState("title");
+  const [gigs, setGigs] = useState([]);
+  // rtk query mutation
+  const { data, isLoading } = useGetMyGigsQuery()
+  useEffect(() => {
+    if (data) {
+      setGigs(data.data); // only runs when `data` changes
+    }
+  }, [data]);
+  //console.log(gigs)
+
+  if (isLoading) { return <div className="pt-25 mx-auto"><Spinner /></div> }
 
   const filteredGigs = gigs.filter(
     (g) =>
-      g.title.toLowerCase().includes(search.toLowerCase()) ||
-      g.category.toLowerCase().includes(search.toLowerCase())
+      g.gigTitle.toLowerCase().includes(search.toLowerCase()) ||
+      g.relatedTopics[0].toLowerCase().includes(search.toLowerCase())
   );
-
+  /*  //if (sortBy === "rating") return b.tutor.rating - a.tutor.rating; */
   const sortedGigs = [...filteredGigs].sort((a, b) => {
-    if (sortBy === "price") return b.price - a.price;
-    if (sortBy === "rating") return b.tutor.rating - a.tutor.rating;
-    return a.title.localeCompare(b.title);
+    if (sortBy === "price") return b.plans.instant.price - a.plans.instant.price;
+
+    return a.gigTitle.localeCompare(b.gigTitle);
   });
 
   const getGigsByStatus = (status) =>
@@ -251,6 +263,7 @@ export default function MyGigs() {
         </Link>
       </div>
 
+
       {/* Tabs & Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between flex-wrap gap-4 w-full">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -304,17 +317,17 @@ export default function MyGigs() {
         </div>
       </div>
 
+
       {/* Gigs */}
       <div
-        className={`${
-          viewMode === "grid"
-            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            : "space-y-4"
-        }`}
+        className={`${viewMode === "grid"
+          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          : "space-y-4"
+          }`}
       >
         {getGigsByStatus(activeTab).map((gig, idx) => (
           <div
-            key={gig.id}
+            key={gig._id}
             className="animate-fade-in"
             style={{ animationDelay: `${idx * 100}ms` }}
           >

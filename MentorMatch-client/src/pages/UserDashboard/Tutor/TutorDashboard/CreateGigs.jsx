@@ -127,6 +127,7 @@ function TagInput({
 
 export default function CreateGigs() {
   const navigate = useNavigate();
+  // rtk query mutation
   const [createGig, { isLoading }] = useCreateGigMutation();
 
   const {
