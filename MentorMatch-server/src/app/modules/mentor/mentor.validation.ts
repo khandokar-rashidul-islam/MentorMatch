@@ -131,6 +131,7 @@ export const createGigSchema = z.object({
   body: z.object({
     gigTitle: z.string().min(3, "Gig title is required"),
     aboutGig: z.string().min(10, "About gig must be at least 10 characters"),
+    status: z.enum(["active", "paused"]).optional(),
     relatedTopics: z.array(z.string()).optional(),
     services: z.array(z.string()).optional(),
     keywords: z.array(z.string()).optional(),
@@ -169,6 +170,7 @@ export const updateGigSchema = z.object({
   body: z.object({
     gigTitle: z.string().min(3).optional(),
     aboutGig: z.string().min(10).optional(),
+    status: z.enum(["active", "paused"]).optional(),
     relatedTopics: z.array(z.string()).optional(),
     services: z.array(z.string()).optional(),
     keywords: z.array(z.string()).optional(),

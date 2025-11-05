@@ -103,6 +103,11 @@ const GigSchema = new Schema<GigDocument>(
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     gigTitle: { type: String, required: true, trim: true },
     aboutGig: { type: String, required: true },
+    status: {
+      type: String,
+      enum: ["active", "paused"],
+      default: "active",
+    },
     relatedTopics: [{ type: String }],
     services: [{ type: String }],
     keywords: [{ type: String }],

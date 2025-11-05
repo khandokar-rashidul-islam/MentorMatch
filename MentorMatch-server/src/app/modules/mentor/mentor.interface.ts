@@ -94,6 +94,7 @@ export interface Gig {
   user: Types.ObjectId; // owner of the gig
   gigTitle: string;
   aboutGig: string;
+  status: "active" | "paused";
   relatedTopics: string[];
   services: string[];
   keywords: string[];
