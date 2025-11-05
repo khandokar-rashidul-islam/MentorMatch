@@ -16,6 +16,7 @@ import { Link } from "react-router";
 import MyGigsCard from "./MyGigsCard";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetMyGigsQuery } from "../../../../redux/features/mentor/mentor.api";
+import { BackgroundGradient } from "../../../../components/ui/background-gradient";
 // const myGigs = [ // { // id: 1, // status: "active", // tutor: { // name: "Sarah Chen ", // avatar: "/placeholder.svg", // rating: 4.9, // reviews: 127, // badge: "Pro", // }, // title: "Learn Python Programming from Scratch to Advanced ", // description: // "Master Python with hands-on projects, real-world examples, and personalized guidance. Perfect for beginners and intermediate learners.", // category: "Programming", // price: 45, // duration: "1 hour", // students: 89, // skills: ["Python", "Django", "Flask", "APIs"], // featured: true, // } // ];
 export default function MyGigs() {
   const [search, setSearch] = useState("");
@@ -191,24 +192,28 @@ export default function MyGigs() {
         <div
           className={
             viewMode === "grid"
-              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 auto-rows-fr gap-6"
               : "space-y-4"
           }
         >
           {getGigsByStatus(activeTab).map((gig, idx) => (
-            <div
-              key={gig._id}
-              className="animate-fade-in"
-              style={{ animationDelay: `${idx * 100}ms` }}
-            >
-              <MyGigsCard
-                gig={gig}
-                viewMode={viewMode}
-                onStatusToggle={handleStatusToggle}
-                onShare={handleShare}
-                onDelete={handleDelete}
-              />
-            </div>
+            <BackgroundGradient className="h-full">
+              <div
+                key={gig._id}
+                className="animate-fade-in h-full "
+                style={{ animationDelay: `${idx * 100}ms` }}
+              >
+
+                <MyGigsCard
+                  gig={gig}
+                  viewMode={viewMode}
+                  onStatusToggle={handleStatusToggle}
+                  onShare={handleShare}
+                  onDelete={handleDelete}
+                  className="h-full"
+                />
+              </div>
+            </BackgroundGradient>
           ))}
         </div>
       ) : (
