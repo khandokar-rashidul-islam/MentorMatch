@@ -30,6 +30,7 @@ import {
   useDeleteGigMutation,
   useUpdateGigMutation,
 } from "../../../../redux/features/mentor/mentor.api";
+import { ShineBorder } from "@/components/ui/shine-border";
 
 
 export default function MyGigsCard({ gig, viewMode, onShare }) {
@@ -83,12 +84,15 @@ export default function MyGigsCard({ gig, viewMode, onShare }) {
   return (
 
       <Card
-        className={`wrap-break-word flex flex-col justify-between w-full h-full rounded-xl border shadow-sm transition-all duration-300 
+        className={`wrap-break-word flex flex-col justify-between overflow-hidden relative
+          w-full h-full rounded-xl border shadow-sm transition-all duration-300 
           ${viewMode === "grid"
           ? "hover:shadow-lg hover:scale-[1.02]"
           : "border-l-4 hover:border-l-primary hover:shadow-md"
           }`}
       >
+        
+         <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} />
         {/* === Header === */}
         <CardHeader className="pb-2 relative w-full">
           <div className="flex flex-col items-start justify-between">

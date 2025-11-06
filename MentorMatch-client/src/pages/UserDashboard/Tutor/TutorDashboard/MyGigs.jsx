@@ -16,7 +16,7 @@ import { Link } from "react-router";
 import MyGigsCard from "./MyGigsCard";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetMyGigsQuery } from "../../../../redux/features/mentor/mentor.api";
-import { BackgroundGradient } from "../../../../components/ui/background-gradient";
+
 // const myGigs = [ // { // id: 1, // status: "active", // tutor: { // name: "Sarah Chen ", // avatar: "/placeholder.svg", // rating: 4.9, // reviews: 127, // badge: "Pro", // }, // title: "Learn Python Programming from Scratch to Advanced ", // description: // "Master Python with hands-on projects, real-world examples, and personalized guidance. Perfect for beginners and intermediate learners.", // category: "Programming", // price: 45, // duration: "1 hour", // students: 89, // skills: ["Python", "Django", "Flask", "APIs"], // featured: true, // } // ];
 export default function MyGigs() {
   const [search, setSearch] = useState("");
@@ -112,6 +112,7 @@ export default function MyGigs() {
   return (
     <div className="pt-20 min-h-screen bg-background space-y-6 w-11/12 mx-auto">
       <Toaster />
+      
 
       {/* ===== HEADER ===== */}
       <div className="flex items-center justify-between flex-wrap gap-4">
@@ -197,7 +198,7 @@ export default function MyGigs() {
           }
         >
           {getGigsByStatus(activeTab).map((gig, idx) => (
-            <BackgroundGradient className="h-full">
+            <div className="h-full">
               <div
                 key={gig._id}
                 className="animate-fade-in h-full "
@@ -213,7 +214,7 @@ export default function MyGigs() {
                   className="h-full"
                 />
               </div>
-            </BackgroundGradient>
+            </div>
           ))}
         </div>
       ) : (
