@@ -92,7 +92,7 @@ export default function MyGigsCard({ gig, viewMode, onShare }) {
           }`}
       >
         
-         <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} />
+         <ShineBorder shineColor={["#A07CFE", "#36b1e5", "#36b1e5","#36b1e5",]} />
         {/* === Header === */}
         <CardHeader className="pb-2 relative w-full">
           <div className="flex flex-col items-start justify-between">
