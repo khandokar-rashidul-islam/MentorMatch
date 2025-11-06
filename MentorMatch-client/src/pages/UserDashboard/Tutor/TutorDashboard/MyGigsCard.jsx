@@ -31,7 +31,7 @@ import {
   useUpdateGigMutation,
 } from "../../../../redux/features/mentor/mentor.api";
 import { ShineBorder } from "@/components/ui/shine-border";
-
+import Swal from "sweetalert2";
 
 export default function MyGigsCard({ gig, viewMode, onShare }) {
   const [deleteGig, { isLoading: deleting }] = useDeleteGigMutation();
@@ -61,7 +61,51 @@ export default function MyGigsCard({ gig, viewMode, onShare }) {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm(`Are you sure you want to delete "${gig.gigTitle}"?`))
+    Swal.fire({
+      title: "Are you absolutely sure?",
+      text: "This action cannot be undone. Your gig will be permanently removed.",
+      icon: "warning",
+      background: "oklch(46.2% 0.09567 235.043",
+      color: "#ffff",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#3b82f6",
+      cancelButtonColor: "#ef4444",
+      buttonsStyling: false,
+      theme: "auto",
+      showClass: {
+        popup: "animate__animated animate__fadeInUp animate__faster",
+      },
+      hideClass: {
+        popup: "animate__animated animate__fadeOutDown animate__faster",
+      },
+      customClass: {
+        popup:
+          "backdrop-blur-xl bg-gradient-to-b from-primary via-gray-800/40 to-gray-900/60 rounded-3xl border border-primary shadow-[0_0_40px_rgba(0,0,0,0.4)] max-w-sm p-4",
+        title: "text-xl font-semibold text-white tracking-wide",
+        htmlContainer: "text-gray-300 text-sm font-medium mt-2",
+        confirmButton:
+          "mt-4 bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg font-medium shadow-lg hover:shadow-red-500/30 transition-all duration-300",
+        cancelButton:
+          "mt-4 bg-green-700 hover:bg-green-800 text-gray-100 px-5 py-2 rounded-lg font-medium shadow-sm transition-all duration-300 ml-2",
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await deleteGig(gig._id).unwrap();
+        toast({
+          title: "Gig Deleted",
+          description: `"${gig.gigTitle}" has been removed.`,
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        toast({
+          title: "Delete Failed",
+          description: "Unable to delete gig. Please try again.",
+          variant: "destructive",
+        });
+      }
+    });
+    /* if (!window.confirm(`Are you sure you want to delete "${gig.gigTitle}"?`))
       return;
 
     try {
@@ -76,7 +120,7 @@ export default function MyGigsCard({ gig, viewMode, onShare }) {
         description: "Unable to delete gig. Please try again.",
         variant: "destructive",
       });
-    }
+    } */
   };
 
   const handleShare = () => {
@@ -166,9 +210,9 @@ export default function MyGigsCard({ gig, viewMode, onShare }) {
         </div>
       </CardHeader>
 
-      {/* === Content === */}
-      <CardContent className="w-full flex flex-col justify-between flex-grow mt-2">
-        {/* <div className="flex flex-wrap gap-2 text-xs mb-3">
+        {/* === Content === */}
+        <CardContent className="w-full flex flex-col justify-between flex-grow mt-2">
+          {/*         <div className="flex flex-wrap gap-2 text-xs mb-3">
           {gig.relatedTopics.slice(0, 3).map((skill) => (
             <Badge
               key={skill}
@@ -208,19 +252,19 @@ export default function MyGigsCard({ gig, viewMode, onShare }) {
           </div>
         </div> */}
 
-        <div className="flex sm:justify-end flex-wrap gap-2 mt-2">
-          <Link to={`/dashboard/mentor/gig-details/${gig._id}`}>
-            <Button variant="outline" size="sm" className="hover:scale-105">
-              <Eye className="w-4 h-4 mr-1" /> View
-            </Button>
-          </Link>
-          <Link to={`/dashboard/mentor/gig-edit/${gig._id}`}>
-            <Button variant="default" size="sm" className="hover:scale-105">
-              <Edit className="w-4 h-4 mr-1" /> Edit
-            </Button>
-          </Link>
-        </div>
-      </CardContent>
-    </Card>
+          <div className="flex sm:justify-end flex-wrap gap-2 mt-2">
+            <Link to={`/dashboard/mentor/gig/${gig._id}`}>
+              <Button variant="outline" size="sm" className="hover:scale-105">
+                <Eye className="w-4 h-4 mr-1" /> View
+              </Button>
+            </Link>
+            <Link to={`/dashboard/mentor/gig-edit/${gig._id}`}>
+              <Button variant="default" size="sm" className="hover:scale-105">
+                <Edit className="w-4 h-4 mr-1" /> Edit
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
   );
 }

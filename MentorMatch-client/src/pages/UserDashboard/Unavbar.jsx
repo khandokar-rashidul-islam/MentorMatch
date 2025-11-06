@@ -32,6 +32,11 @@ import {
   useToggleRoleMutation,
 } from "../../redux/features/auth/authApi";
 import { logout } from "../../redux/features/auth/authSlice";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Unavbar = () => {
   const dispatch = useAppDispatch();
@@ -184,7 +189,8 @@ const Unavbar = () => {
               key={link.path}
               to={link.path}
               className={({ isActive }) =>
-                ` flex flex-col items-center gap-1 ${isActive ? "font-bold text-primary" : ""
+                ` flex flex-col items-center gap-1 ${
+                  isActive ? "font-bold text-primary" : ""
                 }`
               }
             >
@@ -217,24 +223,29 @@ const Unavbar = () => {
               <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer border-2 border-primary ">
                   {user?.profileImage ? (
-                    <AvatarImage src={user.profileImage} />
+                    // tooltip
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        {/* avater image */}
+                        <AvatarImage src={user.profileImage} />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="uppercase font-semibold">{role}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   ) : (
                     <AvatarFallback>
                       {user?.name
                         ? user.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
                         : "CN"}
                     </AvatarFallback>
                   )}
                 </Avatar>
               </DropdownMenuTrigger>
-              {role && (
-                <span className=" absolute -bottom-1.5 -right-[2px] -z-10 flex items-center justify-center w-9 h-2 text-[7px] font-bold rounded-xs text-white bg-primary">
-                  {role}
-                </span>
-              )}
+
             </div>
             {/* dropdown content */}
             <DropdownMenuContent
@@ -249,8 +260,8 @@ const Unavbar = () => {
                       role === "mentor"
                         ? "/dashboard/mentor/mentor-profile/"
                         : role === "learner"
-                          ? "/dashboard/learner/learner-profile/"
-                          : " "
+                        ? "/dashboard/learner/learner-profile/"
+                        : " "
                     }
                     className={
                       "flex flex-1 border border-primary px-4 py-2 rounded-md  items-center gap-3 text-sm font-semibold cursor-pointer  bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-primary"
@@ -263,9 +274,9 @@ const Unavbar = () => {
                         <AvatarFallback>
                           {user?.name
                             ? user.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
                             : "CN"}
                         </AvatarFallback>
                       )}
@@ -282,17 +293,26 @@ const Unavbar = () => {
                     className=" px-8 py-2  w-full text-primary cursor-pointer hover:text-primary"
                   >
                     <UserCheck className="text-primary" />
-                    {isLoading ? "Switching..." : `Switch to ${role === "learner" ? "Mentor" : "Learner"} Mode`}
+                    {isLoading
+                      ? "Switching..."
+                      : `Switch to ${
+                          role === "learner" ? "Mentor" : "Learner"
+                        } Mode`}
                   </Button>
                 </DropdownMenuItem>
-                {role === "learner" &&
-                  (
-                    <DropdownMenuItem >
-                      <Button variant="outline" onClick={() => { navigate('learner/mentor-apply') }} className="w-full">
-                        Apply for mentor
-                      </Button>
-                    </DropdownMenuItem>
-                  )}
+                {role === "learner" && (
+                  <DropdownMenuItem>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        navigate("learner/mentor-apply");
+                      }}
+                      className="w-full"
+                    >
+                      Apply for mentor
+                    </Button>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
               </DropdownMenuGroup>
 
@@ -305,7 +325,8 @@ const Unavbar = () => {
                     <NavLink
                       to={link.path}
                       className={({ isActive }) =>
-                        `w-full flex items-center text-md font-semibold gap-2 cursor-pointer text-md ${isActive ? "font-bold text-primary" : ""
+                        `w-full flex items-center text-md font-semibold gap-2 cursor-pointer text-md ${
+                          isActive ? "font-bold text-primary" : ""
                         }`
                       }
                     >
@@ -366,7 +387,6 @@ const Unavbar = () => {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-
       </div>
     </div>
   );
