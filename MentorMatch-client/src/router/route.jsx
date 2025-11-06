@@ -118,6 +118,7 @@ const router = createBrowserRouter([
           { path: "stats", element: <TutorStats /> },
           { path: "create-gigs", element: <CreateGigs /> },
           { path: "my-gigs", element: <MyGigs /> },
+          { path: "gig-details/:id", element: <GigDetails /> },
           { path: "schedule", element: <Schedule /> },
           { path: "payments-history", element: <PaymentHistory /> },
           { path: "community-posts", element: <CommunityPosts /> },
@@ -144,7 +145,7 @@ const router = createBrowserRouter([
           { path: "notification", element: <Notify /> },
           { path: "learner-profile", element: <LearnerProfile /> },
           { path: "learner-profile/edit", element: <EditProfile /> },
-          { path: "mentor-apply", element: <ApplyForMentor/> }
+          { path: "mentor-apply", element: <ApplyForMentor /> },
         ],
       },
     ],

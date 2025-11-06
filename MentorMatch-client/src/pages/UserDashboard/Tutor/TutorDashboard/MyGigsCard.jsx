@@ -37,6 +37,8 @@ export default function MyGigsCard({ gig, viewMode, onShare }) {
   const [deleteGig, { isLoading: deleting }] = useDeleteGigMutation();
   const [updateGig, { isLoading: updating }] = useUpdateGigMutation();
 
+
+  
   const handleStatusToggle = async () => {
     try {
       const newStatus = gig.status === "active" ? "paused" : "active";
@@ -82,94 +84,91 @@ export default function MyGigsCard({ gig, viewMode, onShare }) {
   };
 
   return (
-
-      <Card
-        className={`wrap-break-word flex flex-col justify-between overflow-hidden relative
+    <Card
+      className={`wrap-break-word flex flex-col justify-between overflow-hidden relative
           w-full h-full rounded-xl border shadow-sm transition-all duration-300 
-          ${viewMode === "grid"
-          ? "hover:shadow-lg hover:scale-[1.02]"
-          : "border-l-4 hover:border-l-primary hover:shadow-md"
+          ${
+            viewMode === "grid"
+              ? "hover:shadow-lg hover:scale-[1.02]"
+              : "border-l-4 hover:border-l-primary hover:shadow-md"
           }`}
-      >
-        
-         <ShineBorder shineColor={["#A07CFE", "#36b1e5", "#36b1e5","#36b1e5",]} />
-        {/* === Header === */}
-        <CardHeader className="pb-2 relative w-full">
-          <div className="flex flex-col items-start justify-between">
-            <div className="w-full flex items-center justify-between">
-              <Badge
-                variant="secondary"
-                className={`px-1 py-0.5 text-[10px] sm:text-[11px] ${gig.status === "active"
+    >
+      <ShineBorder shineColor={["#A07CFE", "#36b1e5", "#36b1e5", "#36b1e5"]} />
+      {/* === Header === */}
+      <CardHeader className="pb-2 relative w-full">
+        <div className="flex flex-col items-start justify-between">
+          <div className="w-full flex items-center justify-between">
+            <Badge
+              variant="secondary"
+              className={`px-1 py-0.5 text-[10px] sm:text-[11px] ${
+                gig.status === "active"
                   ? "text-green-700"
                   : "text-muted-foreground"
-                  }`}
-              >
-                {gig.status === "active" ? "Active" : "Inactive"}
-              </Badge>
+              }`}
+            >
+              {gig.status === "active" ? "Active" : "Inactive"}
+            </Badge>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="p-1 cursor-pointer"
-                    disabled={deleting || updating}
-                  >
-                    <MoreHorizontal className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="p-1 cursor-pointer"
+                  disabled={deleting || updating}
+                >
+                  <MoreHorizontal className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
 
-                <DropdownMenuContent align="end" className="w-40">
-                  <DropdownMenuItem onClick={handleStatusToggle}>
-                    {gig.status === "active" ? (
-                      <Pause className="w-4 h-4 mr-2" />
-                    ) : (
-                      <Play className="w-4 h-4 mr-2" />
-                    )}
-                    {updating
-                      ? "Updating..."
-                      : gig.status === "active"
-                        ? "Pause"
-                        : "Activate"}
-                  </DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem onClick={handleStatusToggle}>
+                  {gig.status === "active" ? (
+                    <Pause className="w-4 h-4 mr-2" />
+                  ) : (
+                    <Play className="w-4 h-4 mr-2" />
+                  )}
+                  {updating
+                    ? "Updating..."
+                    : gig.status === "active"
+                    ? "Pause"
+                    : "Activate"}
+                </DropdownMenuItem>
 
-                  <DropdownMenuItem onClick={handleShare}>
-                    <Share2 className="w-4 h-4 mr-2" /> Share
-                  </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleShare}>
+                  <Share2 className="w-4 h-4 mr-2" /> Share
+                </DropdownMenuItem>
 
-                  <DropdownMenuItem
-                    onClick={handleDelete}
-                    className="text-red-600"
-                  >
-                    {deleting ? (
-                      "Deleting..."
-                    ) : (
-                      <>
-                        <Trash2 className="w-4 h-4 mr-2" /> Delete
-                      </>
-                    )}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            <div className="w-full flex-1 flex flex-col gap-6">
-              <CardTitle className="mt-0 font-semibold text-xl ">
-                <p className="break-all  line-clamp-2">
-                  {gig.gigTitle}
-                </p>
-
-              </CardTitle>
-              <CardDescription className="break-all text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
-                {gig.aboutGig}
-              </CardDescription>
-            </div>
+                <DropdownMenuItem
+                  onClick={handleDelete}
+                  className="text-red-600"
+                >
+                  {deleting ? (
+                    "Deleting..."
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4 mr-2" /> Delete
+                    </>
+                  )}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-        </CardHeader>
 
-        {/* === Content === */}
-        <CardContent className="w-full flex flex-col justify-between flex-grow mt-2">
-          {/*         <div className="flex flex-wrap gap-2 text-xs mb-3">
+          <div className="w-full flex-1 flex flex-col gap-6">
+            <CardTitle className="mt-0 font-semibold text-xl ">
+              <p className="break-all  line-clamp-2">{gig.gigTitle}</p>
+            </CardTitle>
+            <CardDescription className="break-all text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
+              {gig.aboutGig}
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+
+      {/* === Content === */}
+      <CardContent className="w-full flex flex-col justify-between flex-grow mt-2">
+        {/* <div className="flex flex-wrap gap-2 text-xs mb-3">
           {gig.relatedTopics.slice(0, 3).map((skill) => (
             <Badge
               key={skill}
@@ -209,19 +208,19 @@ export default function MyGigsCard({ gig, viewMode, onShare }) {
           </div>
         </div> */}
 
-          <div className="flex sm:justify-end flex-wrap gap-2 mt-2">
-            <Link to={`/dashboard/mentor/gig/${gig._id}`}>
-              <Button variant="outline" size="sm" className="hover:scale-105">
-                <Eye className="w-4 h-4 mr-1" /> View
-              </Button>
-            </Link>
-            <Link to={`/dashboard/mentor/gig-edit/${gig._id}`}>
-              <Button variant="default" size="sm" className="hover:scale-105">
-                <Edit className="w-4 h-4 mr-1" /> Edit
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+        <div className="flex sm:justify-end flex-wrap gap-2 mt-2">
+          <Link to={`/dashboard/mentor/gig-details/${gig._id}`}>
+            <Button variant="outline" size="sm" className="hover:scale-105">
+              <Eye className="w-4 h-4 mr-1" /> View
+            </Button>
+          </Link>
+          <Link to={`/dashboard/mentor/gig-edit/${gig._id}`}>
+            <Button variant="default" size="sm" className="hover:scale-105">
+              <Edit className="w-4 h-4 mr-1" /> Edit
+            </Button>
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

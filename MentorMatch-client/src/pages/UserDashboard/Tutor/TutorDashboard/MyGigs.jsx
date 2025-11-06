@@ -92,7 +92,9 @@ export default function MyGigs() {
   const handleShare = (id) => {
     const gig = gigs.find((g) => g._id === id);
     if (!gig) return;
-    navigator.clipboard.writeText(`${window.location.origin}/gig/${id}`);
+    navigator.clipboard.writeText(
+      `${window.location.origin}/gig-details/${id}`
+    );
     toast({
       title: "Link Copied",
       description: `Share link for "${gig.gigTitle}" copied.`,
@@ -112,7 +114,6 @@ export default function MyGigs() {
   return (
     <div className="pt-20 min-h-screen bg-background space-y-6 w-11/12 mx-auto">
       <Toaster />
-      
 
       {/* ===== HEADER ===== */}
       <div className="flex items-center justify-between flex-wrap gap-4">
@@ -198,13 +199,11 @@ export default function MyGigs() {
           }
         >
           {getGigsByStatus(activeTab).map((gig, idx) => (
-            <div className="h-full">
+            <div key={gig._id} className="h-full">
               <div
-                key={gig._id}
                 className="animate-fade-in h-full "
                 style={{ animationDelay: `${idx * 100}ms` }}
               >
-
                 <MyGigsCard
                   gig={gig}
                   viewMode={viewMode}
