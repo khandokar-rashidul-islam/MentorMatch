@@ -200,7 +200,6 @@ export default function MyGigs() {
           }
         >
           {getGigsByStatus(activeTab).map((gig, idx) => (
-            <div className="h-full">
               <div
                 key={gig._id}
                 className="animate-fade-in h-full "
@@ -216,7 +215,6 @@ export default function MyGigs() {
                   className="h-full"
                 />
               </div>
-            </div>
           ))}
         </div>
       ) : (
