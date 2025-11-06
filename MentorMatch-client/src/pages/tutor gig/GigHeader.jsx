@@ -2,10 +2,19 @@ import React from 'react'
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, Share2, Flag, Star, Users, Clock, Award } from "lucide-react";
+import {
+  Heart,
+  Share2,
+  Flag,
+  Star,
+  Users,
+  Clock,
+  Award,
+  CheckCircle,
+  MapPin,
+} from "lucide-react";
 import { useState } from "react";
 import { Link } from 'react-router';
-import Intro from './Intro';
 
 
 const GigHeader = ({ gig }) => {
@@ -22,6 +31,7 @@ const GigHeader = ({ gig }) => {
   };
   //header data
   const data = gig.data;
+  const userData= gig.data.user.mentorProfile;
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-6">
@@ -59,13 +69,11 @@ const GigHeader = ({ gig }) => {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              {
-                data.keywords.map((keyword, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
-                    {keyword}
-                  </Badge>
-                ))
-              }
+              {data.keywords.map((keyword, index) => (
+                <Badge key={index} variant="outline" className="text-xs">
+                  {keyword}
+                </Badge>
+              ))}
             </div>
           </div>
 
@@ -116,8 +124,46 @@ const GigHeader = ({ gig }) => {
             </div>
           </div>
         </div>
+        {/* === user Intro Section === */}
+        <Card className="overflow-hidden border-none shadow-none pb-0 ">
+          <CardContent>
+            {/* Header with avatar and basic info */}
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+              <div className="relative mx-auto sm:mx-0">
+                <img
+                  alt="Dr. Sarah Johnson"
+                  src={userData.profileImage}
+                  className="w-24 h-24  rounded-full object-cover border-4 border-primary/20"
+                />
+                <div className="absolute right-1 bottom-5 bg-success rounded-full ">
+                  <CheckCircle className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
+                </div>
+              </div>
 
-        <Intro />
+              <div className="flex-1">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                  <div className="text-center sm:text-left">
+                    <h1 className="text-xl sm:text-2xl font-bold text-foreground hover:text-primary">
+                      <Link to={`/tutor/details`}>{userData.name}</Link>
+                    </h1>
+                    <p className="text-base sm:text-lg text-muted-foreground mb-3 sm:mb-2">
+                      {userData.profession}
+                    </p>
+
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
+                      <div className="flex items-center justify-center sm:justify-start gap-1 text-muted-foreground">
+                        <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <span className="text-sm sm:text-base">
+                          {userData.address}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </CardContent>
     </Card>
   );

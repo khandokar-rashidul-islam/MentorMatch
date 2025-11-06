@@ -28,7 +28,14 @@ const userSchema = new Schema<IUser>(
     timestamps: true
   }
 );
-
+userSchema.virtual("mentorProfile", {
+  ref: "MentorProfile",
+  localField: "_id",
+  foreignField: "user",
+  justOne: true,
+});
+userSchema.set("toJSON", { virtuals: true });
+userSchema.set("toObject", { virtuals: true });
 
 // userSchema.pre("save", async function (next) {
 //   const isUserExist = await UserModel.findOne({
@@ -47,5 +54,6 @@ userSchema.post('save', function (doc, next) {
   doc.password = '';
   next();
 });
+
 
 export const UserModel = model<IUser>("User", userSchema);

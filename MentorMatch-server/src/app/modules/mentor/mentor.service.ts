@@ -35,8 +35,17 @@ export const deleteGig = async (gigId: string, userId: string) => {
 
 //* Get Single Gig
 export const getGigById = async (gigId: string) => {
-  const gig = await GigModel.findById(gigId).populate("user", "name email");
+  const gig = await GigModel.findById(gigId).populate({
+    path: "user",
+    select: "email",
+    populate: {
+      path: "mentorProfile",
+      select: "name profileImage profession bio address",
+    },
+  });
+
   if (!gig) throw new AppError(httpStatus.NOT_FOUND, "Gig not found");
+
   return gig;
 };
 
