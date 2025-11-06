@@ -212,48 +212,8 @@ export default function MyGigsCard({ gig, viewMode, onShare }) {
 
         {/* === Content === */}
         <CardContent className="w-full flex flex-col justify-between flex-grow mt-2">
-          {/*         <div className="flex flex-wrap gap-2 text-xs mb-3">
-          {gig.relatedTopics.slice(0, 3).map((skill) => (
-            <Badge
-              key={skill}
-              variant="outline"
-              className="rounded-full px-2 py-1 text-xs sm:text-sm"
-            >
-              {skill}
-            </Badge>
-          ))}
-          {gig.relatedTopics.length > 3 && (
-            <Badge
-              variant="outline"
-              className="rounded-full px-3 py-1 text-xs sm:text-sm"
-            >
-              +{gig.relatedTopics.length - 3}
-            </Badge>
-          )}
-        </div>
-
-        <div className="flex items-center justify-between flex-wrap text-sm py-2 text-gray-500">
-          <div className="flex items-center flex-wrap gap-4">
-            <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              <span>{gig.duration || "30"} min</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Users className="h-4 w-4" />
-              <span>{gig.students || "44"}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap text-right">
-            <div className="text-lg font-bold text-primary">
-              ${gig.plans.instant.price}
-            </div>
-            <div className="text-xs text-gray-400">per session</div>
-          </div>
-        </div> */}
-
           <div className="flex sm:justify-end flex-wrap gap-2 mt-2">
-            <Link to={`/dashboard/mentor/gig/${gig._id}`}>
+            <Link to={`/dashboard/mentor/gig-details/${gig._id}`}>
               <Button variant="outline" size="sm" className="hover:scale-105">
                 <Eye className="w-4 h-4 mr-1" /> View
               </Button>

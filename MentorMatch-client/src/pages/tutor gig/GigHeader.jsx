@@ -20,6 +20,7 @@ const GigHeader = ({ gig }) => {
     }
     setIsLiked(!isLiked);
   };
+  //header data
   const data = gig.data;
   return (
     <Card className="overflow-hidden">
@@ -58,21 +59,13 @@ const GigHeader = ({ gig }) => {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline" className="text-xs">
-                Algebra
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                Calculus
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                Trigonometry
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                Statistics
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                Test Prep
-              </Badge>
+              {
+                data.keywords.map((keyword, index) => (
+                  <Badge key={index} variant="outline" className="text-xs">
+                    {keyword}
+                  </Badge>
+                ))
+              }
             </div>
           </div>
 

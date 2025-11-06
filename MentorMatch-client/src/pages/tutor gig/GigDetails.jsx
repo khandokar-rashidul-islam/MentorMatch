@@ -12,6 +12,7 @@ import CommentSection from "./CommentSection";
 import GigHeader from "./GigHeader";
 import { useParams } from "react-router";
 import { useGetGigByIdQuery } from "../../redux/features/mentor/mentor.api";
+import ServicePlans from "./ServicePlans";
 
 const GigDetails = () => {
   const { id } = useParams();
@@ -47,11 +48,12 @@ const GigDetails = () => {
   ];
 
   // === Dynamic Data Extraction ===
-  const subjects = gig.relatedTopics || [];
-  const faqs = gig.faqs || [];
-  const about = gig.aboutGig || "No description provided.";
+  const subjects = gig.data.relatedTopics || [];
+  const faqs = gig.data.faqs || [];
+  const about = gig.data.aboutGig || "No description provided.";
   //const tutor = gig.tutor || gig.mentor || {};
-  const plans = gig.plans || {};
+  const plans = gig.data.plans || {};
+  const services = gig.data.services || [];
    
   console.log("Gig Data:", gig);
   return (
@@ -73,9 +75,7 @@ const GigDetails = () => {
             {/* === About This Gig === */}
             <Card>
               <CardHeader>
-                <CardTitle>
-                  About This {gig.category || "Tutoring"} Service
-                </CardTitle>
+                <CardTitle>About This Tutoring Service</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="prose prose-sm max-w-none">
@@ -84,11 +84,11 @@ const GigDetails = () => {
                   </p>
                 </div>
 
-                {gig.features?.length > 0 && (
+                {services?.length > 0 && (
                   <div>
                     <h4 className="font-semibold mb-3">What You’ll Get:</h4>
                     <div className="grid sm:grid-cols-2 gap-3">
-                      {gig.features.map((item, i) => (
+                      {services.map((item, i) => (
                         <div key={i} className="flex items-center gap-2">
                           <CheckCircle className="h-4 w-4 text-success flex-shrink-0" />
                           <span className="text-sm">{item}</span>
@@ -119,7 +119,7 @@ const GigDetails = () => {
             )}
 
             {/* === Booking Plans === */}
-            {plans && <BookingPlans plans={plans} />}
+            {plans && <ServicePlans plans={plans} />}
 
             {/* === FAQ Section === */}
             {faqs.length > 0 && <FAQSection faqs={faqs} />}
