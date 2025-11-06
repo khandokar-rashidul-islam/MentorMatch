@@ -36,16 +36,6 @@ const GigDetails = () => {
     );
   }
 
-  // === Dynamic Breadcrumbs ===
-  const breadcrumbItems = [
-    { label: "Home", href: "/" },
-    { label: "Find Tutors", href: "/tutors" },
-    {
-      label: gig.category || "Category",
-      href: `/tutors/${gig.category?.toLowerCase() || "general"}`,
-    },
-    { label: gig.gigTitle || "Gig Details" },
-  ];
 
   // === Dynamic Data Extraction ===
   const subjects = gig.data.relatedTopics || [];
@@ -58,11 +48,7 @@ const GigDetails = () => {
   console.log("Gig Data:", gig);
   return (
     <div className="min-h-screen bg-gradient-subtle">
-      <main className="w-11/12 mx-auto px-4 md:px-6 lg:px-8 py-6 pt-30">
-        {/* === Breadcrumbs === */}
-        <div className="mb-6">
-          <Breadcrumbs items={breadcrumbItems} />
-        </div>
+      <main className="w-11/12 mx-auto px-4 md:px-6 lg:px-8 py-6 pt-20">
 
         {/* === Gig Header === */}
         <div className="mb-8">
