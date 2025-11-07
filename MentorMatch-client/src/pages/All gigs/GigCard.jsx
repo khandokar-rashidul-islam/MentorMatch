@@ -114,7 +114,7 @@ const GigCard = ({ gig }) => {
             <MessageCircle className="h-4 w-4" />
             Chat
           </Button>
-          <Link to="/tutor/gig/details">
+          <Link to={`/dashboard/learner/gig-details/${gig.id}`}>
             <Button
               size="sm"
               className="flex-1 flex items-center cursor-pointer justify-center gap-2 py-2 bg-primary"

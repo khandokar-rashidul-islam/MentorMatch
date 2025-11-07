@@ -15,11 +15,14 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from 'react-router';
+import { useAppSelector } from '../../redux/hooks';
 
 
 const GigHeader = ({ gig }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(1247);
+  const user = useAppSelector((state) => state.auth.user);
+  const role = user?.activeRole;
    
   const handleLike = () => {
     if (isLiked) {
@@ -144,7 +147,7 @@ const GigHeader = ({ gig }) => {
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                   <div className="text-center sm:text-left">
                     <h1 className="text-xl sm:text-2xl font-bold text-foreground hover:text-primary">
-                      <Link to={`/tutor/details`}>{userData.name}</Link>
+                      <Link to={`/dashboard/${role}/mentor-profile`}>{userData.name}</Link>
                     </h1>
                     <p className="text-base sm:text-lg text-muted-foreground mb-3 sm:mb-2">
                       {userData.profession}
