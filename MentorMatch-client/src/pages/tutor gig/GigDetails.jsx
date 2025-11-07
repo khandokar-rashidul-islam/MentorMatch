@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { CheckCircle, Loader2 } from "lucide-react";
+import { Car, CheckCircle, Loader2 } from "lucide-react";
 import Breadcrumbs from "../../components/shared/Breadcrumbs";
 import BookingPlans from "../Tutor/BookingPlans";
 import ReviewSection from "../Tutor/ReviewSection";
@@ -13,6 +13,7 @@ import GigHeader from "./GigHeader";
 import { useParams } from "react-router";
 import { useGetGigByIdQuery } from "../../redux/features/mentor/mentor.api";
 import ServicePlans from "./ServicePlans";
+import GigSuggestions from "./GigSuggestions";
 
 const GigDetails = () => {
   const { id } = useParams();
@@ -49,7 +50,6 @@ const GigDetails = () => {
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <main className="w-11/12 mx-auto px-4 md:px-6 lg:px-8 py-6 pt-20">
-
         {/* === Gig Header === */}
         <div className="mb-8">
           <GigHeader gig={gig} />
@@ -112,7 +112,6 @@ const GigDetails = () => {
 
             {/* === Reviews / Comments === */}
             <ReviewSection gigId={gig._id} />
-            <CommentSection gigId={gig._id} />
           </div>
 
           {/* === Sidebar === */}
@@ -190,6 +189,11 @@ const GigDetails = () => {
             )}
           </div>
         </div>
+        {/* === Gig Suggestions / Carousel === */}
+        <Card className="mt-8 px-5">
+          <h1 className="text-2xl font-bold ">Related services</h1>
+          <GigSuggestions/>
+        </Card>
       </main>
     </div>
   );
