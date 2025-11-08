@@ -134,7 +134,7 @@ const GigHeader = ({ gig }) => {
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
               <div className="relative mx-auto sm:mx-0">
                 <img
-                  alt="Dr. Sarah Johnson"
+                  alt={userData.profileImage}
                   src={userData.profileImage}
                   className="w-24 h-24  rounded-full object-cover border-4 border-primary/20"
                 />
@@ -147,7 +147,9 @@ const GigHeader = ({ gig }) => {
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                   <div className="text-center sm:text-left">
                     <h1 className="text-xl sm:text-2xl font-bold text-foreground hover:text-primary">
-                      <Link to={`/dashboard/${role}/mentor-profile`}>{userData.name}</Link>
+                      <Link to={`/dashboard/${role}/mentor-profile`}>
+                        {userData.name}
+                      </Link>
                     </h1>
                     <p className="text-base sm:text-lg text-muted-foreground mb-3 sm:mb-2">
                       {userData.profession}

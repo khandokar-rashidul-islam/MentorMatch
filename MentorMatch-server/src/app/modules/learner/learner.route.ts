@@ -13,4 +13,25 @@ router.post(
   learnerController.applyLearnerToMentor
 );
 
+//* learner submit review for a gig
+router.post(
+  "/reviews/:gigId",
+  auth(USER_ROLES.LEARNER), // only logged-in learners
+  learnerController.createReview
+);
+// Get all reviews for a specific gig
+router.get(
+  "/reviews/:gigId",
+  learnerController.getReviewsByGig
+);
+
+//toggle helpful count for a review
+router.patch(
+  "/reviews/helpful/:reviewId",
+  auth(USER_ROLES.LEARNER), // only logged-in learners
+  learnerController.incrementHelpful
+);
+
+
+
 export const learnerRoutes = router;

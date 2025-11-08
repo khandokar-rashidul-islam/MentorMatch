@@ -16,6 +16,27 @@ export interface ILearnerProfileCore {
   profession?: string;
 }
 
+
+
+// Review interface
+
+export interface ICreateReviewInput {
+  gigId: string;
+  userId: string;
+  rating: number;
+  comment?: string;
+}
+
+export interface IReview {
+  gigId: Types.ObjectId;
+  reviewerId: Types.ObjectId;
+  rating: number;
+  comment: string;
+  helpful?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 // Edit-time extra fields
 export interface ILearnerProfileExtra {
   about?: string;

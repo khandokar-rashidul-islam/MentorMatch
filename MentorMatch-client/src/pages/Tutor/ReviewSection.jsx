@@ -1,43 +1,99 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Star, ThumbsUp } from "lucide-react";
+import { useCreateReviewMutation, useGetReviewsByGigQuery, useToggleHelpfulMutation } from '../../redux/features/learner/learner.api';
+import { toast, Toaster } from "../../hooks/use-toast";
 
-const ReviewSection = () => {
-    const reviews = [
-    {
-      id: 1,
-      name: "Emily Chen",
-      rating: 5,
-      date: "2 weeks ago",
-      subject: "Calculus",
-      content: "Dr. Johnson is an exceptional tutor! She helped me understand complex calculus concepts that I was struggling with for months. Her teaching method is clear and patient.",
-      helpful: 12
-    },
-    {
-      id: 2,
-      name: "Marcus Williams",
-      rating: 5,
-      date: "1 month ago",
-      subject: "Physics",
-      content: "Amazing experience! The way she explains physics problems makes everything click. I went from failing to getting A's in my physics class.",
-      helpful: 8
-    },
-    {
-      id: 3,
-      name: "Sophia Martinez",
-      rating: 4,
-      date: "2 months ago",
-      subject: "Algebra",
-      content: "Very knowledgeable and helpful. Sometimes the sessions go a bit fast, but overall great experience. Would recommend!",
-      helpful: 5
-    }
-  ];
 
-  const averageRating = 4.9;
-  const totalReviews = 234;
+const ReviewSection = ({ gigId, gigOwnerId, userId, userRole}) => {
 
+   const { data, isLoading } = useGetReviewsByGigQuery(gigId);
+   const [createReview, { isLoading: submitting }] =useCreateReviewMutation();
+   const [toggleHelpful] = useToggleHelpfulMutation();
+
+   const [newRating, setNewRating] = useState(5);
+   const [newComment, setNewComment] = useState("");
+
+   if (isLoading) {
+     return (
+       <div className="flex justify-center items-center h-24 text-gray-500">
+         Loading reviews...
+       </div>
+     );
+   }
+
+   const {
+     reviews = [],
+     averageRating = 0,
+     totalReviews = 0,
+     ratingBreakdown = {},
+   } = data?.data || {};
+
+   const handleSubmitReview = async () => {
+     if (userRole !== "learner") {
+       toast({
+         title: "Error",
+         description: "Only learners can submit reviews",
+         variant: "destructive",
+       });
+       return;
+     }
+
+     if (userId === gigOwnerId) {
+       toast({
+         title: "Error",
+         description: "You cannot review your own gig",
+         variant: "destructive",
+       });
+       return;
+     }
+
+     if (!newComment || newRating < 1 || newRating > 5) {
+       toast({
+         title: "Error",
+         description: "Please enter valid rating and comment",
+         variant: "destructive",
+       });
+       return;
+     }
+
+     try {
+       await createReview({
+         gigId,
+         rating: newRating,
+         comment: newComment,
+       }).unwrap();
+       toast({
+         title: "Success",
+         description: "Review submitted successfully!",
+       });
+       setNewComment("");
+       setNewRating(5);
+     } catch (err) {
+       toast({
+         title: "Error",
+         description: err.data?.message || err.message,
+         variant: "destructive",
+       });
+     }
+   };
+
+   const handleHelpful = async (reviewId) => {
+     try {
+       await toggleHelpful({ reviewId }).unwrap();
+     } catch (err) {
+       toast({
+         title: "Error",
+         description: err.data?.message || err.message,
+         variant: "destructive",
+       });
+     }
+   };
+
+     console.log("ReviewSection Props:", { gigId, gigOwnerId, userId, userRole });
+       console.log("Reviews Data:",data);
   return (
     <Card>
       <CardHeader>
@@ -45,53 +101,88 @@ const ReviewSection = () => {
           <span>Student Reviews</span>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
-              <Star className="h-5 w-5 fill-warning text-warning" />
-              <span className="font-semibold">{averageRating}</span>
-              <span className="text-muted-foreground">({totalReviews} reviews)</span>
+              <Star className="h-5 w-5 fill-warning text-yellow-500 " />
+              <span className="font-semibold">{averageRating.toFixed(1)}</span>
+              <span className="text-muted-foreground">
+                ({totalReviews} reviews)
+              </span>
             </div>
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent>
+
+      <CardContent className="space-y-6">
         {/* Rating breakdown */}
         <div className="mb-6">
           <div className="space-y-2">
-            {[5, 4, 3, 2, 1].map((stars) => (
-              <div key={stars} className="flex items-center gap-3">
-                <span className="text-sm w-8">{stars}</span>
-                <Star className="h-4 w-4 fill-warning text-warning" />
+            {[5, 4, 3, 2, 1].map((star) => (
+              <div key={star} className="flex items-center gap-3">
+                <span className="text-sm w-8 ">{star}</span>
+                <Star className="h-4 w-4 fill-warning text-yellow-500 " />
                 <div className="flex-1 bg-muted rounded-full h-2">
-                  <div 
+                  <div
                     className="bg-warning h-2 rounded-full"
-                    style={{ 
-                      width: stars === 5 ? '85%' : 
-                             stars === 4 ? '12%' : 
-                             stars === 3 ? '2%' : 
-                             stars === 2 ? '1%' : '0%' 
-                    }}
+                    style={{ width: `${ratingBreakdown[star] || 0}%` }}
                   />
                 </div>
                 <span className="text-sm text-muted-foreground w-12">
-                  {stars === 5 ? '85%' : 
-                   stars === 4 ? '12%' : 
-                   stars === 3 ? '2%' : 
-                   stars === 2 ? '1%' : '0%'}
+                  {ratingBreakdown[star] || 0}%
                 </span>
               </div>
             ))}
           </div>
         </div>
 
+        {/* Submit review */}
+        {userRole === "learner" && userId !== gigOwnerId && (
+          <div className="border p-4 rounded-lg space-y-2">
+            <h4 className="font-semibold">Submit Your Review</h4>
+            <div className="flex items-center gap-2">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Star
+                  key={i}
+                  className={`h-6 w-6 cursor-pointer ${
+                    i <= newRating
+                      ? "fill-warning text-warning"
+                      : "text-muted-foreground"
+                  }`}
+                  onClick={() => setNewRating(i)}
+                />
+              ))}
+            </div>
+            <textarea
+              className="w-full border rounded p-2 text-sm"
+              placeholder="Write your review..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            />
+            <Button onClick={handleSubmitReview} disabled={submitting}>
+              {submitting ? "Submitting..." : "Submit Review"}
+            </Button>
+          </div>
+        )}
+
         {/* Individual reviews */}
-        <div className="space-y-6">
+        <div className="space-y-6 mt-10">
           {reviews.map((review) => (
-            <div key={review.id} className="border-b border-border pb-6 last:border-b-0">
+            <div
+              key={review._id}
+              className="border-b border-border pb-6 last:border-b-0"
+            >
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-semibold">{review.name}</h4>
+                  <div className="flex items-center gap-2 mb-2">
+                    <img
+                      alt={review.reviewerId?.learnerProfile?.profileImage}
+                      src={review.reviewerId?.learnerProfile?.profileImage}
+                      className="w-12 h-12  rounded-full object-cover border-2 border-primary/20"
+                    />
+                    <h4 className="font-semibold">
+                      {review.reviewerId?.learnerProfile?.name || "Anonymous"}
+                    </h4>
                     <Badge variant="outline" className="text-xs">
-                      {review.subject}
+                      {review.reviewerId?.learnerProfile?.topics?.[0] ||
+                        "General"}
                     </Badge>
                   </div>
                   <div className="flex items-center gap-2">
@@ -100,38 +191,41 @@ const ReviewSection = () => {
                         <Star
                           key={i}
                           className={`h-4 w-4 ${
-                            i < review.rating 
-                              ? 'fill-warning text-warning' 
-                              : 'text-muted-foreground'
+                            i < review.rating
+                              ? "fill-warning text-yellow-500"
+                              : "text-muted-foreground"
                           }`}
                         />
                       ))}
                     </div>
-                    <span className="text-sm text-muted-foreground">{review.date}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {new Date(review.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
               </div>
-              
+
               <p className="text-muted-foreground mb-3 leading-relaxed">
-                {review.content}
+                {review.comment}
               </p>
-              
+
               <div className="flex items-center justify-between">
-                <Button variant="ghost" size="sm" className="h-auto p-0">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0"
+                  onClick={() => handleHelpful(review._id)}
+                >
                   <ThumbsUp className="h-4 w-4 mr-1" />
-                  Helpful ({review.helpful})
+                  Helpful ({review.helpful || 0})
                 </Button>
               </div>
             </div>
           ))}
         </div>
-
-        <div className="mt-6 text-center">
-          <Button variant="outline">View All Reviews</Button>
-        </div>
       </CardContent>
     </Card>
   );
-}
+};
 
 export default ReviewSection

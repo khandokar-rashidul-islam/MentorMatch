@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { ILearnerProfile } from "./learner.interface";
+import { ILearnerProfile, IReview } from "./learner.interface";
 
 const learnerProfileSchema = new Schema<ILearnerProfile>(
   {
@@ -10,8 +10,8 @@ const learnerProfileSchema = new Schema<ILearnerProfile>(
       required: true,
     },
     profileImage: String,
-    name: { type: String, required: true},
-    phone: { type: String, required: true},
+    name: { type: String, required: true },
+    phone: { type: String, required: true },
     birthDate: String,
     nidOrBirthCertId: String,
     bankAccountNo: String,
@@ -22,12 +22,50 @@ const learnerProfileSchema = new Schema<ILearnerProfile>(
     profession: String,
     // Optional edit-time fields
     about: { type: String, default: undefined },
-    topics:[String]
+    topics: [String],
   },
   { timestamps: true }
 );
+
+// Review Schema
+const reviewSchema = new Schema<IReview>(
+  {
+    gigId: {
+      type: Schema.Types.ObjectId,
+      ref: "Gig",
+      required: true,
+    },
+    reviewerId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    rating: {
+      type: Number,
+      min: 1,
+      max: 5,
+      required: true,
+    },
+    comment: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    helpful: {
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true }
+);
+
+// Enable virtuals if you need to populate nested data later
+reviewSchema.set("toJSON", { virtuals: true });
+reviewSchema.set("toObject", { virtuals: true });
 
 export const LearnerProfileModel = model<ILearnerProfile>(
   "LearnerProfile",
   learnerProfileSchema
 );
+
+export const ReviewModel = model<IReview>("Review", reviewSchema);

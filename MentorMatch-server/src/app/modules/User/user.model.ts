@@ -28,14 +28,26 @@ const userSchema = new Schema<IUser>(
     timestamps: true
   }
 );
+// mentors virtual
 userSchema.virtual("mentorProfile", {
   ref: "MentorProfile",
   localField: "_id",
   foreignField: "user",
   justOne: true,
 });
+
+
+// learners virtual
+userSchema.virtual("learnerProfile", {
+  ref: "LearnerProfile",
+  localField: "_id",
+  foreignField: "user",
+  justOne: true,
+});
+
 userSchema.set("toJSON", { virtuals: true });
 userSchema.set("toObject", { virtuals: true });
+
 
 // userSchema.pre("save", async function (next) {
 //   const isUserExist = await UserModel.findOne({

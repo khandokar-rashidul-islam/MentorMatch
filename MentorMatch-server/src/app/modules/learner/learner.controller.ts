@@ -28,3 +28,65 @@ if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated
     data: { mentorProfile },
   });
 });
+
+
+//* ---------------------- learner submit review for a gig---------------------------------------*/
+
+//Create a new review (only learner can, and not for own gig)
+export const createReview = catchAsync(async (req,res) => {
+  const authReq = req as AuthRequest;
+  const userId = authReq.user?.id;
+
+  if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated");
+
+  const { gigId } = req.params;
+  const { rating, comment } = req.body;
+
+  if (!gigId) throw new AppError(httpStatus.BAD_REQUEST, "Gig ID is required");
+
+  const review = await learnerService.createReviewService({
+    gigId,
+    userId,
+    rating,
+    comment,
+  });
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "Review submitted successfully",
+    data: review,
+  });
+});
+
+// Get all reviews for a specific gig
+export const getReviewsByGig = catchAsync(async (req,res) => {
+  const { gigId } = req.params;
+
+  if (!gigId) throw new AppError(httpStatus.BAD_REQUEST, "Gig ID is required");
+
+  const data = await learnerService.getReviewsByGigService(gigId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Reviews fetched successfully",
+    data,
+  });
+});
+
+
+// Increment helpful count for a review
+export const incrementHelpful = catchAsync(async (req,res) => {
+  const { reviewId } = req.params;
+  if (!reviewId) throw new AppError(httpStatus.BAD_REQUEST, "Review ID is required");
+
+  const updatedReview = await learnerService.incrementHelpfulService(reviewId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Marked as helpful successfully",
+    data: updatedReview,
+  });
+});

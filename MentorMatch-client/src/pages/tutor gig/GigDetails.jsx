@@ -14,11 +14,12 @@ import { useParams } from "react-router";
 import { useGetGigByIdQuery } from "../../redux/features/mentor/mentor.api";
 import ServicePlans from "./ServicePlans";
 import GigSuggestions from "./GigSuggestions";
+import { useAppSelector } from "../../redux/hooks";
 
 const GigDetails = () => {
   const { id } = useParams();
   const { data: gig, isLoading, isError } = useGetGigByIdQuery(id);
-
+  const { user } = useAppSelector((state) => state.auth); // current logged-in user
   // === Loading State ===
   if (isLoading) {
     return (
@@ -37,7 +38,6 @@ const GigDetails = () => {
     );
   }
 
-
   // === Dynamic Data Extraction ===
   const subjects = gig.data.relatedTopics || [];
   const faqs = gig.data.faqs || [];
@@ -45,7 +45,7 @@ const GigDetails = () => {
   //const tutor = gig.tutor || gig.mentor || {};
   const plans = gig.data.plans || {};
   const services = gig.data.services || [];
-   
+
   console.log("Gig Data:", gig);
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -111,7 +111,12 @@ const GigDetails = () => {
             {faqs.length > 0 && <FAQSection faqs={faqs} />}
 
             {/* === Reviews / Comments === */}
-            <ReviewSection gigId={gig._id} />
+            <ReviewSection
+              gigId={gig.data._id}
+              gigOwnerId={gig.data.user._id}
+              userId={user._id} //current logged-in user ID
+              userRole={user.activeRole}
+            />
           </div>
 
           {/* === Sidebar === */}
@@ -192,7 +197,7 @@ const GigDetails = () => {
         {/* === Gig Suggestions / Carousel === */}
         <Card className="mt-8 px-5">
           <h1 className="text-2xl font-bold ">Related services</h1>
-          <GigSuggestions/>
+          <GigSuggestions />
         </Card>
       </main>
     </div>
