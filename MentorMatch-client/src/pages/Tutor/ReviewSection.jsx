@@ -32,6 +32,7 @@ const ReviewSection = ({ gigId, gigOwnerId, userId, userRole}) => {
    } = data?.data || {};
 
    const handleSubmitReview = async () => {
+    console.log("Submitting review");
      if (userRole !== "learner") {
        toast({
          title: "Error",
@@ -81,6 +82,14 @@ const ReviewSection = ({ gigId, gigOwnerId, userId, userRole}) => {
    };
 
    const handleHelpful = async (reviewId) => {
+         if (userId === gigOwnerId) {
+           toast({
+             title: "Error",
+             description: "You cannot mark helpful on reviews for your own gig",
+             variant: "destructive",
+           });
+           return;
+         }
      try {
        await toggleHelpful({ reviewId }).unwrap();
      } catch (err) {
@@ -93,9 +102,10 @@ const ReviewSection = ({ gigId, gigOwnerId, userId, userRole}) => {
    };
 
      console.log("ReviewSection Props:", { gigId, gigOwnerId, userId, userRole });
-       console.log("Reviews Data:",data);
+      console.log("Reviews Data:",data);
   return (
     <Card>
+      <Toaster />
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Student Reviews</span>
@@ -143,7 +153,7 @@ const ReviewSection = ({ gigId, gigOwnerId, userId, userRole}) => {
                   key={i}
                   className={`h-6 w-6 cursor-pointer ${
                     i <= newRating
-                      ? "fill-warning text-warning"
+                      ? "fill-warning text-yellow-500"
                       : "text-muted-foreground"
                   }`}
                   onClick={() => setNewRating(i)}
