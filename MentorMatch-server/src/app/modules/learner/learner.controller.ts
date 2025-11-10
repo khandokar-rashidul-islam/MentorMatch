@@ -29,6 +29,20 @@ if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated
   });
 });
 
+//*-------------------------- Get all gigs-----------------------------------------
+
+//* Get All Gigs (public)
+export const getAllGigs = catchAsync(async (req, res) => {
+  const gigs = await learnerService.getAllGigs(req.query);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Gigs fetched successfully",
+    data: gigs,
+  });
+});
+
 
 //* ---------------------- learner submit review for a gig---------------------------------------*/
 

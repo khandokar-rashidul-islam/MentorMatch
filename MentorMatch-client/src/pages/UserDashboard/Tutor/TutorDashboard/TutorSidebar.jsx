@@ -16,6 +16,11 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "../../../../components/ui/tooltip";
 const menuItems = [
   { title: "Overview", url: "/dashboard/mentor/overview", icon: <HomeIcon /> },
   {
@@ -103,21 +108,29 @@ const TutorSidebar = ({ collapsed, setCollapsed }) => {
           {menuItems.map(({ title, url, icon }) => (
             <li key={title}>
               <NavLink to={url} end className={getNavCls}>
-                <span
-                  className={`h-5 w-5 ${
-                    collapsed ? "mx-auto" : "mr-3"
-                  } flex items-center justify-center`}
-                >
-                  {icon}
-                </span>
-                {!collapsed && (
-                  <>
-                    <span className="flex-1 font-semibold ">{title}</span>
-                    {isActive(url) && (
-                      <ChevronRight className="h-4 w-4 text-blue-500" />
-                    )}
-                  </>
-                )}
+                <Tooltip className="bg-transparent">
+                  <TooltipTrigger asChild>
+                    <span
+                      className={`h-5 w-5 ${
+                        collapsed ? "mx-auto" : "mr-3"
+                      } flex items-center justify-center`}
+                    >
+                      {icon}
+                    </span>
+                  </TooltipTrigger>
+                  {!collapsed && (
+                    <>
+                      <span className="flex-1 font-semibold ">{title}</span>
+                      {isActive(url) && (
+                        <ChevronRight className="h-4 w-4 text-blue-500" />
+                      )}
+                    </>
+                  )}
+
+                  <TooltipContent side="right" sideOffset={collapsed ? 4 : 0} className={'text-sm font-semibold'}>
+                    <p>{title}</p>
+                  </TooltipContent>
+                </Tooltip>
               </NavLink>
             </li>
           ))}

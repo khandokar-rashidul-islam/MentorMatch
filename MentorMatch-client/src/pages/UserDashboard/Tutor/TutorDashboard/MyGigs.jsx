@@ -20,7 +20,7 @@ import { useGetMyGigsQuery } from "../../../../redux/features/mentor/mentor.api"
 // const myGigs = [ // { // id: 1, // status: "active", // tutor: { // name: "Sarah Chen ", // avatar: "/placeholder.svg", // rating: 4.9, // reviews: 127, // badge: "Pro", // }, // title: "Learn Python Programming from Scratch to Advanced ", // description: // "Master Python with hands-on projects, real-world examples, and personalized guidance. Perfect for beginners and intermediate learners.", // category: "Programming", // price: 45, // duration: "1 hour", // students: 89, // skills: ["Python", "Django", "Flask", "APIs"], // featured: true, // } // ];
 export default function MyGigs() {
   const [search, setSearch] = useState("");
-  const [viewMode, setViewMode] = useState("list");
+  const [viewMode, setViewMode] = useState("grid");
   const [activeTab, setActiveTab] = useState("all");
   const [sortBy, setSortBy] = useState("title");
 

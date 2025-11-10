@@ -4,7 +4,6 @@ import {
   updateGig,
   deleteGig,
   getGigById,
-  getAllGigs,
   getMyGigs,
 } from "./mentor.controller";
 import { createGigSchema, updateGigSchema } from "./mentor.validation";
@@ -35,9 +34,6 @@ router.delete("/gig-delete/:id", auth(USER_ROLES.MENTOR), deleteGig);
 
 //* Get Single Gig (public)
 router.get("/gig-details/:id", getGigById);
-
-//* Get All Gigs (public, with filters in query)
-router.get("/gigs", getAllGigs);
 
 //* Get My Gigs (only mentors)
 router.get("/my-gigs", auth(USER_ROLES.MENTOR), getMyGigs);

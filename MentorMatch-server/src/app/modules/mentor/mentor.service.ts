@@ -49,11 +49,6 @@ export const getGigById = async (gigId: string) => {
   return gig;
 };
 
-//* Get All Gigs (public)
-export const getAllGigs = async (filter: Record<string, unknown> = {}) => {
-  const gigs = await GigModel.find(filter).populate("user", "name email");
-  return gigs;
-};
 
 //* Get Gigs by Owner
 export const getMyGigs = async (userId: string) => {

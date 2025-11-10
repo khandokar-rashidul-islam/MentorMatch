@@ -13,6 +13,10 @@ router.post(
   learnerController.applyLearnerToMentor
 );
 
+//* Get All Gigs (public, with filters in query)
+router.get("/gigs", learnerController.getAllGigs);
+
+
 //* learner submit review for a gig
 router.post(
   "/reviews/:gigId",

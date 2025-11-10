@@ -66,17 +66,6 @@ export const getGigById = catchAsync(async (req, res) => {
   });
 });
 
-//* Get All Gigs (public)
-export const getAllGigs = catchAsync(async (req, res) => {
-  const gigs = await mentorService.getAllGigs(req.query);
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Gigs fetched successfully",
-    data: gigs,
-  });
-});
 
 //* Get My Gigs
 export const getMyGigs = catchAsync(async (req, res) => {
