@@ -149,7 +149,7 @@ const router = createBrowserRouter([
           { path: "learner-profile", element: <LearnerProfile /> },
           { path: "learner-profile/edit", element: <EditProfile /> },
           { path: "mentor-apply", element: <ApplyForMentor /> },
-          { path: "mentor-profile", element: <TutorDetails /> },
+          { path: "mentor-profile/:id", element: <TutorDetails /> },
           { path: "gig-details/:id", element: <GigDetails /> },
         ],
       },
