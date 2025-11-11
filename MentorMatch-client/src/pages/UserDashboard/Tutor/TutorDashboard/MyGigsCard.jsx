@@ -210,21 +210,21 @@ export default function MyGigsCard({ gig, viewMode, onShare }) {
         </div>
       </CardHeader>
 
-        {/* === Content === */}
-        <CardContent className="w-full flex flex-col justify-between flex-grow mt-2">
-          <div className="flex sm:justify-end flex-wrap gap-2 mt-2">
-            <Link to={`/dashboard/mentor/gig-details/${gig._id}`}>
-              <Button variant="outline" size="sm" className="hover:scale-105">
-                <Eye className="w-4 h-4 mr-1" /> View
-              </Button>
-            </Link>
-            <Link to={`/dashboard/mentor/gig-edit/${gig._id}`}>
-              <Button variant="default" size="sm" className="hover:scale-105">
-                <Edit className="w-4 h-4 mr-1" /> Edit
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+      {/* === Content === */}
+      <CardContent className="w-full flex flex-col justify-between flex-grow mt-2">
+        <div className="flex sm:justify-end flex-wrap gap-2 mt-2">
+          <Link to={`/dashboard/mentor/gig-details/${gig._id}`}>
+            <Button variant="outline" size="sm" className="hover:scale-105">
+              <Eye className="w-4 h-4 mr-1" /> View
+            </Button>
+          </Link>
+          <Link to={`/dashboard/mentor/gig-details/edit/${gig._id}`}>
+            <Button variant="default" size="sm" className="hover:scale-105">
+              <Edit className="w-4 h-4 mr-1" /> Edit
+            </Button>
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

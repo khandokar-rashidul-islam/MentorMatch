@@ -24,7 +24,8 @@ import { useCreateGigMutation } from "../../../../redux/features/mentor/mentor.a
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 
-function TagInput({
+// TagInput component for managing tag inputs like Related Topics and Keywords
+export function TagInput({
   label,
   fieldArray,
   append,
