@@ -45,12 +45,23 @@ export const learnerApi = baseApi.injectEndpoints({
       // Invalidate all reviews cache (optional: could be more selective)
       invalidatesTags: () => [{ type: "Reviews" }],
     }),
+     // === Gigs Endpoints ===
+    getAllGigs: builder.query({
+      // optional filters (like ?category=design&page=2)
+      query: (params) => ({
+        url: "/learners/gigs",
+        method: "GET",
+        params, // query string
+      }),
+      providesTags: ["Gigs"],
+    }),
   }),
 });
 
 export const {
   useApplyForMentorMutation,
   useGetLearnerDashboardQuery,
+  useGetAllGigsQuery,
   useCreateReviewMutation,
   useGetReviewsByGigQuery,
   useToggleHelpfulMutation,

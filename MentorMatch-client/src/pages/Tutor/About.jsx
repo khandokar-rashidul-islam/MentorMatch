@@ -4,8 +4,9 @@ import { Badge } from "@/components/ui/badge";
 
 
 const About = ({data}) => {
-
+console.log(data)
   const profile = data?.data?.user?.profile;
+  console.log(profile)
 
   return (
     <Card className="overflow-hidden">
