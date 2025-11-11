@@ -32,6 +32,7 @@ import EditProfile from "../pages/UserDashboard/Learner/EditProfile";
 import PublicRoute from "./PublicRoute";
 import ApplyForMentor from "../pages/UserDashboard/Learner/ApplyForMentor";
 import EditGig from "../pages/tutor gig/EditGig";
+import AdminHome from "../admin/admin-pages/AdminHome";
 
 const router = createBrowserRouter([
   {
@@ -153,6 +154,10 @@ const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path:"/admin",
+    Component:AdminHome,
   },
 
   { path: "/*", Component: Error404 },

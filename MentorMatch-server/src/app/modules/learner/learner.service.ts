@@ -44,7 +44,13 @@ export const applyMentorForExistingLearner = async (
 
 //* Get All Gigs (public)
 export const getAllGigs = async (filter: Record<string, unknown> = {}) => {
-  const gigs = await GigModel.find(filter).populate("user", "name email");
+  const gigs = await GigModel.find(filter).populate({
+    path: "user",
+    select: "email",
+    populate: {
+      path: "mentorProfile",
+      select: "name profileImage profession bio address",
+    }});
   return gigs;
 };
 

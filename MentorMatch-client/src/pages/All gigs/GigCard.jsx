@@ -12,7 +12,7 @@ import { Star, Clock, Users, BookOpen, MessageCircle } from "lucide-react";
 import { Link } from "react-router";
 
 const GigCard = ({ gig }) => {
-  // console.log(gig)
+ // console.log(gig)
   return (
     <Card
       key={gig._id}
@@ -23,38 +23,41 @@ const GigCard = ({ gig }) => {
           {/* Tutor Info */}
           <div className="flex items-center gap-2">
             <Avatar className="h-12 w-12">
-              {/* <AvatarImage src={gig.tutor.avatar} alt={gig.tutor.name} /> */}
+              <AvatarImage src={gig.user.mentorProfile.profileImage} alt={gig.user.mentorProfile.name} />
               <AvatarFallback>
-                {/* {gig.tutor.name
+                {gig.user.mentorProfile.name
                   .split(" ")
                   .map((n) => n[0])
-                  .join("")} */}
-                u
+                  .join("")}
+
               </AvatarFallback>
             </Avatar>
             <div>
               <div className="flex items-center gap-2">
-                <h4 className="font-semibold flex-1">{"Mentor name"}</h4>
+                {/* mentor name */}
+                <h4 className="font-semibold flex-1">{gig.user.mentorProfile.name}</h4>
               </div>
               <div className="text-sm text-gray-500 flex items-center gap-1">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                {/* <span>{gig.tutor.rating}</span>
-                <span>({gig.tutor.reviews})</span> */}
+                {/* ratings */}
+                <span>{"2.3"}</span>
+                {/* reviews */}
+                <span>({"44"})</span>
               </div>
             </div>
           </div>
 
           {/* Featured Tag */}
-          {/* <div className=" absolute right-0 flex flex-col items-end gap-1">
+           <div className=" absolute right-0 flex flex-col items-end gap-1">
             <Badge className="bg-green-600 text-white  rounded-full  ">
               Pro
             </Badge>
-            {gig.featured && (
+            {/*{gig.featured && (
               <Badge className="bg-red-500 text-white rounded-fullpx-1 py-0.5 text-[10px] sm:text-[11px]">
                 Featured
               </Badge>
-            )}
-          </div> */}
+            )}*/}
+          </div> 
         </div>
 
         {/* Title */}
