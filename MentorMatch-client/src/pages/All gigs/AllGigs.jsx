@@ -190,6 +190,7 @@ export default function AllGigs() {
   const gigs = data?.data || [];
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
+  const [visibleGigsCount, setVisibleGigsCount] = useState(9);
 
   const displayedCategories = categories.slice(0, visibleCount);
 
@@ -239,9 +240,10 @@ export default function AllGigs() {
     //const matchesRating = gig.tutor.rating >= minRating;
 
     return (
-      matchesSearch && matchesCategory 
-     // && matchesLevel 
-      && matchesPrice
+      matchesSearch &&
+      matchesCategory &&
+      // && matchesLevel
+      matchesPrice
       //&& matchesRating
     );
   });
@@ -629,28 +631,49 @@ export default function AllGigs() {
                   : "space-y-4"
               }
             >
-              {sortedGigs.map((gig) =>
-                viewMode === "grid" ? (
-                  <GigCard key={gig._id} gig={gig} />
-                ) : (
-                  <GigCard gig={gig} key={gig._id} />
-                )
-              )}
+              {sortedGigs
+                .slice(0, visibleGigsCount)
+                .map((gig) =>
+                  viewMode === "grid" ? (
+                    <GigCard key={gig._id} gig={gig} />
+                  ) : (
+                    <GigCard gig={gig} key={gig._id} />
+                  )
+                )}
             </div>
 
             {sortedGigs.length == 0 ? (
               <>
                 <p>no data found</p>
               </>
-            ) : (
+            ) : sortedGigs.length > visibleGigsCount ? (
               <>
                 {/* Load More */}
                 <div className="text-center mt-12">
-                  <Button variant="outline" size="lg">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => {
+                      setVisibleGigsCount((prev) => prev + 9);
+                    }}
+                  >
                     Load More Gigs
                   </Button>
                 </div>
               </>
+            ) : (
+              <div className="text-center mt-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setVisibleGigsCount(9);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                >
+                  Show Less
+                </Button>
+              </div>
             )}
           </div>
         </div>
