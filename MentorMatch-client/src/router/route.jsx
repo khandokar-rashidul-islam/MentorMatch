@@ -31,6 +31,7 @@ import EditTutorProfile from "../pages/UserDashboard/Tutor/TutorProfile/EditTuto
 import EditProfile from "../pages/UserDashboard/Learner/EditProfile";
 import PublicRoute from "./PublicRoute";
 import ApplyForMentor from "../pages/UserDashboard/Learner/ApplyForMentor";
+import EditGig from "../pages/tutor gig/EditGig";
 
 const router = createBrowserRouter([
   {
@@ -119,6 +120,7 @@ const router = createBrowserRouter([
           { path: "create-gigs", element: <CreateGigs /> },
           { path: "my-gigs", element: <MyGigs /> },
           { path: "gig-details/:id", element: <GigDetails /> },
+          { path: "gig-details/edit/:gigId", element: <EditGig /> },
           { path: "schedule", element: <Schedule /> },
           { path: "payments-history", element: <PaymentHistory /> },
           { path: "community-posts", element: <CommunityPosts /> },
