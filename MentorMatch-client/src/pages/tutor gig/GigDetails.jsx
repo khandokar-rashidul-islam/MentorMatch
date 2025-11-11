@@ -23,7 +23,7 @@ const GigDetails = () => {
   // === Loading State ===
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-60">
+      <div className="flex justify-center items-center h-60 min-h-screen">
         <Loader2 className="animate-spin w-6 h-6 text-primary" />
       </div>
     );

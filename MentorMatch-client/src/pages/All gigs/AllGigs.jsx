@@ -204,7 +204,7 @@ export default function AllGigs() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const [selectedLevels, setSelectedLevels] = useState([]);
-  const [priceRange, setPriceRange] = useState([0, 100]);
+  const [priceRange, setPriceRange] = useState([0, 1000]);
   const [minRating, setMinRating] = useState(0);
   const [sortBy, setSortBy] = useState("relevance");
   const [viewMode, setViewMode] = useState("grid");
@@ -224,19 +224,24 @@ export default function AllGigs() {
 
     const matchesCategory =
       selectedCategories.length === 0 ||
-      gig.keywords?.some((keyword) => selectedCategories.includes(keyword));
+      gig.keywords?.some((keyword) =>
+        selectedCategories
+          .map((cat) => cat.toLowerCase())
+          .includes(keyword.toLowerCase())
+      );
 
-    const matchesLevel = selectedLevels.length === 0;
+    //const matchesLevel = selectedLevels.length === 0;
 
-    // const matchesPrice =
-    //   gig.plans.instant.price >= priceRange[0] &&
-    //   gig.plans.monthly.elite.price <= priceRange[1];
+    const matchesPrice =
+      gig.plans.instant.price >= priceRange[0] &&
+      gig.plans.instant.price <= priceRange[1];
 
     //const matchesRating = gig.tutor.rating >= minRating;
 
     return (
-      matchesSearch && matchesCategory && matchesLevel 
-      //&& matchesPrice
+      matchesSearch && matchesCategory 
+     // && matchesLevel 
+      && matchesPrice
       //&& matchesRating
     );
   });
@@ -245,8 +250,6 @@ export default function AllGigs() {
   const sortedGigs = [...filteredGigs].sort((a, b) => {
     const aInstant = a.plans?.instant?.price ?? 0;
     const bInstant = b.plans?.instant?.price ?? 0;
-    const aElite = a.plans?.monthly?.elite?.price ?? aInstant;
-    const bElite = b.plans?.monthly?.elite?.price ?? bInstant;
 
     switch (sortBy) {
       case "price-low":
@@ -255,7 +258,7 @@ export default function AllGigs() {
 
       case "price-high":
         // Sort by highest available plan price (elite as baseline)
-        return bElite - aElite;
+        return bInstant - aInstant;
 
       // case "rating":
       //   return (b.rating ?? 0) - (a.rating ?? 0);
@@ -280,14 +283,14 @@ export default function AllGigs() {
     } else if (type === "rating") {
       setMinRating(0);
     } else if (type === "price") {
-      setPriceRange([0, 100]);
+      setPriceRange([0, 1000]);
     }
   };
 
   const clearAllFilters = () => {
     setSelectedCategories([]);
     setSelectedLevels([]);
-    setPriceRange([0, 100]);
+    setPriceRange([0, 1000]);
     setMinRating(0);
     setSearchQuery("");
   };
@@ -295,12 +298,22 @@ export default function AllGigs() {
   const activeFiltersCount =
     selectedCategories.length +
     selectedLevels.length +
-    (priceRange[0] > 0 || priceRange[1] < 100 ? 1 : 0) +
+    (priceRange[0] > 0 || priceRange[1] < 1000 ? 1 : 0) +
     (minRating > 0 ? 1 : 0) +
     (searchQuery ? 1 : 0);
 
-  if (isLoading) return <p>Loading gigs...</p>;
-  if (error) return <p>Error fetching gigs!</p>;
+  if (isLoading)
+    return (
+      <div className="min-h-screen pt-25 flex justify-center items-start">
+        Loading gigs...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="min-h-screen pt-25 flex justify-center items-start text-red-500">
+        Error fetching gigs!
+      </div>
+    );
 
   return (
     <div className="min-h-screen w-11/12 mx-auto bg-gradient-subtle pt-28">
