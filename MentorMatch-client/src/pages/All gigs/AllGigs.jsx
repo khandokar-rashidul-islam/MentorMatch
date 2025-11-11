@@ -662,17 +662,21 @@ export default function AllGigs() {
                 </div>
               </>
             ) : (
-              <div className="text-center mt-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setVisibleGigsCount(9);
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                >
-                  Show Less
-                </Button>
+              <div>
+                {sortedGigs.length > 9 && (
+                  <div className="text-center mt-4">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setVisibleGigsCount(9);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                    >
+                      Show Less
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
           </div>
