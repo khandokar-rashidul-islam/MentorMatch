@@ -6,39 +6,70 @@ import ReviewSection from "./ReviewSection";
 import FAQSection from "./FAQSection";
 import BookingPlans from "./BookingPlans";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, Clock, DollarSign, FileText, Star, User } from "lucide-react";
+import {
+  BookOpen,
+  Clock,
+  DollarSign,
+  FileText,
+  Star,
+  User,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import About from "./About";
 import Posts from "./Posts";
 import Gigs from "./Gigs";
 import { useGetActiveProfileQuery } from "../../redux/features/user/userApi";
 import Certifications from "./Certifications";
+import { useAppSelector } from "../../redux/hooks";
+import { useParams } from "react-router";
+import { useGetMentorByIdQuery } from "../../redux/features/learner/learner.api";
+
+const days = [
+  { day: "Monday", time: "9:00 AM - 6:00 PM" },
+  { day: "Tuesday", time: "9:00 AM - 6:00 PM" },
+  { day: "Wednesday", time: "9:00 AM - 6:00 PM" },
+  { day: "Thursday", time: "9:00 AM - 6:00 PM" },
+  { day: "Friday", time: "9:00 AM - 4:00 PM" },
+  { day: "Weekend", time: "By appointment" },
+];
 
 const TutorDetails = () => {
-  // const breadcrumbItems = [
-  //   { label: "Home", href: "/" },
-  //   { label: "Find Tutors", href: "/tutors" },
-  //   { label: "Mathematics", href: "/tutors/mathematics" },
-  //   { label: "Dr. Sarah Johnson" }
-  // ];
-  const days = [
-    { day: "Monday", time: "9:00 AM - 6:00 PM" },
-    { day: "Tuesday", time: "9:00 AM - 6:00 PM" },
-    { day: "Wednesday", time: "9:00 AM - 6:00 PM" },
-    { day: "Thursday", time: "9:00 AM - 6:00 PM" },
-    { day: "Friday", time: "9:00 AM - 4:00 PM" },
-    { day: "Weekend", time: "By appointment" },
-  ];
-  const { data, isLoading, isError } = useGetActiveProfileQuery(
-    null,
-    {
-      refetchOnMountOrArgChange: true,
-    }
-  );
+  const user = useAppSelector((state) => state.auth.user);
+  const { id } = useParams();
+  console.log(id);
+  const role = user?.activeRole;
+  // //const { data, isLoading, isError } = useGetMentorByIdQuery(id);
+  // const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
+  //   refetchOnMountOrArgChange: true,
+  // });
+  const {
+    data: mentorData,
+    isLoading: isMentorLoading,
+    isError: isMentorError,
+  } = useGetMentorByIdQuery(id, { skip: role !== "learner" });
 
-  if (isLoading) return <div className="min-h-screen text-center pt-20">Loading....</div>
-  if (isError) return <div className="min-h-screen text-center pt-55 text-red-500">Error loading profile!</div>
+  const {
+    data: activeProfileData,
+    isLoading: isProfileLoading,
+    isError: isProfileError,
+  } = useGetActiveProfileQuery(null, {
+    skip: role === "learner",
+    refetchOnMountOrArgChange: true,
+  });
 
+  const isLoading = isMentorLoading || isProfileLoading;
+  const isError = isMentorError || isProfileError;
+  const data = role === "learner" ? mentorData : activeProfileData;
+  console.log("data from tutor details:",data)
+
+  if (isLoading)
+    return <div className="min-h-screen text-center pt-20">Loading....</div>;
+  if (isError)
+    return (
+      <div className="min-h-screen text-center pt-55 text-red-500">
+        Error loading profile!
+      </div>
+    );
 
   return (
     <div className="min-h-screen mt-20 bg-gradient-subtle">
@@ -111,9 +142,7 @@ const TutorDetails = () => {
             {/* REVIEWS */}
             <ReviewSection />
             {/* FAQ */}
-            <FAQSection
-              faqs={data?.data?.user?.profile?.faqs}
-            />
+            <FAQSection faqs={data?.data?.user?.profile?.faqs} />
           </div>
 
           {/* Sidebar */}

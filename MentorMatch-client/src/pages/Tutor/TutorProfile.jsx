@@ -31,9 +31,11 @@ const TutorProfile = ({data}) => {
     setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
     setIsLiked(!isLiked);
   };
-
+console.log(" data from tutorprofile:",data)
   const user = data?.data?.user;
+   console.log("user data from tutorprofile:",user)
   const profile = user?.profile;
+  console.log("data from tutorprofile:",profile)
 
   // if (isLoading) {
   //   return <div>Loading...</div>;

@@ -18,7 +18,7 @@ export const learnerApi = baseApi.injectEndpoints({
 
 // === Mentor Public Profile Endpoint ===
     getMentorById: builder.query({
-      query: (mentorId) => `/mentor-details/${mentorId}`,
+      query: (mentorId) => `/learners/mentor-details/${mentorId}`,
       providesTags: (result, error, mentorId) => [{ type: "Mentor", id: mentorId }],
     }),
 

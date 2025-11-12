@@ -23,6 +23,8 @@ const GigHeader = ({ gig }) => {
   const [likeCount, setLikeCount] = useState(1247);
   const user = useAppSelector((state) => state.auth.user);
   const role = user?.activeRole;
+  console.log(role)
+  console.log("gig data from dig header:",gig)
    
   const handleLike = () => {
     if (isLiked) {
@@ -35,6 +37,7 @@ const GigHeader = ({ gig }) => {
   //header data
   const data = gig.data;
   const userData= gig.data.user.mentorProfile;
+  const mentorId=data.user.id
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-6">
@@ -147,7 +150,7 @@ const GigHeader = ({ gig }) => {
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                   <div className="text-center sm:text-left">
                     <h1 className="text-xl sm:text-2xl font-bold text-foreground hover:text-primary">
-                      <Link to={`/dashboard/${role}/mentor-profile`}>
+                      <Link to={`/dashboard/${role}/mentor-profile${role ==='learner'?`/${mentorId}`:''}`}>
                         {userData.name}
                       </Link>
                     </h1>
