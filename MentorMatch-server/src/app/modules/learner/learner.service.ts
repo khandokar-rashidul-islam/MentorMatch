@@ -42,6 +42,20 @@ export const applyMentorForExistingLearner = async (
   return newMentor;
 };
 
+//*------------get mentor public profile by id (for learner to view)--------------
+
+export const getMentorById = async (mentorId: string) => {
+
+  const mentor = await MentorProfileModel.findOne({ user: mentorId });
+
+  if (!mentor) {
+    throw new AppError(httpStatus.NOT_FOUND, "Mentor not found");
+  }
+
+  return mentor;
+};
+
+
 //* Get All Gigs (public)
 export const getAllGigs = async (filter: Record<string, unknown> = {}) => {
   const gigs = await GigModel.find(filter).populate({

@@ -29,6 +29,21 @@ if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated
   });
 });
 
+//* get mentor public profile by id (for learner to view)
+
+export const getMentorById = catchAsync(async (req, res) => {
+  const { mentorId } = req.params;
+
+  const mentor = await learnerService.getMentorById(mentorId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Mentor details fetched successfully",
+    data: mentor,
+  });
+});
+
 //*-------------------------- Get all gigs-----------------------------------------
 
 //* Get All Gigs (public)

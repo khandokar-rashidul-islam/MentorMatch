@@ -13,6 +13,12 @@ router.post(
   learnerController.applyLearnerToMentor
 );
 
+//* get mentor public profile by id (for learner to view)
+router.get(
+  "/mentor-details/:mentorId",
+  learnerController.getMentorById
+);
+
 //* Get All Gigs (public, with filters in query)
 router.get("/gigs", learnerController.getAllGigs);
 

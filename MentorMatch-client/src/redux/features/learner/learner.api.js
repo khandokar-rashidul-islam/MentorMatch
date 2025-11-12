@@ -16,6 +16,12 @@ export const learnerApi = baseApi.injectEndpoints({
       providesTags: ["Learner"],
     }),
 
+// === Mentor Public Profile Endpoint ===
+    getMentorById: builder.query({
+      query: (mentorId) => `/mentor-details/${mentorId}`,
+      providesTags: (result, error, mentorId) => [{ type: "Mentor", id: mentorId }],
+    }),
+
     // === Reviews Endpoints ===
 
     // Submit a review for a gig
@@ -65,4 +71,5 @@ export const {
   useCreateReviewMutation,
   useGetReviewsByGigQuery,
   useToggleHelpfulMutation,
+  useGetMentorByIdQuery,
 } = learnerApi;
