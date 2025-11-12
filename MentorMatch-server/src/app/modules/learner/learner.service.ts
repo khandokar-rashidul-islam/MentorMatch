@@ -52,7 +52,11 @@ export const getMentorById = async (mentorId: string) => {
     throw new AppError(httpStatus.NOT_FOUND, "Mentor not found");
   }
 
-  return mentor;
+  return {
+    user:{
+      profile:mentor
+    }
+  };
 };
 
 

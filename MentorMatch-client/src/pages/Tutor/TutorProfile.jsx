@@ -14,15 +14,18 @@ import {
   Link,
 } from "lucide-react";
 import { NavLink } from "react-router";
+import { useAppSelector } from "../../redux/hooks";
 //import { useGetActiveProfileQuery } from "../../redux/features/user/userApi";
 
-const TutorProfile = ({data}) => {
+const TutorProfile = ({ data }) => {
   // const { data,isLoading, isError } = useGetActiveProfileQuery(
   //   null,
   //   {
   //     refetchOnMountOrArgChange: true,
   //   }
   // );
+  const userr = useAppSelector((state) => state.auth.user);
+  const role = userr?.activeRole;
 
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(247);
@@ -31,11 +34,11 @@ const TutorProfile = ({data}) => {
     setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
     setIsLiked(!isLiked);
   };
-console.log(" data from tutorprofile:",data)
+  console.log(" data from tutorprofile:", data);
   const user = data?.data?.user;
-   console.log("user data from tutorprofile:",user)
+  console.log("user data from tutorprofile:", user);
   const profile = user?.profile;
-  console.log("data from tutorprofile:",profile)
+  console.log("data from tutorprofile:", profile);
 
   // if (isLoading) {
   //   return <div>Loading...</div>;
@@ -80,7 +83,9 @@ console.log(" data from tutorprofile:",data)
                   </div>
                   <div className="flex items-center justify-center sm:justify-start gap-1 text-muted-foreground">
                     <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
-                    <span className="text-sm sm:text-base">{profile.address }</span>
+                    <span className="text-sm sm:text-base">
+                      {profile.address}
+                    </span>
                   </div>
                   <div className="flex items-center justify-center sm:justify-start gap-1 text-muted-foreground">
                     <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -133,21 +138,23 @@ console.log(" data from tutorprofile:",data)
                 variant="default"
                 size="sm"
                 className="sm:size-lg  sm:flex-none"
+                disabled={role==='mentor'}
               >
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Contact Tutor
               </Button>
-              <Button variant="outline" size="sm" className="sm:size-lg">
+              <Button variant="outline" size="sm" className="sm:size-lg" disabled={role==='mentor'}>
                 View Schedule
               </Button>
-              <Button variant="default" size="sm" className="sm:size-lg">
+              <Button variant="default" size="sm" className="sm:size-lg" disabled={role==='mentor'}>
                 Book Trial Lesson
               </Button>
-              <NavLink to="/dashboard/mentor/mentor-profile/edit">
+
+              {role!='learner'&&<NavLink to="/dashboard/mentor/mentor-profile/edit">
                 <Button variant="outline" size="sm" className="sm:size-lg">
                   Edit Profile
                 </Button>
-              </NavLink>
+              </NavLink>}
             </div>
           </div>
         </div>
