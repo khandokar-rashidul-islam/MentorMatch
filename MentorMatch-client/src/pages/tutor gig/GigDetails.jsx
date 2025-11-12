@@ -197,7 +197,7 @@ const GigDetails = () => {
         {/* === Gig Suggestions / Carousel === */}
         <Card className="mt-8 px-5">
           <h1 className="text-2xl font-bold ">Related services</h1>
-          <GigSuggestions />
+          <GigSuggestions gig={gig} />
         </Card>
       </main>
     </div>

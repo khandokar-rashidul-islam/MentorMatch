@@ -72,7 +72,25 @@ export const getAllGigs = async (filter: Record<string, unknown> = {}) => {
   return gigs;
 };
 
+//* get gigs by mentor id (public) */
 
+export const getGigsByUserId = async (userId: string) => {
+  // Find gigs where the user matches the provided userId
+  const gigs = await GigModel.find({ user: userId }).populate({
+    path: "user",
+    select: "email activeRole",
+    populate: {
+      path: "mentorProfile",
+      select: "name profileImage profession bio address topics experience",
+    },
+  });
+
+  if (!gigs || gigs.length === 0) {
+    throw new AppError(httpStatus.NOT_FOUND, "No gigs found for this user");
+  }
+
+  return gigs;
+};
 
 //* ------------ Learner submits review for a gig --------------------
 

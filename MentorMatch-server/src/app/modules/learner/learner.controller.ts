@@ -58,6 +58,21 @@ export const getAllGigs = catchAsync(async (req, res) => {
   });
 });
 
+//* get gigs by mentor id (public)
+export const getGigsByUserId = catchAsync(async (req, res) => {
+    const { userId } = req.params;
+
+    const gigs = await learnerService.getGigsByUserId(userId);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Gigs fetched successfully for this user",
+      data: gigs,
+    });
+  }
+);
+
 
 //* ---------------------- learner submit review for a gig---------------------------------------*/
 

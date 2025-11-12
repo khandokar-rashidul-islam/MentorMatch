@@ -6,12 +6,16 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { useGetMyGigsQuery } from "../../redux/features/mentor/mentor.api";
+import { useGetGigsByUserIdQuery } from "../../redux/features/learner/learner.api";
 
-const GigSuggestions = () => {
-  const { data, isLoading, isError } = useGetMyGigsQuery();
+
+const GigSuggestions = ({gig}) => {
+
+const userId = gig.data.user.id;
+console.log("GigSuggestions User ID:", userId);
+const { data, isLoading } = useGetGigsByUserIdQuery(userId);
   const gigs = data?.data || [];
-  if (isLoading || isError || gigs.length === 0) {
+  if (isLoading || gigs.length === 0) {
     return null;
   }
 

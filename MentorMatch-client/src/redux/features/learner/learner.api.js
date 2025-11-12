@@ -61,6 +61,13 @@ export const learnerApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Gigs"],
     }),
+
+   // == Gigs by User ID Endpoint ==
+    getGigsByUserId: builder.query({
+      query: (userId) => `/learners/user-gigs/${userId}`,
+      providesTags: (result, error, userId) => [{ type: "Gigs", id: userId }],
+    }),
+
   }),
 });
 
@@ -72,4 +79,5 @@ export const {
   useGetReviewsByGigQuery,
   useToggleHelpfulMutation,
   useGetMentorByIdQuery,
+  useGetGigsByUserIdQuery,
 } = learnerApi;

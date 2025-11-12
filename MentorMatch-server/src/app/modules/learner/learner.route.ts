@@ -22,6 +22,8 @@ router.get(
 //* Get All Gigs (public, with filters in query)
 router.get("/gigs", learnerController.getAllGigs);
 
+//  Get gigs of any user (public)
+router.get("/user-gigs/:userId", learnerController.getGigsByUserId);
 
 //* learner submit review for a gig
 router.post(
