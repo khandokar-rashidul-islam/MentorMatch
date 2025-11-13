@@ -23,6 +23,7 @@ import Certifications from "./Certifications";
 import { useAppSelector } from "../../redux/hooks";
 import { useParams } from "react-router";
 import { useGetMentorByIdQuery } from "../../redux/features/learner/learner.api";
+import MentorReviews from "./MentorReviews";
 
 const days = [
   { day: "Monday", time: "9:00 AM - 6:00 PM" },
@@ -34,11 +35,13 @@ const days = [
 ];
 
 const TutorDetails = () => {
+
   const user = useAppSelector((state) => state.auth.user);
   const { id } = useParams();
   console.log(id);
   const role = user?.activeRole;
-  // //const { data, isLoading, isError } = useGetMentorByIdQuery(id);
+
+  //const { data, isLoading, isError } = useGetMentorByIdQuery(id);
   // const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
   //   refetchOnMountOrArgChange: true,
   // });
@@ -60,7 +63,7 @@ const TutorDetails = () => {
   const isLoading = isMentorLoading || isProfileLoading;
   const isError = isMentorError || isProfileError;
   const data = role === "learner" ? mentorData : activeProfileData;
-  console.log("data from tutor details:",data)
+  console.log("data from tutor details:", data?.data?.user?.profile.user);
 
   if (isLoading)
     return <div className="min-h-screen text-center pt-20">Loading....</div>;
@@ -140,7 +143,11 @@ const TutorDetails = () => {
               </Card>
             </div>
             {/* REVIEWS */}
-            <ReviewSection />
+            <MentorReviews
+              mentorId={data?.data?.user?.profile.user}
+              userId={user._id} //current logged-in user ID
+              userRole={role}
+            />
             {/* FAQ */}
             <FAQSection faqs={data?.data?.user?.profile?.faqs} />
           </div>

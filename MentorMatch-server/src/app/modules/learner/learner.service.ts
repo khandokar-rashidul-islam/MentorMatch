@@ -1,10 +1,15 @@
+import mongoose from "mongoose";
 import AppError from "../../errors/AppError";
-import {GigModel, MentorProfileModel } from "../mentor/mentor.model";
+import { GigModel, MentorProfileModel } from "../mentor/mentor.model";
 import { APPROVAL_STATUS } from "../user/user.constant";
 import { MentorSpecificData } from "../user/user.interface";
 import { UserModel } from "../user/user.model";
 import { ICreateReviewInput } from "./learner.interface";
-import { LearnerProfileModel, ReviewModel } from "./learner.model";
+import {
+  LearnerProfileModel,
+  MentorReviewModel,
+  ReviewModel,
+} from "./learner.model";
 import httpStatus from "http-status";
 
 //* ------------ Learner applies to become Mentor later --------------------
@@ -45,7 +50,6 @@ export const applyMentorForExistingLearner = async (
 //*------------get mentor public profile by id (for learner to view)--------------
 
 export const getMentorById = async (mentorId: string) => {
-
   const mentor = await MentorProfileModel.findOne({ user: mentorId });
 
   if (!mentor) {
@@ -53,12 +57,11 @@ export const getMentorById = async (mentorId: string) => {
   }
 
   return {
-    user:{
-      profile:mentor
-    }
+    user: {
+      profile: mentor,
+    },
   };
 };
-
 
 //* Get All Gigs (public)
 export const getAllGigs = async (filter: Record<string, unknown> = {}) => {
@@ -68,7 +71,8 @@ export const getAllGigs = async (filter: Record<string, unknown> = {}) => {
     populate: {
       path: "mentorProfile",
       select: "name profileImage profession bio address",
-    }});
+    },
+  });
   return gigs;
 };
 
@@ -191,7 +195,6 @@ export const createReviewService = async ({
   return populated;
 };
 
-
 export const getReviewsByGigService = async (gigId: string) => {
   // find reviews and populate reviewer -> learnerProfile
   const reviews = await ReviewModel.find({ gigId })
@@ -242,20 +245,209 @@ export const getReviewsByGigService = async (gigId: string) => {
   };
 };
 
-
-
 /**
  * Increment "helpful" count for a review
  * (optional — invoked when user clicks Helpful)
  */
-export const incrementHelpfulService = async (reviewId: string ) => {
-  const updated = await ReviewModel.findByIdAndUpdate(
-    reviewId,
-    { $inc: { helpful: 1 } },
-    { new: true }
-  );
-  if (!updated) {
-    throw new AppError(httpStatus.NOT_FOUND, "Review not found");
+export const toggleHelpfulService = async (
+  reviewId: string,
+  userId: string
+) => {
+  const review = await ReviewModel.findById(reviewId);
+  if (!review) throw new AppError(httpStatus.NOT_FOUND, "Review not found");
+
+  if (!userId)
+    throw new AppError(httpStatus.UNAUTHORIZED, "User ID is required");
+
+  // Initialize helpfulBy array if missing
+  if (!Array.isArray(review.helpfulBy)) review.helpfulBy = [];
+
+  // Check if user already marked helpful
+  const index = review.helpfulBy.findIndex((id) => id.toString() === userId);
+  if (index === -1) {
+    // Not marked yet → add
+    review.helpfulBy.push(new mongoose.Types.ObjectId(userId));
+  } else {
+    // Already marked → remove
+    review.helpfulBy.splice(index, 1);
   }
-  return updated;
+
+  // Update total helpful count
+  review.helpful = review.helpfulBy.length;
+
+  await review.save();
+
+  return review;
+};
+
+//* ------------ Learner gives feedback for mentor (after session completed) --------------------
+// create mentor review
+export const createMentorReviewService = async ({
+  mentorId,
+  userId,
+  rating,
+  comment,
+}: {
+  mentorId: string;
+  userId: string;
+  rating: number;
+  comment?: string;
+}) => {
+  // validation
+  if (!rating || rating < 1 || rating > 5) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Rating must be between 1 and 5"
+    );
+  }
+
+  const [reviewer, mentor] = await Promise.all([
+    UserModel.findById(userId).select("role"),
+    UserModel.findById(mentorId).select("activeRole"),
+  ]);
+
+  if (!reviewer) throw new AppError(httpStatus.UNAUTHORIZED, "User not found");
+  if (!mentor) throw new AppError(httpStatus.NOT_FOUND, "Mentor not found");
+
+  if (mentor.activeRole !== "mentor") {
+    throw new AppError(httpStatus.BAD_REQUEST, "Target user is not a mentor");
+  }
+
+  // only learners can review mentors
+  if (!Array.isArray(reviewer.role) || !reviewer.role.includes("learner")) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Only learners can review mentors"
+    );
+  }
+
+  // prevent self-review
+  if (mentorId.toString() === userId.toString()) {
+    throw new AppError(httpStatus.FORBIDDEN, "You cannot review yourself");
+  }
+
+  // prevent duplicate review
+  const existing = await MentorReviewModel.findOne({
+    mentorId,
+    reviewerId: userId,
+  });
+  if (existing) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You already reviewed this mentor"
+    );
+  }
+
+  // create review
+  const created = await MentorReviewModel.create({
+    mentorId,
+    reviewerId: userId,
+    rating,
+    comment,
+  });
+
+  // compute updated averages
+  const agg = await MentorReviewModel.aggregate([
+    { $match: { mentorId: created.mentorId } },
+    {
+      $group: {
+        _id: "$mentorId",
+        avgRating: { $avg: "$rating" },
+        total: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const avg = agg[0]?.avgRating ?? 0;
+  const total = agg[0]?.total ?? 0;
+
+  // optionally update mentorProfile with average rating
+  await MentorProfileModel.findOneAndUpdate(
+    { user: mentorId },
+    { averageRating: avg.toFixed(2), totalReviews: total },
+    { new: true }
+  ).catch(() => {});
+
+  // populate reviewer
+  const populated = await MentorReviewModel.findById(created._id).populate({
+    path: "reviewerId",
+    select: "email",
+    populate: {
+      path: "learnerProfile",
+      select: "name profileImage profession",
+    },
+  });
+
+  return populated;
+};
+//fetch mentor reviews
+export const getReviewsByMentorService = async (mentorId: string) => {
+  const reviews = await MentorReviewModel.find({ mentorId })
+    .populate({
+      path: "reviewerId",
+      select: "email",
+      populate: {
+        path: "learnerProfile",
+        select: "name profileImage profession",
+      },
+    })
+    .sort({ createdAt: -1 });
+
+  if (!reviews.length) {
+    return {
+      averageRating: 0,
+      totalReviews: 0,
+      ratingBreakdown: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+      reviews: [],
+    };
+  }
+
+  const totalReviews = reviews.length;
+  const ratingSum = reviews.reduce((acc, r) => acc + (r.rating || 0), 0);
+  const averageRating = totalReviews ? ratingSum / totalReviews : 0;
+
+  const ratingCounts: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  reviews.forEach((r) => {
+    const rt = Math.min(5, Math.max(1, Number(r.rating || 0)));
+    ratingCounts[rt] = (ratingCounts[rt] || 0) + 1;
+  });
+
+  const ratingBreakdown: Record<number, number> = {};
+  for (let i = 5; i >= 1; i--) {
+    ratingBreakdown[i] = Math.round((ratingCounts[i] / totalReviews) * 100);
+  }
+
+  return {
+    averageRating,
+    totalReviews,
+    ratingBreakdown,
+    reviews,
+  };
+};
+//mentor helpful count for a review
+export const MentorToggleHelpful = async (reviewId: string, userId: string) => {
+  const review = await MentorReviewModel.findById(reviewId);
+  if (!review) throw new AppError(httpStatus.NOT_FOUND, "Review not found");
+  
+  if (!userId)
+    throw new AppError(httpStatus.UNAUTHORIZED, "User ID is required");
+
+  const alreadyMarked = review.helpfulBy.some(
+    (id) => id.toString() === userId.toString()
+  );
+
+  if (alreadyMarked) {
+    // User already marked as helpful → remove it
+    review.helpfulBy = review.helpfulBy.filter(
+      (id) => id.toString() !== userId.toString()
+    );
+    review.helpful = Math.max(0, review.helpful - 1);
+  } else {
+    //  User not marked yet → add
+    review.helpfulBy.push(new mongoose.Types.ObjectId(userId));
+    review.helpful += 1;
+  }
+
+  await review.save();
+  return review;
 };

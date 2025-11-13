@@ -33,6 +33,7 @@ export interface IReview {
   rating: number;
   comment: string;
   helpful?: number;
+  helpfulBy?: Types.ObjectId[];
   createdAt?: Date;
   updatedAt?: Date;
 }

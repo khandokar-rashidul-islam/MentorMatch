@@ -27,6 +27,41 @@ const learnerProfileSchema = new Schema<ILearnerProfile>(
   { timestamps: true }
 );
 
+// mentor review schema
+const mentorReviewSchema = new Schema(
+  {
+    mentorId: {
+      type: Schema.Types.ObjectId,
+      ref: "User", // mentor user reference
+      required: true,
+    },
+    reviewerId: {
+      type: Schema.Types.ObjectId,
+      ref: "User", // learner user reference
+      required: true,
+    },
+    rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5,
+    },
+    comment: {
+      type: String,
+      trim: true,
+    },
+    helpful: {
+      type: Number,
+      default: 0,
+    },
+    helpfulBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  },
+  { timestamps: true }
+);
+
+
+
+
 // Review Schema
 const reviewSchema = new Schema<IReview>(
   {
@@ -55,6 +90,7 @@ const reviewSchema = new Schema<IReview>(
       type: Number,
       default: 0,
     },
+    helpfulBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );
@@ -63,9 +99,12 @@ const reviewSchema = new Schema<IReview>(
 reviewSchema.set("toJSON", { virtuals: true });
 reviewSchema.set("toObject", { virtuals: true });
 
+
+
+
 export const LearnerProfileModel = model<ILearnerProfile>(
   "LearnerProfile",
   learnerProfileSchema
 );
-
+export const MentorReviewModel = model("MentorReview", mentorReviewSchema);
 export const ReviewModel = model<IReview>("Review", reviewSchema);

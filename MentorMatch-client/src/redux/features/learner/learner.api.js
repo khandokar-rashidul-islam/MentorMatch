@@ -16,13 +16,15 @@ export const learnerApi = baseApi.injectEndpoints({
       providesTags: ["Learner"],
     }),
 
-// === Mentor Public Profile Endpoint ===
+    // === Mentor Public Profile Endpoint ===
     getMentorById: builder.query({
       query: (mentorId) => `/learners/mentor-details/${mentorId}`,
-      providesTags: (result, error, mentorId) => [{ type: "Mentor", id: mentorId }],
+      providesTags: (result, error, mentorId) => [
+        { type: "Mentor", id: mentorId },
+      ],
     }),
 
-    // === Reviews Endpoints ===
+    //* ============ Reviews Endpoints ==========
 
     // Submit a review for a gig
     createReview: builder.mutation({
@@ -51,7 +53,9 @@ export const learnerApi = baseApi.injectEndpoints({
       // Invalidate all reviews cache (optional: could be more selective)
       invalidatesTags: () => [{ type: "Reviews" }],
     }),
-     // === Gigs Endpoints ===
+
+    //* =========== Gigs Endpoints ==============
+
     getAllGigs: builder.query({
       // optional filters (like ?category=design&page=2)
       query: (params) => ({
@@ -62,12 +66,40 @@ export const learnerApi = baseApi.injectEndpoints({
       providesTags: ["Gigs"],
     }),
 
-   // == Gigs by User ID Endpoint ==
+    //* ======== Gigs by User ID Endpoint =======
     getGigsByUserId: builder.query({
       query: (userId) => `/learners/user-gigs/${userId}`,
       providesTags: (result, error, userId) => [{ type: "Gigs", id: userId }],
     }),
 
+    //*========== mentor review endpoints ===========
+    // Submit a review for a mentor
+    createMentorReview: builder.mutation({
+      query: ({ mentorId, rating, comment }) => ({
+        url: `/learners/mentor-reviews/${mentorId}/reviews`,
+        method: "POST",
+        body: { rating, comment },
+      }),
+      invalidatesTags: (result, error, { mentorId }) => [
+        { type: "MentorReviews", id: mentorId },
+      ],
+    }),
+
+    // Fetch all reviews for a specific mentor
+    getMentorReviews: builder.query({
+      query: (mentorId) => `/learners/mentor-reviews/${mentorId}/reviews`,
+      providesTags: (result, error, mentorId) => [
+        { type: "MentorReviews", id: mentorId },
+      ],
+    }),
+    // Toggle helpful count for a mentor review
+    toggleMentorHelpful: builder.mutation({
+      query: ({ reviewId }) => ({
+        url: `/learners/mentor-reviews/helpful/${reviewId}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: () => [{ type: "MentorReviews" }],
+    }),
   }),
 });
 
@@ -80,4 +112,7 @@ export const {
   useToggleHelpfulMutation,
   useGetMentorByIdQuery,
   useGetGigsByUserIdQuery,
+  useCreateMentorReviewMutation,
+  useGetMentorReviewsQuery,
+  useToggleMentorHelpfulMutation,
 } = learnerApi;

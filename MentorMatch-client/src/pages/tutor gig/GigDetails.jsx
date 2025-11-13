@@ -125,7 +125,7 @@ const GigDetails = () => {
             <GigStats gig={gig} />
 
             {/* === Quick Contact / Pricing === */}
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Contact Tutor</CardTitle>
               </CardHeader>
@@ -169,7 +169,7 @@ const GigDetails = () => {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* === Related Skills === */}
             {gig.skills?.length > 0 && (

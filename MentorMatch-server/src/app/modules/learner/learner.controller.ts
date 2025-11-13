@@ -5,14 +5,13 @@ import httpStatus from "http-status";
 import { AuthRequest } from "../user/user.interface";
 import AppError from "../../errors/AppError";
 
-
 //* learner -> apply to become mentor (later)
 export const applyLearnerToMentor = catchAsync(async (req, res) => {
+  const authReq = req as AuthRequest;
+  const userId = authReq.user?.id;
 
-   const authReq = req as AuthRequest;
-   const userId = authReq.user?.id;
-
-if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated");
+  if (!userId)
+    throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated");
 
   const mentorSpecific = req.body; // { expertiseAreas, bio, experienceYears }
 
@@ -60,28 +59,27 @@ export const getAllGigs = catchAsync(async (req, res) => {
 
 //* get gigs by mentor id (public)
 export const getGigsByUserId = catchAsync(async (req, res) => {
-    const { userId } = req.params;
+  const { userId } = req.params;
 
-    const gigs = await learnerService.getGigsByUserId(userId);
+  const gigs = await learnerService.getGigsByUserId(userId);
 
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Gigs fetched successfully for this user",
-      data: gigs,
-    });
-  }
-);
-
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Gigs fetched successfully for this user",
+    data: gigs,
+  });
+});
 
 //* ---------------------- learner submit review for a gig---------------------------------------*/
 
 //Create a new review (only learner can, and not for own gig)
-export const createReview = catchAsync(async (req,res) => {
+export const createReview = catchAsync(async (req, res) => {
   const authReq = req as AuthRequest;
   const userId = authReq.user?.id;
 
-  if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated");
+  if (!userId)
+    throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated");
 
   const { gigId } = req.params;
   const { rating, comment } = req.body;
@@ -104,7 +102,7 @@ export const createReview = catchAsync(async (req,res) => {
 });
 
 // Get all reviews for a specific gig
-export const getReviewsByGig = catchAsync(async (req,res) => {
+export const getReviewsByGig = catchAsync(async (req, res) => {
   const { gigId } = req.params;
 
   if (!gigId) throw new AppError(httpStatus.BAD_REQUEST, "Gig ID is required");
@@ -119,18 +117,90 @@ export const getReviewsByGig = catchAsync(async (req,res) => {
   });
 });
 
-
-// Increment helpful count for a review
-export const incrementHelpful = catchAsync(async (req,res) => {
+// toggle helpful count for a review
+export const toggleHelpful = catchAsync(async (req, res) => {
   const { reviewId } = req.params;
-  if (!reviewId) throw new AppError(httpStatus.BAD_REQUEST, "Review ID is required");
+  const authReq = req as AuthRequest;
+  const userId = authReq.user?.id;
 
-  const updatedReview = await learnerService.incrementHelpfulService(reviewId);
+  if (!reviewId)
+    throw new AppError(httpStatus.BAD_REQUEST, "Review ID is required");
+  if (!userId)
+    throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated");
+
+  const updatedReview = await learnerService.toggleHelpfulService(
+    reviewId,
+    userId
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Marked as helpful successfully",
+    message: "Toggled helpful successfully",
+    data: updatedReview,
+  });
+});
+
+//*----------------learner give feedback for mentor (after session completed)----------------------
+
+export const createMentorReview = catchAsync(async (req, res) => {
+  const authReq = req as AuthRequest;
+  const userId = authReq.user?.id;
+
+  if (!userId)
+    throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated");
+
+  const { mentorId } = req.params;
+  const { rating, comment } = req.body;
+
+  const review = await learnerService.createMentorReviewService({
+    mentorId,
+    userId,
+    rating,
+    comment,
+  });
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "Mentor review submitted successfully",
+    data: review,
+  });
+});
+
+export const getReviewsByMentor = catchAsync(async (req, res) => {
+  const { mentorId } = req.params;
+
+  const data = await learnerService.getReviewsByMentorService(mentorId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Mentor reviews fetched successfully",
+    data,
+  });
+});
+
+// mentor helpful count for a review
+export const MentorToggleHelpful = catchAsync(async (req, res) => {
+  const { reviewId } = req.params;
+  const userId = req.user?.id; 
+
+  if (!reviewId)
+    throw new AppError(httpStatus.BAD_REQUEST, "Review ID is required");
+
+  if (!userId) {
+    throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated");
+  }
+  const updatedReview = await learnerService.MentorToggleHelpful(
+    reviewId,
+    userId
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Toggled helpful successfully",
     data: updatedReview,
   });
 });

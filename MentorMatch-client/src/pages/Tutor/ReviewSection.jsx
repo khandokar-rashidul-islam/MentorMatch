@@ -223,7 +223,7 @@ const ReviewSection = ({ gigId, gigOwnerId, userId, userRole}) => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-auto p-0"
+                  className="h-auto p-0 cursor-pointer "
                   onClick={() => handleHelpful(review._id)}
                 >
                   <ThumbsUp className="h-4 w-4 mr-1" />

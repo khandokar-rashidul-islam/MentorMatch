@@ -19,13 +19,15 @@ router.get(
   learnerController.getMentorById
 );
 
-//* Get All Gigs (public, with filters in query)
+//*======= Get All Gigs (public, with filters in query)==========
+
 router.get("/gigs", learnerController.getAllGigs);
 
 //  Get gigs of any user (public)
 router.get("/user-gigs/:userId", learnerController.getGigsByUserId);
 
-//* learner submit review for a gig
+//* ======= learner submit review for a gig ===========
+
 router.post(
   "/reviews/:gigId",
   auth(USER_ROLES.LEARNER), // only logged-in learners
@@ -41,9 +43,29 @@ router.get(
 router.patch(
   "/reviews/helpful/:reviewId",
   auth(USER_ROLES.LEARNER), // only logged-in learners
-  learnerController.incrementHelpful
+  learnerController.toggleHelpful
 );
 
+//* ================= mentor reviews management routes ===================
 
+// create mentor review
+router.post(
+  "/mentor-reviews/:mentorId/reviews",
+  auth(USER_ROLES.LEARNER),
+  learnerController.createMentorReview
+);
+
+// fetch mentor reviews
+router.get(
+  "/mentor-reviews/:mentorId/reviews",
+  learnerController.getReviewsByMentor
+);
+
+// toggle helpful count for a mentor review
+router.patch(
+  "/mentor-reviews/helpful/:reviewId",
+  auth(USER_ROLES.LEARNER),
+  learnerController.MentorToggleHelpful
+);
 
 export const learnerRoutes = router;
