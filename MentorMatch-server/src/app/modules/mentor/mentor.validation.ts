@@ -54,7 +54,16 @@ export const mentorEditSchema = mentorProfileSchema.partial().extend({
       })
     )
     .optional(),
-  plans: z.object({
+  availability: z
+    .array(
+      z.object({
+        day: z.string(),
+         time: z.string()
+      })
+    )
+    .optional(),
+  plans: z
+    .object({
       instant: z
         .object({
           price: z.number(),

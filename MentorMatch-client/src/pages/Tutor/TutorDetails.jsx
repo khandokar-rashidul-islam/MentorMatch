@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card,CardHeader, CardContent,CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Breadcrumbs from "../../components/shared/Breadcrumbs";
 import TutorProfile from "./TutorProfile";
@@ -8,6 +8,7 @@ import BookingPlans from "./BookingPlans";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   BookOpen,
+  Calendar,
   Clock,
   DollarSign,
   FileText,
@@ -24,18 +25,9 @@ import { useAppSelector } from "../../redux/hooks";
 import { useParams } from "react-router";
 import { useGetMentorByIdQuery } from "../../redux/features/learner/learner.api";
 import MentorReviews from "./MentorReviews";
-
-const days = [
-  { day: "Monday", time: "9:00 AM - 6:00 PM" },
-  { day: "Tuesday", time: "9:00 AM - 6:00 PM" },
-  { day: "Wednesday", time: "9:00 AM - 6:00 PM" },
-  { day: "Thursday", time: "9:00 AM - 6:00 PM" },
-  { day: "Friday", time: "9:00 AM - 4:00 PM" },
-  { day: "Weekend", time: "By appointment" },
-];
+import Availability from "./Availability";
 
 const TutorDetails = () => {
-
   const user = useAppSelector((state) => state.auth.user);
   const { id } = useParams();
   console.log(id);
@@ -45,6 +37,7 @@ const TutorDetails = () => {
   // const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
   //   refetchOnMountOrArgChange: true,
   // });
+
   const {
     data: mentorData,
     isLoading: isMentorLoading,
@@ -63,7 +56,8 @@ const TutorDetails = () => {
   const isLoading = isMentorLoading || isProfileLoading;
   const isError = isMentorError || isProfileError;
   const data = role === "learner" ? mentorData : activeProfileData;
-  console.log("data from tutor details:", data?.data?.user?.profile.user);
+  const availability = data?.data?.user.profile.availability;
+  // console.log("data from tutor details:", data?.data?.user.profile.availability);
 
   if (isLoading)
     return <div className="min-h-screen text-center pt-20">Loading....</div>;
@@ -126,10 +120,15 @@ const TutorDetails = () => {
             <div className="xl:hidden space-y-4 sm:space-y-6 ">
               <BookingPlans data={data} />
               <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-primary" />
+                    Weekly Availability
+                  </CardTitle>
+                </CardHeader>
                 <CardContent className="p-4 sm:p-6">
-                  <h3 className="font-semibold mb-3 sm:mb-4">Availability</h3>
                   <div className="space-y-3">
-                    {days.map(({ day, time }) => (
+                    {availability.map(({ day, time }) => (
                       <div
                         className="flex justify-between items-center"
                         key={day}
@@ -157,23 +156,8 @@ const TutorDetails = () => {
             <div className="">
               <BookingPlans data={data} />
             </div>
-
-            <Card>
-              <CardContent className="p-4 sm:p-6">
-                <h3 className="font-semibold mb-3 sm:mb-4">Availability</h3>
-                <div className="space-y-3">
-                  {days.map(({ day, time }) => (
-                    <div
-                      className="flex justify-between items-center"
-                      key={day}
-                    >
-                      <span className="text-muted-foreground">{day}</span>
-                      <span className="text-sm">{time}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            {/* Availability */}
+               <Availability availability={availability} />
           </div>
         </div>
       </main>

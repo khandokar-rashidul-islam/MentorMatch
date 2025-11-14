@@ -38,6 +38,10 @@ export interface IMentorProfileExtra {
     year: string;
     gpa: string;
   }[];
+  availability?: {
+    day: string;
+    time: string;
+  }[];
   plans?: {
     instant?: {
       price: number;

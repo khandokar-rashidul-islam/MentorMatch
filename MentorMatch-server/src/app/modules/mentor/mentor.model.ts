@@ -51,6 +51,12 @@ import { APPROVAL_STATUS } from "../user/user.constant";
         gpa: String,
       },
     ],
+    availability: [
+      {
+        day: String, 
+        time: String,
+      },
+    ],
     plans: {
       instant: {
         price: Number,

@@ -16,6 +16,7 @@ import {
   Trash2,
   Camera,
   HelpCircle,
+  PlusCircleIcon,
 } from "lucide-react";
 import {
   useEditActiveProfileMutation,
@@ -38,6 +39,16 @@ export default function EditTutorProfile() {
   // local preview state for image
   const [previewImage, setPreviewImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+
+  const WEEK_DAYS = [
+  "Saturday",
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+ ];
 
   const {
     control,
@@ -66,6 +77,7 @@ export default function EditTutorProfile() {
       about: "",
       skills: [],
       certifications: [],
+      availability: [],
       educationDetails: [],
       plans: {
         instant: { price: 0, description: "", features: [] },
@@ -126,6 +138,15 @@ const removeSkill = (index) => {
     append: addFaq,
     remove: removeFaq,
   } = useFieldArray({ control, name: "faqs" });
+
+const {
+  fields: availabilityFields,
+  append: addAvailability,
+  remove: removeAvailability,
+} = useFieldArray({
+  control,
+  name: "availability",
+});
 
   // image handling
   const handleImageChange = (e) => {
@@ -648,7 +669,91 @@ const removeSkill = (index) => {
             ))}
           </CardContent>
         </Card>
+        {/* ----------------- Weekly Availability ----------------- */}
+        <Card className="dashboard-card">
+          <CardHeader>
+            <CardTitle className="text-primary font-bold text-2xl">
+              Weekly Availability
+            </CardTitle>
+          </CardHeader>
 
+          <CardContent className="space-y-4">
+            {/* Render Rows */}
+            {availabilityFields.map((field, index) => (
+              <div
+                key={field.id}
+                className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center border p-4 rounded-lg"
+              >
+                {/* Day Dropdown */}
+                <div className="space-y-3">
+                  <Label>Day</Label>
+                  <select
+                    {...register(`availability.${index}.day`)}
+                    className="border bg-muted/30 rounded-md px-3 py-1.5 w-full"
+                  >
+                    <option value="">Select day</option>
+
+                    {WEEK_DAYS.map((day) => (
+                      <option
+                        key={day}
+                        value={day}
+                        disabled={
+                          // Prevent selecting a day already used (except current row)
+                          availabilityFields
+                            .filter((_, i) => i !== index)
+                            .some((s) => s.day === day)
+                        }
+                      >
+                        {day}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Time Input */}
+                <div className="space-y-3 ">
+                  <Label>Time</Label>
+                  <Input
+                    {...register(`availability.${index}.time`)}
+                    className="bg-background"
+                    placeholder="9:00 AM - 6:00 PM"
+                  />
+                </div>
+
+                {/* Delete Row */}
+                <div className="flex justify-end">
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={() => removeAvailability(index)}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              </div>
+            ))}
+
+            {/* Add Button */}
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              disabled={availabilityFields.length >= 7}
+              onClick={() => {
+                const usedDays = availabilityFields.map((s) => s.day);
+                const nextDay =
+                  WEEK_DAYS.find((d) => !usedDays.includes(d)) || "";
+
+                addAvailability({
+                  day: nextDay,
+                  time: "",
+                });
+              }}
+            >
+              <PlusCircleIcon /> Add Day
+            </Button>
+          </CardContent>
+        </Card>
         {/*----------- Tutoring Plans Section -------------------------------------*/}
         <Card className="dashboard-card">
           <CardHeader>

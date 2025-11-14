@@ -35,7 +35,7 @@ const MentorCard = ({tutor}) => {
                                     <span>{tutor?.address}</span>
                                 </div>
                             </div>
-                            <p className="text-sm text-muted-foreground mb-4">bio: {tutor?.bio}</p>
+                            <p className="text-sm text-muted-foreground mb-4"> {tutor?.bio}</p>
                         </div>
                     </div>
 
