@@ -20,6 +20,7 @@ const GigDetails = () => {
   const { id } = useParams();
   const { data: gig, isLoading, isError } = useGetGigByIdQuery(id);
   const { user } = useAppSelector((state) => state.auth); // current logged-in user
+  console.log(user);
   // === Loading State ===
   if (isLoading) {
     return (
@@ -195,10 +196,12 @@ const GigDetails = () => {
           </div>
         </div>
         {/* === Gig Suggestions / Carousel === */}
-        <Card className="mt-8 px-5">
-          <h1 className="text-2xl font-bold ">Related services</h1>
-          <GigSuggestions gig={gig} />
-        </Card>
+        {user.activeRole === "learner" && (
+          <Card className="mt-8 px-5 ">
+            <h1 className="text-2xl font-bold ">Related services</h1>
+            <GigSuggestions gig={gig} />
+          </Card>
+        )}
       </main>
     </div>
   );

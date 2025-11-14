@@ -12,7 +12,7 @@ import { Star, Clock, Users, BookOpen, MessageCircle } from "lucide-react";
 import { Link } from "react-router";
 
 const GigCard = ({ gig }) => {
- // console.log(gig)
+  // console.log(gig)
   return (
     <Card
       key={gig._id}
@@ -35,7 +35,7 @@ const GigCard = ({ gig }) => {
             <div>
               <div className="flex items-center gap-2">
                 {/* mentor name */}
-                <h4 className="font-semibold flex-1">{gig.user.mentorProfile.name}</h4>
+                <Link to={`/dashboard/learner/mentor-profile/${gig?.user?._id}`}><h4 className="font-semibold flex-1 hover:text-primary">{gig.user.mentorProfile.name}</h4></Link>
               </div>
               <div className="text-sm text-gray-500 flex items-center gap-1">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
