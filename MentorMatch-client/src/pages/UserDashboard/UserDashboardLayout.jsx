@@ -2,6 +2,7 @@ import Unavbar from "./Unavbar";
 import Ufooter from "./Ufooter";
 import { Navigate, Outlet, useLocation } from "react-router";
 import { useBootstrapAuth } from "../../hooks/useBootstrapAuth";
+import ScrollToTop from "../../router/ScrollToTop";
 
 const UserDashboard = () => {
   const { user } = useBootstrapAuth();
@@ -28,6 +29,7 @@ const UserDashboard = () => {
         <Unavbar />
       </div>
       <div>
+        <ScrollToTop/>
         <Outlet />
       </div>
       <div>
