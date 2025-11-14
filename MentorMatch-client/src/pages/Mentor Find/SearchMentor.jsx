@@ -6,7 +6,6 @@ import { Search, BookOpen } from "lucide-react";
 import MentorCard from "./MentorCard";
 import { useGetAllMentorsQuery } from "../../redux/features/learner/learner.api";
 
-
 const SearchMentor = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [limit, setLimit] = useState(5);
@@ -19,7 +18,7 @@ const SearchMentor = () => {
     sort: "-experience",
   });
 
-  console.log("Mentors Data:", data);
+  console.log("Mentors Data:", data?.data);
   const mentors = data?.data || [];
   const total = data?.meta?.total || 0;
 
@@ -70,7 +69,7 @@ const SearchMentor = () => {
                 {mentors.length > 0 ? (
                   <div className="space-y-6">
                     {mentors.map((mentor) => (
-                      <MentorCard key={mentor._id} mentor={mentor} />
+                      <MentorCard key={mentor._id} tutor={mentor} />
                     ))}
                   </div>
                 ) : (

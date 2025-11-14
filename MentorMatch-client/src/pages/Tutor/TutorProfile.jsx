@@ -84,7 +84,7 @@ const TutorProfile = ({ data }) => {
                   <div className="flex items-center justify-center sm:justify-start gap-1 text-muted-foreground">
                     <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
                     <span className="text-sm sm:text-base">
-                      {profile.address}
+                      {profile?.address}
                     </span>
                   </div>
                   <div className="flex items-center justify-center sm:justify-start gap-1 text-muted-foreground">

@@ -19,7 +19,7 @@ const FAQSection = ({ faqs }) => {
       </CardHeader>
       <CardContent>
         <Accordion type="single" collapsible className="w-full">
-          {faqs.map((faq) => (
+          {faqs?.map((faq) => (
             <AccordionItem key={faq._id} value={faq._id}>
               <AccordionTrigger className="text-left">
                 {faq.question}
