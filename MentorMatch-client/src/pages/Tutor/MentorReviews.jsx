@@ -230,7 +230,7 @@ const MentorReviews = ({ mentorId,userId, userRole }) => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-auto p-0 cursor-pointer "
+                  className={`h-auto p-0 cursor-pointer ${review.helpfulBy.includes(userId)&&"text-primary"}`}
                   onClick={() => handleHelpful(review._id)}
                 >
                   <ThumbsUp className="h-4 w-4 mr-1" />
