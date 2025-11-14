@@ -19,6 +19,12 @@ router.get(
   learnerController.getMentorById
 );
 
+// get all mentor wigh query
+router.get("/mentor-list", learnerController.getAllMentors);
+
+
+
+
 //*======= Get All Gigs (public, with filters in query)==========
 
 router.get("/gigs", learnerController.getAllGigs);
@@ -26,8 +32,11 @@ router.get("/gigs", learnerController.getAllGigs);
 //  Get gigs of any user (public)
 router.get("/user-gigs/:userId", learnerController.getGigsByUserId);
 
-//* ======= learner submit review for a gig ===========
 
+
+
+
+//* ======= learner submit review for a gig ===========
 router.post(
   "/reviews/:gigId",
   auth(USER_ROLES.LEARNER), // only logged-in learners
@@ -45,6 +54,8 @@ router.patch(
   auth(USER_ROLES.LEARNER), // only logged-in learners
   learnerController.toggleHelpful
 );
+
+
 
 //* ================= mentor reviews management routes ===================
 

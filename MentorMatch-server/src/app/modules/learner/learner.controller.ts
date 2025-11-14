@@ -5,7 +5,7 @@ import httpStatus from "http-status";
 import { AuthRequest } from "../user/user.interface";
 import AppError from "../../errors/AppError";
 
-//* learner -> apply to become mentor (later)
+//*--------------learner -> apply to become mentor (later)------------------------
 export const applyLearnerToMentor = catchAsync(async (req, res) => {
   const authReq = req as AuthRequest;
   const userId = authReq.user?.id;
@@ -28,8 +28,23 @@ export const applyLearnerToMentor = catchAsync(async (req, res) => {
   });
 });
 
-//* get mentor public profile by id (for learner to view)
 
+
+
+//*--------- get all mentor wih query ---------------------------------------
+export const getAllMentors = catchAsync(async (req, res) => {
+  const result = await learnerService.getAllMentorsService(req.query);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Mentors fetched successfully",
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
+//*---------- get mentor public profile by id (for learner to view)-----------------
 export const getMentorById = catchAsync(async (req, res) => {
   const { mentorId } = req.params;
 
@@ -43,9 +58,11 @@ export const getMentorById = catchAsync(async (req, res) => {
   });
 });
 
-//*-------------------------- Get all gigs-----------------------------------------
 
-//* Get All Gigs (public)
+
+
+//*-------------------------- Get all gigs-----------------------------------------
+//Get All Gigs (public)
 export const getAllGigs = catchAsync(async (req, res) => {
   const gigs = await learnerService.getAllGigs(req.query);
 
@@ -57,7 +74,7 @@ export const getAllGigs = catchAsync(async (req, res) => {
   });
 });
 
-//* get gigs by mentor id (public)
+//get gigs by mentor id (public)
 export const getGigsByUserId = catchAsync(async (req, res) => {
   const { userId } = req.params;
 
@@ -70,6 +87,11 @@ export const getGigsByUserId = catchAsync(async (req, res) => {
     data: gigs,
   });
 });
+
+
+
+
+
 
 //* ---------------------- learner submit review for a gig---------------------------------------*/
 
@@ -140,6 +162,11 @@ export const toggleHelpful = catchAsync(async (req, res) => {
     data: updatedReview,
   });
 });
+
+
+
+
+
 
 //*----------------learner give feedback for mentor (after session completed)----------------------
 

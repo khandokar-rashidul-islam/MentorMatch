@@ -24,6 +24,16 @@ export const learnerApi = baseApi.injectEndpoints({
       ],
     }),
 
+    // === geet all mentors with filters endpoint ===
+    getAllMentors: builder.query({
+      query: (params) => {
+        const queryString = new URLSearchParams(params).toString();
+        return `learners/mentor-list?${queryString}`;
+      },
+      providesTags: ["Mentors"],
+    }),
+
+
     //* ============ Reviews Endpoints ==========
 
     // Submit a review for a gig
@@ -111,6 +121,7 @@ export const {
   useGetReviewsByGigQuery,
   useToggleHelpfulMutation,
   useGetMentorByIdQuery,
+  useGetAllMentorsQuery,
   useGetGigsByUserIdQuery,
   useCreateMentorReviewMutation,
   useGetMentorReviewsQuery,

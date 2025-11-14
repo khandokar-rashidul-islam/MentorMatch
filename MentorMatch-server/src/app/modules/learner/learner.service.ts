@@ -11,6 +11,7 @@ import {
   ReviewModel,
 } from "./learner.model";
 import httpStatus from "http-status";
+import QueryBuilder from "../../../Query/BaseQuery";
 
 //* ------------ Learner applies to become Mentor later --------------------
 export const applyMentorForExistingLearner = async (
@@ -47,8 +48,36 @@ export const applyMentorForExistingLearner = async (
   return newMentor;
 };
 
-//*------------get mentor public profile by id (for learner to view)--------------
 
+
+
+
+
+//*------------ get all mentors wih query--------------------------
+export const getAllMentorsService = async (query: Record<string, unknown>) => {
+  const searchableFields = ["name", "profession", "topics", "expertiseAreas"];
+
+  const mentorQuery = new QueryBuilder(
+    MentorProfileModel.find().populate({
+      path: "user",
+      select: "_id email activeRole",
+    }),
+    query
+  )
+    .search(searchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const meta = await mentorQuery.countTotal();
+  const data = await mentorQuery.modelQuery;
+
+  return { meta, data };
+};
+
+
+//*------------get mentor public profile by id (for learner to view)--------------
 export const getMentorById = async (mentorId: string) => {
   const mentor = await MentorProfileModel.findOne({ user: mentorId });
 
@@ -63,7 +92,10 @@ export const getMentorById = async (mentorId: string) => {
   };
 };
 
-//* Get All Gigs (public)
+
+
+
+//*------------------- Get All Gigs (public)-------------------------
 export const getAllGigs = async (filter: Record<string, unknown> = {}) => {
   const gigs = await GigModel.find(filter).populate({
     path: "user",
@@ -75,8 +107,7 @@ export const getAllGigs = async (filter: Record<string, unknown> = {}) => {
   });
   return gigs;
 };
-
-//* get gigs by mentor id (public) */
+//*----------- get gigs by mentor id (public) -----------------------
 
 export const getGigsByUserId = async (userId: string) => {
   // Find gigs where the user matches the provided userId
@@ -96,8 +127,11 @@ export const getGigsByUserId = async (userId: string) => {
   return gigs;
 };
 
-//* ------------ Learner submits review for a gig --------------------
 
+
+
+
+//* ------------ Learner submits review for a gig --------------------
 /**
  * Create a review for a gig.
  * - Only users with 'learner' role can review.
@@ -279,6 +313,10 @@ export const toggleHelpfulService = async (
 
   return review;
 };
+
+
+
+
 
 //* ------------ Learner gives feedback for mentor (after session completed) --------------------
 // create mentor review
