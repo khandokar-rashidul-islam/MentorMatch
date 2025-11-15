@@ -114,7 +114,7 @@ const TutorDetails = () => {
 
               {/* gigs tab */}
               <TabsContent value="gigs" className="mt-4">
-                <Gigs />
+                <Gigs mentorId={data?.data?.user?.profile.user} />
               </TabsContent>
             </Tabs>
             <div className="xl:hidden space-y-4 sm:space-y-6 ">

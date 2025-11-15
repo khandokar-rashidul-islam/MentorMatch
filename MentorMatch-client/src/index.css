@@ -152,3 +152,6 @@
   background-size: 600% 600%;
   animation: grokBackground 15s ease infinite;
 }
+a,img,button,input{
+  cursor: pointer;
+}
