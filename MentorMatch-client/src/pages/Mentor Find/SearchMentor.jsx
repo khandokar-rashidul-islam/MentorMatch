@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, BookOpen } from "lucide-react";
 import MentorCard from "./MentorCard";
 import { useGetAllMentorsQuery } from "../../redux/features/learner/learner.api";
+import MentorCardSkeleton from "./MentorCardSkeleton";
 
 const SearchMentor = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -58,7 +59,9 @@ const SearchMentor = () => {
           <>
             {/* Loading */}
             {isLoading || isFetching ? (
-              <p className="text-center py-6">Loading mentors...</p>
+              <div className="space-y-6">
+                <MentorCardSkeleton />
+              </div>
             ) : (
               <>
                 <div className="mb-6">
