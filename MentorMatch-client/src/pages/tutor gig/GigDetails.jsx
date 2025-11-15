@@ -15,6 +15,7 @@ import { useGetGigByIdQuery } from "../../redux/features/mentor/mentor.api";
 import ServicePlans from "./ServicePlans";
 import GigSuggestions from "./GigSuggestions";
 import { useAppSelector } from "../../redux/hooks";
+import GigDetailsSkeleton from "./GigDetailsSkeleton";
 
 const GigDetails = () => {
   const { id } = useParams();
@@ -24,9 +25,10 @@ const GigDetails = () => {
   // === Loading State ===
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-60 min-h-screen">
-        <Loader2 className="animate-spin w-6 h-6 text-primary" />
-      </div>
+      // <div className="flex justify-center items-center h-60 min-h-screen">
+      //   <Loader2 className="animate-spin w-6 h-6 text-primary" />
+      // </div>
+      <GigDetailsSkeleton/>
     );
   }
 
