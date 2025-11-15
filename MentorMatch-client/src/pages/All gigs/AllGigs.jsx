@@ -41,6 +41,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { useGetAllGigsQuery } from "@/redux/features/learner/learner.api";
+import GigCardSkeleton from "../../components/shared/GigCardSkeleton";
 
 // Mock gigs data
 // const gigs = [
@@ -304,12 +305,12 @@ export default function AllGigs() {
     (minRating > 0 ? 1 : 0) +
     (searchQuery ? 1 : 0);
 
-  if (isLoading)
-    return (
-      <div className="min-h-screen pt-25 flex justify-center items-start">
-        Loading gigs...
-      </div>
-    );
+  // if (isLoading)
+  //   return (
+  //     <div className="min-h-screen pt-25 flex justify-center items-start">
+  //       Loading gigs...
+  //     </div>
+  //   );
   if (error)
     return (
       <div className="min-h-screen pt-25 flex justify-center items-start text-red-500">
@@ -436,7 +437,7 @@ export default function AllGigs() {
                 </div>
               )}
               {/* Price Range */}
-              <div className="mb-6">
+              <div className="mb-6 cursor-pointer">
                 <h4 className="font-medium mb-3">Price Range</h4>
                 <div className="px-2">
                   <Slider
@@ -631,6 +632,10 @@ export default function AllGigs() {
                   : "space-y-4"
               }
             >
+              {isLoading &&
+                Array.from({ length: 9 }).map((_, i) => (
+                  <GigCardSkeleton key={i} />
+                ))}
               {sortedGigs
                 .slice(0, visibleGigsCount)
                 .map((gig) =>
