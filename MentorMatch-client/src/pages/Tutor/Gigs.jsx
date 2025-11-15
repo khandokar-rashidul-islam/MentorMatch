@@ -57,7 +57,7 @@ const Gigs = ({ mentorId }) => {
               </Card>
             ))}
           {visibleGigs.map((gig) => (
-            <Card>
+            <Card key={gig._id}>
               <CardContent className="">
                 <div className="flex flex-col sm:flex-row">
                   <div className="flex-1 p-4 sm:p-6">

@@ -1,4 +1,4 @@
-import { Card,CardHeader, CardContent,CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Breadcrumbs from "../../components/shared/Breadcrumbs";
 import TutorProfile from "./TutorProfile";
@@ -26,6 +26,7 @@ import { useParams } from "react-router";
 import { useGetMentorByIdQuery } from "../../redux/features/learner/learner.api";
 import MentorReviews from "./MentorReviews";
 import Availability from "./Availability";
+import TutorDetailsSkeleton from "./TutorDetailsSkeleton";
 
 const TutorDetails = () => {
   const user = useAppSelector((state) => state.auth.user);
@@ -59,8 +60,8 @@ const TutorDetails = () => {
   const availability = data?.data?.user.profile.availability;
   // console.log("data from tutor details:", data?.data?.user.profile.availability);
 
-  if (isLoading)
-    return <div className="min-h-screen text-center pt-20">Loading....</div>;
+  if (isLoading) return <TutorDetailsSkeleton />;
+  // return <div className="min-h-screen text-center pt-20">Loading....</div>;
   if (isError)
     return (
       <div className="min-h-screen text-center pt-55 text-red-500">
@@ -157,7 +158,7 @@ const TutorDetails = () => {
               <BookingPlans data={data} />
             </div>
             {/* Availability */}
-               <Availability availability={availability} />
+            <Availability availability={availability} />
           </div>
         </div>
       </main>
