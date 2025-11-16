@@ -320,7 +320,7 @@ export default function AllGigs() {
 
   return (
     <div className="min-h-screen w-11/12 mx-auto bg-gradient-subtle pt-28">
-      <main className=" px-4">
+      <main className=" ">
         {/* Search Bar */}
         <div className="bg-card rounded-lg p-6 mb-3 shadow-elegant lg:hidden ">
           <div className="flex flex-col lg:flex-row gap-4">

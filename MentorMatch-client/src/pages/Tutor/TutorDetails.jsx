@@ -34,10 +34,7 @@ const TutorDetails = () => {
   console.log(id);
   const role = user?.activeRole;
 
-  //const { data, isLoading, isError } = useGetMentorByIdQuery(id);
-  // const { data, isLoading, isError } = useGetActiveProfileQuery(null, {
-  //   refetchOnMountOrArgChange: true,
-  // });
+
 
   const {
     data: mentorData,

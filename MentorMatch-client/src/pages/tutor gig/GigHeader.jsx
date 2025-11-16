@@ -134,7 +134,7 @@ const GigHeader = ({ gig }) => {
         <Card className="overflow-hidden border-none shadow-none pb-0 ">
           <CardContent>
             {/* Header with avatar and basic info */}
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
               <div className="relative mx-auto sm:mx-0">
                 <img
                   alt={userData.profileImage}
