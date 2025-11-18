@@ -23,18 +23,22 @@ const UserDashboard = () => {
     );
   }
 
+   const shouldHideFooter = location.pathname.startsWith("/dashboard/inbox");
+
   return (
     <>
       <div>
         <Unavbar />
       </div>
       <div>
-        <ScrollToTop/>
+        <ScrollToTop />
         <Outlet />
       </div>
-      <div>
-        <Ufooter />
-      </div>
+      {!shouldHideFooter && (
+        <div>
+          <Ufooter />
+        </div>
+      )}
     </>
   );
 };

@@ -33,10 +33,10 @@ import PublicRoute from "./PublicRoute";
 import ApplyForMentor from "../pages/UserDashboard/Learner/ApplyForMentor";
 import EditGig from "../pages/tutor gig/EditGig";
 import AdminHome from "../admin/admin-pages/AdminHome";
-import path from "path";
 import AdminLogin from "../admin/admin-pages/AdminLogin";
 import AdminDashboard from "../admin/admin-pages/AdminDashboard";
 import MentorApproval from "@/admin/admin-pages/MentorApproval";
+import Chat from "@/Chat/chatHome/Chat";
 
 const router = createBrowserRouter([
   {
@@ -157,6 +157,11 @@ const router = createBrowserRouter([
           { path: "gig-details/:id", element: <GigDetails /> },
         ],
       },
+
+      {
+        path: "inbox",
+        element: <Chat/>
+      }
     ],
   },
 {
