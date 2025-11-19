@@ -43,13 +43,6 @@ export const ChatHeader = ({ participant, onBack }) => {
             <h2 className="font-semibold text-foreground text-sm sm:text-base truncate">
               {participant.name}
             </h2>
-
-            <Badge
-              variant="secondary"
-              className="text-[10px] sm:text-xs capitalize px-1.5 py-0 shrink-0"
-            >
-              {participant.role}
-            </Badge>
           </div>
 
           <p className="text-[10px] sm:text-xs text-muted-foreground">

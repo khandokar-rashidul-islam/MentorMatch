@@ -159,35 +159,35 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "inbox",
-        element: <Chat/>
-      }
+        path: "inbox/:username/:userId",
+        element: <Chat />,
+      },
     ],
   },
-{
-  path: "/admin",
-  element: <AdminHome />,
-  children: [
-    {
-      index: true,
-      element: <AdminDashboard />,
-    },
-    {
-      path: "",
-      element: <AdminDashboard />,
-      children: [
-        {
-          path: "mentors-approve",
-          element: <MentorApproval />,
-        },
-      ],
-    },
-    {
-      path: "login",
-      element: <AdminLogin />,
-    },
-  ],
-},
+  {
+    path: "/admin",
+    element: <AdminHome />,
+    children: [
+      {
+        index: true,
+        element: <AdminDashboard />,
+      },
+      {
+        path: "",
+        element: <AdminDashboard />,
+        children: [
+          {
+            path: "mentors-approve",
+            element: <MentorApproval />,
+          },
+        ],
+      },
+      {
+        path: "login",
+        element: <AdminLogin />,
+      },
+    ],
+  },
 
   { path: "/*", Component: Error404 },
 ]);

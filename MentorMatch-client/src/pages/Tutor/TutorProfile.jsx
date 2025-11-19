@@ -13,7 +13,7 @@ import {
   MoreHorizontal,
   Link,
 } from "lucide-react";
-import { NavLink } from "react-router";
+import { NavLink} from "react-router";
 import { useAppSelector } from "../../redux/hooks";
 //import { useGetActiveProfileQuery } from "../../redux/features/user/userApi";
 
@@ -39,6 +39,7 @@ const TutorProfile = ({ data }) => {
   console.log("user data from tutorprofile:", user);
   const profile = user?.profile;
   console.log("data from tutorprofile:", profile);
+  console.log("id from tutorprofile:", profile.user);
 
   // if (isLoading) {
   //   return <div>Loading...</div>;
@@ -134,27 +135,41 @@ const TutorProfile = ({ data }) => {
 
             {/* Quick action buttons */}
             <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3 mt-4">
+              <NavLink to={`/dashboard/inbox/${profile.name}/${profile.user}`}>
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="sm:size-lg  sm:flex-none"
+                  disabled={role === "mentor"}
+                >
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Contact Tutor
+                </Button>
+              </NavLink>
+              <Button
+                variant="outline"
+                size="sm"
+                className="sm:size-lg"
+                disabled={role === "mentor"}
+              >
+                View Schedule
+              </Button>
               <Button
                 variant="default"
                 size="sm"
-                className="sm:size-lg  sm:flex-none"
-                disabled={role==='mentor'}
+                className="sm:size-lg"
+                disabled={role === "mentor"}
               >
-                <MessageCircle className="h-4 w-4 mr-2" />
-                Contact Tutor
-              </Button>
-              <Button variant="outline" size="sm" className="sm:size-lg" disabled={role==='mentor'}>
-                View Schedule
-              </Button>
-              <Button variant="default" size="sm" className="sm:size-lg" disabled={role==='mentor'}>
                 Book Trial Lesson
               </Button>
 
-              {role!='learner'&&<NavLink to="/dashboard/mentor/mentor-profile/edit">
-                <Button variant="outline" size="sm" className="sm:size-lg">
-                  Edit Profile
-                </Button>
-              </NavLink>}
+              {role != "learner" && (
+                <NavLink to="/dashboard/mentor/mentor-profile/edit">
+                  <Button variant="outline" size="sm" className="sm:size-lg">
+                    Edit Profile
+                  </Button>
+                </NavLink>
+              )}
             </div>
           </div>
         </div>
