@@ -48,7 +48,7 @@ export const MessageInput = ({ onSendMessage }) => {
 
   return (
     <div className="border-t border-border p-3 sm:p-4 bg-card shadow-sm shrink-0">
-      <div className="max-w-4xl mx-auto">
+      <div className="">
         {selectedFiles.length > 0 && (
           <div className="mb-3 flex flex-wrap gap-2">
             {selectedFiles.map((file, index) => (
