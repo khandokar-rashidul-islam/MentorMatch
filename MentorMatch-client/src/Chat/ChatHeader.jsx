@@ -1,7 +1,14 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MoreVertical, Video, Phone, ArrowLeft } from "lucide-react";
+import { MoreVertical, Video, Phone, ArrowLeft, MessageSquareX, Trash2, Ban, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 export const ChatHeader = ({ participant, onBack }) => {
   return (
@@ -52,21 +59,53 @@ export const ChatHeader = ({ participant, onBack }) => {
       </div>
 
       <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 sm:h-9 sm:w-9 hidden sm:flex"
-        >
-          <Phone className="h-4 w-4" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 sm:h-9 sm:w-9 "
+            >
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
 
-        <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
-          <Video className="h-4 w-4" />
-        </Button>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => console.log("Clear chat")}
+            >
+              <MessageSquareX className="h-4 w-4 mr-2" />
+              Clear chat
+            </DropdownMenuItem>
 
-        <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
-          <MoreVertical className="h-4 w-4" />
-        </Button>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => console.log("Delete conversation")}
+            >
+              <Trash2 className="h-4 w-4 mr-2 text-destructive" />
+              <span className="text-destructive">Delete conversation</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => console.log("Block user")}
+            >
+              <Ban className="h-4 w-4 mr-2" />
+              Block user
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => console.log("Report user")}
+            >
+              <Flag className="h-4 w-4 mr-2" />
+              Report
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

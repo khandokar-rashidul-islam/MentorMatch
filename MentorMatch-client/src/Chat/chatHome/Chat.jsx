@@ -158,22 +158,24 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex w-11/12 mx-auto px-4 mt-20 border  rounded-lg shadow-lg">
-      {(!isMobile || !showChat) && (
-        <ConversationList
-          conversations={mockConversations}
-          selectedId={selectedConversation.id}
-          onSelectConversation={handleSelectConversation}
-        />
-      )}
-      {(!isMobile || showChat) && (
-        <ChatWindow
-          conversation={selectedConversation}
-          messages={messages}
-          onSendMessage={handleSendMessage}
-          onBack={isMobile ? handleBackToList : undefined}
-        />
-      )}
+    <div className="fixed top-20 left-0 right-0 flex items-center justify-center">
+      <div className="w-11/12 h-[87vh] flex border rounded-lg shadow-lg bg-background overflow-hidden">
+        {(!isMobile || !showChat) && (
+          <ConversationList
+            conversations={mockConversations}
+            selectedId={selectedConversation.id}
+            onSelectConversation={handleSelectConversation}
+          />
+        )}
+        {(!isMobile || showChat) && (
+          <ChatWindow
+            conversation={selectedConversation}
+            messages={messages}
+            onSendMessage={handleSendMessage}
+            onBack={isMobile ? handleBackToList : undefined}
+          />
+        )}
+      </div>
     </div>
   );
 };

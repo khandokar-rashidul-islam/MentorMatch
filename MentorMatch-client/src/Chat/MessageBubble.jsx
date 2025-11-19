@@ -20,12 +20,12 @@ export const MessageBubble = ({
     <div
       className={cn(
         "flex flex-col animate-in fade-in-0 slide-in-from-bottom-2 duration-300 group",
-        isOwnMessage ? "items-end" : "items-start"
+        isOwnMessage ? "items-end " : "items-start"
       )}
     >
       <div
         className={cn(
-          "flex items-start gap-2",
+          "flex items-center gap-2",
           isOwnMessage && "flex-row-reverse"
         )}
       >
@@ -33,8 +33,8 @@ export const MessageBubble = ({
           className={cn(
             "max-w-[85%] sm:max-w-[75%] lg:max-w-[60%] rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5 break-words shadow-sm",
             isOwnMessage
-              ? "bg-chat-sent text-chat-sent-foreground rounded-br-md"
-              : "bg-chat-received text-chat-received-foreground rounded-bl-md border border-border"
+              ? " border border-border bg-primary text-secondary rounded-br-md"
+              : " rounded-bl-md border border-border"
           )}
         >
           <p className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap">

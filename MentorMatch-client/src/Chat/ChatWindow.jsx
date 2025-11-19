@@ -26,18 +26,18 @@ export const ChatWindow = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-background h-full w-full">
+    <div className="flex flex-col h-full w-full bg-background">
       <ChatHeader participant={conversation.participant} onBack={onBack} />
-
-      <MessageList
-        messages={messages}
-        currentUserId="me"
-        onEditMessage={handleEditMessage}
-        onDeleteMessage={handleDeleteMessage}
-      />
-
+      <div className="flex-1 min-h-0">
+        <MessageList
+          messages={messages}
+          currentUserId="me"
+          onEditMessage={handleEditMessage}
+          onDeleteMessage={handleDeleteMessage}
+        />
+      </div>
       <MessageInput onSendMessage={onSendMessage} />
-        <Toaster />
+      <Toaster />
     </div>
   );
 };

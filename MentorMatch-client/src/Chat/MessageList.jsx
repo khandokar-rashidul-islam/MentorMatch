@@ -12,7 +12,7 @@ export const MessageList = ({ messages, currentUserId, onEditMessage, onDeleteMe
   }, [messages]);
 
   return (
-    <ScrollArea className="flex-1 px-3 sm:px-6 py-4 sm:py-6" ref={scrollRef}>
+    <ScrollArea className="h-full px-3 sm:px-6 py-4 sm:py-6" ref={scrollRef}>
       <div className="space-y-3 sm:space-y-4 max-w-4xl mx-auto">
         {messages.map((message, index) => {
           const isOwnMessage = message.senderId === currentUserId;

@@ -76,6 +76,12 @@ export const MessageInput = ({ onSendMessage }) => {
         )}
 
         <div className="flex items-end gap-2">
+            
+         {/* create custome oreder  */}
+         <div>
+           <Button variant="outline" className=" ">Custom order</Button>
+         </div>
+
           <div className="hidden sm:flex gap-2">
             <Popover open={attachmentOpen} onOpenChange={setAttachmentOpen}>
               <PopoverTrigger asChild>
@@ -187,7 +193,7 @@ export const MessageInput = ({ onSendMessage }) => {
             onClick={handleSend}
             disabled={!message.trim() && selectedFiles.length === 0}
             size="icon"
-            className="h-10 w-10 sm:h-11 sm:w-11 shrink-0 shadow-md"
+            className="h-10 w-10 sm:h-11 sm:w-11 shrink-0 shadow-md bg-primary hover:bg-primary/90"
           >
             <Send className="h-4 w-4" />
           </Button>

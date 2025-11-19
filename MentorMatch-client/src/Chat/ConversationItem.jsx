@@ -10,8 +10,9 @@ export const ConversationItem = ({ conversation, isSelected, onClick }) => {
     <button
       onClick={onClick}
       className={cn(
-        "w-full p-4 sm:p-5 flex items-start gap-3 hover:bg-chat-hover transition-all duration-200 text-left active:scale-[0.98]",
-        isSelected && "bg-chat-hover border-l-4 border-primary"
+        "w-full p-4 sm:p-5 flex items-start gap-3  transition-all duration-200 text-left hover:bg-primary-foreground",
+        isSelected &&
+          " hover:bg-primary-foreground border-l-4 border-l-primary bg-primary/10"
       )}
     >
       <div className="relative shrink-0">
@@ -33,13 +34,6 @@ export const ConversationItem = ({ conversation, isSelected, onClick }) => {
             <h3 className="font-semibold text-foreground truncate text-sm sm:text-base">
               {participant.name}
             </h3>
-
-            <Badge
-              variant="secondary"
-              className="text-[10px] sm:text-xs capitalize shrink-0 px-1.5 py-0"
-            >
-              {participant.role}
-            </Badge>
           </div>
 
           <span className="text-[10px] sm:text-xs text-muted-foreground shrink-0 whitespace-nowrap">
@@ -50,8 +44,10 @@ export const ConversationItem = ({ conversation, isSelected, onClick }) => {
           </span>
         </div>
 
-        <div className="flex items-center justify-between gap-2">
-          <p className="text-xs sm:text-sm text-muted-foreground truncate flex-1">
+        <div className="flex items-center justify-between gap-2 ">
+          <p
+            className=" text-xs sm:text-sm text-muted-foreground  truncate line-clamp-1 max-w-[150px] sm:max-w-[200px]"
+          >
             {lastMessage}
           </p>
 
