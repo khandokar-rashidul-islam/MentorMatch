@@ -4,6 +4,8 @@ import { AuthRoutes } from "../modules/auth/auth.route";
 import { learnerRoutes } from "../modules/learner/learner.route";
 import { adminRoutes } from "../modules/admin/admin.route";
 import { mentorRoutes } from "../modules/mentor/mentor.route";
+import { ChatRoutes } from "../modules/chat/chat.route";
+
 
 const router = Router();
 
@@ -27,6 +29,10 @@ const moduleRoutes = [
   {
     path: "/mentors",
     route: mentorRoutes,
+  },
+  {
+    path: "/chat",
+    route: ChatRoutes,
   },
 ];
 

@@ -120,7 +120,10 @@ const GigCard = ({ gig }) => {
 
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row sm:justify-between gap-2 pt-2">
-          <Link to={`/dashboard/inbox`} className="flex-1 ">
+          <Link
+            to={`/dashboard/inbox/${gig.user.mentorProfile.name}/${gig.user.mentorProfile.user}`}
+            className="flex-1 "
+          >
             <Button
               variant="outline"
               size="sm"

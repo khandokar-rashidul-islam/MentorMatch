@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { connectSocket, disconnectSocket } from "../chat/socket";
 
 const initialState = {
   user: null, // { _id, name, profileImage, activeRole, role }
@@ -15,10 +16,14 @@ const authSlice = createSlice({
       const { user, roleProfile } = action.payload;
       state.user = user;
       state.roleProfile = roleProfile ?? user?.activeRole ?? state.roleProfile;
+      // connect socket
+      connectSocket();
     },
     logout: (state) => {
       state.user = null;
       state.roleProfile = null;
+      // disconnect socket
+      disconnectSocket();
     },
     switchRole: (state, action) => {
       state.roleProfile = action.payload;
