@@ -1,6 +1,6 @@
 // src/modules/chat/chat.route.ts
 
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import auth from "../../middlewares/auth";
 import { USER_ROLES } from "../user/user.constant";
 import validateRequest from "../../middlewares/validateRequest";
@@ -14,6 +14,7 @@ import {
 } from "./chat.validation";
 
 import { ChatController } from "./chat.controller";
+import { upload } from "../../utils/sendImageToCloudinary";
 
 const router = express.Router();
 
@@ -44,6 +45,17 @@ router.get(
 router.post(
   "/message/send",
   auth(USER_ROLES.LEARNER, USER_ROLES.MENTOR),
+  upload.array("attachments", 5), // up to 5 files
+  // Parse JSON from body.data + attach uploaded files
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.body.data) {
+      req.body = JSON.parse(req.body.data);
+    }
+    if (req.files && Array.isArray(req.files)) {
+      req.body.attachmentFiles = req.files; // pass files to controller
+    }
+    next();
+  },
   validateRequest(sendMessageValidation),
   ChatController.sendMessage
 );

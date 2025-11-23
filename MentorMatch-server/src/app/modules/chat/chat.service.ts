@@ -7,6 +7,8 @@ import { ConversationModel, MessageModel } from "./chat.model";
 import { UserModel } from "../user/user.model";
 import { MentorProfileModel } from "../mentor/mentor.model";
 import QueryBuilder from "../../../Query/BaseQuery";
+import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
+import { IMessageAttachment } from "./chat.interface";
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -196,17 +198,26 @@ export const sendMessage = async (payload: {
   senderRole: "learner" | "mentor";
   mentorId?: string;
   text?: string;
-  attachments?: any[];
+  customOrder?: any;
+  attachmentFiles?: Express.Multer.File[];
 }) => {
-  const { conversationId, senderId, senderRole, mentorId, text, attachments } =
-    payload;
+  const {
+    conversationId,
+    senderId,
+    senderRole,
+    mentorId,
+    text,
+    customOrder,
+    attachmentFiles,
+  } = payload;
 
+  // 1. Conversation logic (same as your code)
   let conversation = null;
   if (!conversationId) {
     if (senderRole !== "learner") {
       throw new AppError(
         httpStatus.FORBIDDEN,
-        "Only learner can create a new conversation"
+        "Only learner can create a conversation"
       );
     }
     if (!mentorId) {
@@ -215,19 +226,21 @@ export const sendMessage = async (payload: {
         "mentorId required to create conversation"
       );
     }
+
     conversation = await findConversationBetween(senderId, mentorId);
-    if (!conversation) {
+    if (!conversation)
       conversation = await createOrGetConversation(senderId, mentorId);
-    }
   } else {
     conversation = await ConversationModel.findById(conversationId);
     if (!conversation)
       throw new AppError(httpStatus.NOT_FOUND, "Conversation not found");
   }
 
+  // 2. Check participant
   const senderIsParticipant =
     conversation.learnerId.toString() === senderId ||
     conversation.mentorId.toString() === senderId;
+
   if (!senderIsParticipant) {
     throw new AppError(
       httpStatus.FORBIDDEN,
@@ -235,8 +248,30 @@ export const sendMessage = async (payload: {
     );
   }
 
+  // 3. Upload attachments if any
+  const attachments: IMessageAttachment[] = [];
+
+  if (attachmentFiles && attachmentFiles.length > 0) {
+    for (const file of attachmentFiles) {
+      const uploaded = await sendImageToCloudinary(
+        `msg-${Date.now()}-${file.originalname}`,
+        file.buffer
+      );
+
+      attachments.push({
+        url: uploaded.secure_url,
+        name: file.originalname,
+        mimeType: file.mimetype,
+        size: file.size,
+        type: file.mimetype.startsWith("image") ? "image" : "file",
+      });
+    }
+  }
+
+  // 4. Create message
   const session = await mongoose.startSession();
   session.startTransaction();
+  
   try {
     const messageDoc = await MessageModel.create(
       [
@@ -246,6 +281,7 @@ export const sendMessage = async (payload: {
           senderRole,
           text,
           attachments,
+          customOrder,
           isRead: false,
         },
       ],
@@ -254,26 +290,26 @@ export const sendMessage = async (payload: {
 
     const message = messageDoc[0];
 
+    // Update conversation
     conversation.lastMessage =
-      text ?? (attachments?.length ? "Attachment" : "");
+      text ?? (attachments.length ? "Sent an attachment" : "");
     conversation.lastMessageAt = message.createdAt;
     await conversation.save({ session });
 
     await session.commitTransaction();
     session.endSession();
 
+    // Populate message sender
     const populated = await MessageModel.findById(message._id).populate({
       path: "sender",
       select: "email role",
       populate: [
         {
           path: "learnerProfile",
-          model: "LearnerProfile",
           select: "name profileImage profession",
         },
         {
           path: "mentorProfile",
-          model: "MentorProfile",
           select: "name profileImage profession",
         },
       ],

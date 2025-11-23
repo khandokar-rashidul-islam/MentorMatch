@@ -1,5 +1,3 @@
-// src/modules/chat/chat.validation.ts
-
 import { z } from "zod";
 
 // Create or Get Conversation

@@ -69,24 +69,26 @@ export const sendMessage = catchAsync(async (req, res) => {
   const activeRole = req.user?.activeRole;
 
   if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized");
+  if (!activeRole) throw new AppError(httpStatus.BAD_REQUEST, "Invalid role");
 
-  if (!activeRole || (activeRole !== "learner" && activeRole !== "mentor")) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Invalid sender role");
-  }
-
-  const payload = {
+  const payload: any = {
     conversationId: req.body.conversationId,
     senderId: userId,
-    senderRole: activeRole as "learner" | "mentor",
+    senderRole: activeRole,
     mentorId: req.body.mentorId,
     text: req.body.text,
-    attachments: req.body.attachments,
-    customOrder: req.body.customOrder,
+    customOrder: req.body.customOrder ?? undefined,
+    attachments: [], // will be filled below
   };
+
+  // If files were uploaded
+  if (req.body.attachmentFiles) {
+    payload.attachmentFiles = req.body.attachmentFiles; // pass to service
+  }
 
   const { message, conversation } = await ChatService.sendMessage(payload);
 
-  // Emit socket event
+  // Emit via socket
   const io = req.app.get("io");
   io.to(conversation._id.toString()).emit("new-message", message);
 
@@ -97,7 +99,6 @@ export const sendMessage = catchAsync(async (req, res) => {
     data: { message, conversationId: conversation._id },
   });
 });
-
 // ---------------------------
 // Get messages
 // ---------------------------
@@ -144,7 +145,7 @@ export const markAsRead = catchAsync(async (req, res) => {
   const io = req.app.get("io");
   io.to(conversationId).emit("messages-read", { userId });
 
-  sendResponse(res,{
+  sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Messages marked as read",
@@ -170,8 +171,8 @@ export const editMessage = catchAsync(async (req, res) => {
     throw new AppError(httpStatus.NOT_FOUND, "Message not found");
   }
   // Emit socket edit event
-    const io = req.app.get("io");
-    io.to(updated.conversation.toString()).emit("message-edited", updated);
+  const io = req.app.get("io");
+  io.to(updated.conversation.toString()).emit("message-edited", updated);
 
   sendResponse(res, {
     success: true,
