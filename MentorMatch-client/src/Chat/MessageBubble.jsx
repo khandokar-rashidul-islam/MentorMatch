@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
+
 export const MessageBubble = ({
   message,
   isOwnMessage,
@@ -16,6 +17,8 @@ export const MessageBubble = ({
   onEdit,
   onDelete,
 }) => {
+
+  console.log("message in bubble:", isOwnMessage);
   return (
     <div
       className={cn(
@@ -31,15 +34,53 @@ export const MessageBubble = ({
       >
         <div
           className={cn(
-            "max-w-[85%] sm:max-w-[75%] lg:max-w-[60%] rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5 break-words shadow-sm",
+            "rounded-xl px-2 py-2 shadow ",
             isOwnMessage
-              ? " border border-border bg-primary text-secondary rounded-br-md"
-              : " rounded-bl-md border border-border"
+              ? "bg-primary text-secondary rounded-br-md"
+              : "bg-muted rounded-bl-md"
           )}
         >
-          <p className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap">
-            {message.content}
-          </p>
+          {/* TEXT MESSAGE */}
+          {message.text && (
+            <p className="whitespace-pre-line mb-2">{message.text}</p>
+          )}
+
+          {/* ATTACHMENTS */}
+          {message.attachments?.map((file, i) => (
+            <div key={i} className="mt-2">
+              {/* IMAGE ATTACHMENT */}
+              {file.type === "image" ? (
+                <a href={file.url} target="_blank">
+                  <img
+                    src={file.url}
+                    alt={file.name}
+                    className="rounded-lg max-h-60 border"
+                  />
+                </a>
+              ) : (
+                /* FILE ATTACHMENT */
+                <a
+                  href={file.url}
+                  target="_blank"
+                  className="flex items-center gap-3 p-2 bg-white/70 border rounded-lg text-black"
+                >
+                  {/* File Icon */}
+                  <div className="h-10 w-10 bg-gray-200 rounded flex items-center justify-center">
+                    📄
+                  </div>
+
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold truncate">
+                      {file.name}
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      {(file.size / 1024).toFixed(1)} KB
+                    </p>
+                  </div>
+                </a>
+              )}
+            </div>
+          ))}
         </div>
 
         <DropdownMenu>
@@ -81,7 +122,7 @@ export const MessageBubble = ({
           )}
         >
           <span className="font-medium">
-            {format(message.timestamp, "HH:mm")}
+            {format(new Date(message.createdAt), "HH:mm")}
           </span>
 
           {isOwnMessage && (

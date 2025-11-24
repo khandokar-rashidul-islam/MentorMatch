@@ -1,19 +1,44 @@
-import { baseApi } from "../../api/baseApi";
-import { getSocket } from "../../socket/socket";
+import { baseApi } from "@/redux/api/baseApi";
+import { getSocket } from "./socket";
+
+
+// Utility to convert File[] → FormData for uploading attachments
+const buildFormData = ({ conversationId, mentorId, text, files }) => {
+  const formData = new FormData();
+
+  const data = {
+    conversationId,
+    mentorId,
+    text,
+  };
+
+  formData.append("data", JSON.stringify(data));
+
+  if (files?.length) {
+    files.forEach((file) => {
+      formData.append("attachments", file);
+    });
+  }
+
+  return formData;
+};
 
 export const chatApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // Get conversations
+    /* ---------------------------------------------------------------------- */
+    /* GET MY CONVERSATIONS (Inbox)                                           */
+    /* ---------------------------------------------------------------------- */
     getConversations: builder.query({
-      query: () => "/chat/conversations",
+      query: () => "/chat/conversation",
       providesTags: ["Conversations"],
     }),
 
-    // Get messages + real-time sync
+    /* ---------------------------------------------------------------------- */
+    /* GET MESSAGES OF A CONVERSATION                                         */
+    /* ---------------------------------------------------------------------- */
     getMessages: builder.query({
-      query: (conversationId) => `/chat/messages/${conversationId}`,
-
-      providesTags: (result, error, conversationId) => [
+      query: (conversationId) => `/chat/message/${conversationId}`,
+      providesTags: (r, e, conversationId) => [
         { type: "Messages", id: conversationId },
       ],
 
@@ -22,75 +47,62 @@ export const chatApi = baseApi.injectEndpoints({
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
       ) {
         await cacheDataLoaded;
-
         const socket = getSocket();
         if (!socket) return;
 
+        // Join room
         socket.emit("joinRoom", conversationId);
 
-        const listener = (message) => {
-          if (message.conversation === conversationId) {
+        const handleNewMessage = (message) => {
+          if (message.conversation.toString() === conversationId) {
             updateCachedData((draft) => {
-              draft.data.push(message);
+              // Insert message at the end and ensure messages are sorted
+              draft.data.messages.push(message);
+              draft.data.messages.sort(
+                (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+              );
             });
           }
         };
 
-        socket.on("newMessage", listener);
-
+        socket.on("new-message", handleNewMessage);
         await cacheEntryRemoved;
-        socket.off("newMessage", listener);
+        socket.off("new-message", handleNewMessage);
       },
     }),
 
-    // Send message
+    /* ---------------------------------------------------------------------- */
+    /* SEND MESSAGE (text + files)                                             */
+    /* ---------------------------------------------------------------------- */
     sendMessage: builder.mutation({
-      query: ({ conversationId, text, attachments }) => ({
-        url: "/chat/messages/send",
+      query: ({ conversationId, mentorId, text, files }) => ({
+        url: "/chat/message/send",
         method: "POST",
-        body: { conversationId, text, attachments },
+        body: buildFormData({ conversationId, mentorId, text, files }),
       }),
 
-      invalidatesTags: (result, error, { conversationId }) => [
+      invalidatesTags: (r, e, { conversationId }) => [
         { type: "Messages", id: conversationId },
+        "Conversations",
       ],
-
-      async onQueryStarted(arg, { queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-
-          const socket = getSocket();
-          if (socket) {
-            socket.emit("sendMessage", data.data);
-          }
-        } catch (err) {
-          console.log("Message send failed", err);
-        }
-      },
     }),
 
-    // Mark as read
+    /* ---------------------------------------------------------------------- */
+    /* MARK MESSAGES AS READ                                                   */
+    /* ---------------------------------------------------------------------- */
     markAsRead: builder.mutation({
-      query: (conversationId) => ({
-        url: `/chat/messages/read/${conversationId}`,
+      query: ({ conversationId }) => ({
+        url: "/chat/message/read",
         method: "PATCH",
+        body: { conversationId },
       }),
 
-      async onQueryStarted(conversationId) {
+      async onQueryStarted({ conversationId }) {
         const socket = getSocket();
         if (socket) {
           socket.emit("markAsRead", { conversationId });
         }
       },
-    }),
-
-    // Upload file
-    uploadFile: builder.mutation({
-      query: (formData) => ({
-        url: `/chat/messages/upload`,
-        method: "POST",
-        body: formData,
-      }),
     }),
   }),
 });
@@ -100,5 +112,4 @@ export const {
   useGetMessagesQuery,
   useSendMessageMutation,
   useMarkAsReadMutation,
-  useUploadFileMutation,
 } = chatApi;

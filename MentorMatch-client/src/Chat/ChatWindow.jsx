@@ -2,21 +2,36 @@ import { ChatHeader } from "./ChatHeader";
 import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
 import { toast, Toaster } from "../../src/hooks/use-toast";
+import { useSendMessageMutation } from "@/redux/features/chat/chatApi";
+import { useAppSelector } from "@/redux/hooks";
 
-export const ChatWindow = ({
-  conversation,
-  messages,
-  onSendMessage,
-  onBack,
-}) => {
+export const ChatWindow = ({ conversation, messages, onBack }) => {
+  const currentUser = useAppSelector((state) => state.auth.user._id);
 
+  const [sendMessage] = useSendMessageMutation();
+
+  // SEND MESSAGE HANDLER
+  const handleSend = async (text, files) => {
+    try {
+      if (!conversation?.id) return;
+      await sendMessage({
+        conversationId: conversation.id,
+        mentorId: conversation.participant.id,
+        text,
+        files,
+      }).unwrap();
+    } catch (err) {
+      console.log("Send error:", err);
+    }
+  };
+
+  //!need both handlers for edit and delete(works letter)
   const handleEditMessage = (messageId) => {
     toast({
       title: "Edit message",
       description: `Editing message ${messageId}`,
     });
   };
-
   const handleDeleteMessage = (messageId) => {
     toast({
       title: "Delete message",
@@ -31,12 +46,12 @@ export const ChatWindow = ({
       <div className="flex-1 min-h-0">
         <MessageList
           messages={messages}
-          currentUserId="me"
+          currentUserId={currentUser}
           onEditMessage={handleEditMessage}
           onDeleteMessage={handleDeleteMessage}
         />
       </div>
-      <MessageInput onSendMessage={onSendMessage} />
+      <MessageInput onSendMessage={handleSend} />
       <Toaster />
     </div>
   );

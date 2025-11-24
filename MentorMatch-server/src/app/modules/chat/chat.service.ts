@@ -341,7 +341,7 @@ export const getMessages = async (
   // Base query
   let baseQuery = MessageModel.find({
     conversation: new ObjectId(conversationId),
-  });
+  }).sort({ createdAt: 1 });
 
   // If using cursor-based pagination
   if (query.cursor) {
@@ -357,6 +357,7 @@ export const getMessages = async (
     .fields(); // select fields
 
   const messages = await messagesQuery.modelQuery
+    .sort({ createdAt: 1 })
     .populate({
       path: "sender",
       select: "email role",

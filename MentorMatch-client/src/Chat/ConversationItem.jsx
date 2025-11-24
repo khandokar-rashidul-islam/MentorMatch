@@ -48,7 +48,7 @@ export const ConversationItem = ({ conversation, isSelected, onClick }) => {
           <p
             className=" text-xs sm:text-sm text-muted-foreground  truncate line-clamp-1 max-w-[150px] sm:max-w-[200px]"
           >
-            {lastMessage}
+            {lastMessage || "No messages yet"}
           </p>
 
           {unreadCount > 0 && (

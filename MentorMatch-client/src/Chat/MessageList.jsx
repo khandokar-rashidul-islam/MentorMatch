@@ -2,36 +2,40 @@ import { MessageBubble } from "./MessageBubble";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useRef } from "react";
 
-export const MessageList = ({ messages, currentUserId, onEditMessage, onDeleteMessage }) => {
+export const MessageList = ({
+  messages,
+  currentUserId,
+  onEditMessage,
+  onDeleteMessage,
+}) => {
   const scrollRef = useRef(null);
 
- useEffect(() => {
-   const viewport = scrollRef.current?.querySelector(
-     "[data-radix-scroll-area-viewport]"
-   );
-   if (viewport) {
-     viewport.scrollTop = viewport.scrollHeight;
-   }
- }, [messages]);
+  // AUTO SCROLL TO BOTTOM WHEN MESSAGES CHANGE
+  useEffect(() => {
+    const viewport = scrollRef.current?.querySelector(
+      "[data-radix-scroll-area-viewport]"
+    );
+    if (viewport) {
+      viewport.scrollTop = viewport.scrollHeight; // always scroll to bottom
+    }
+  }, [messages]); 
 
   return (
-    <ScrollArea className="h-full px-3 sm:px-6 py-4 sm:py-4" ref={scrollRef}>
-      <div className="space-y-3 sm:space-y-4 pb-4">
-        {messages.map((message, index) => {
-          const isOwnMessage = message.senderId === currentUserId;
+    <ScrollArea className="h-full px-4 py-4" ref={scrollRef}>
+      <div className="space-y-3 pb-4">
+        {messages.map((msg, index) => {
+          const isOwn = msg.sender._id === currentUserId;
 
           const showTimestamp =
             index === 0 ||
-            messages[index - 1].senderId !== message.senderId ||
-            new Date(message.timestamp).getTime() -
-              new Date(messages[index - 1].timestamp).getTime() >
-              1000 * 60 * 5;
+            msg.sender._id !== messages[index - 1].sender._id ||
+            msg.createdAt - messages[index - 1].createdAt > 5 * 60 * 1000;
 
           return (
             <MessageBubble
-              key={message.id}
-              message={message}
-              isOwnMessage={isOwnMessage}
+              key={msg._id}
+              message={msg}
+              isOwnMessage={isOwn}
               showTimestamp={showTimestamp}
               onEdit={onEditMessage}
               onDelete={onDeleteMessage}
