@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import { cn } from "@/lib/utils";
 import { Check, CheckCheck, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import {
@@ -16,6 +17,8 @@ export const MessageBubble = ({
   onEdit,
   onDelete,
 }) => {
+
+
 const isOnlyEmoji = (text) => {
   const trimmed = text.trim();
 
@@ -25,9 +28,8 @@ const isOnlyEmoji = (text) => {
   return emojiRegex.test(trimmed);
 };
 
-  console.log(message);
+  
 
-  console.log("message in bubble:", isOwnMessage);
   return (
     <div
       className={cn(
@@ -47,7 +49,8 @@ const isOnlyEmoji = (text) => {
             isOwnMessage
               ? "bg-primary text-white rounded-br-none"
               : "bg-muted rounded-bl-none",
-            (message.attachments?.length > 0 ||  isOnlyEmoji(message.text) )&& "bg-transparent "
+            (message.attachments?.length > 0 || isOnlyEmoji(message.text)) &&
+              "bg-transparent "
           )}
         >
           {/* TEXT MESSAGE */}
@@ -56,10 +59,12 @@ const isOnlyEmoji = (text) => {
               className={`whitespace-pre-line
               ${isOnlyEmoji(message.text) && "text-3xl"} 
                 ${
-                message.attachments?.length > 0
-                  ? `bg-primary p-2 rounded-lg ${isOwnMessage?"rounded-br-none":"rounded-bl-none"}  `
-                  : ""
-              } `}
+                  message.attachments?.length > 0
+                    ? `bg-primary p-2 rounded-lg ${
+                        isOwnMessage ? "rounded-br-none" : "rounded-bl-none"
+                      }  `
+                    : ""
+                } `}
             >
               {message.text}
             </p>
@@ -101,6 +106,37 @@ const isOnlyEmoji = (text) => {
               )}
             </div>
           ))}
+
+          {/* TIMESTAMP & STATUS */}
+          {showTimestamp && (
+            <div
+              className={cn(
+                "flex items-center gap-1 mt-1.5 text-[10px] sm:text-xs  ",
+                isOwnMessage && "flex-row-reverse"
+              )}
+            >
+              <small className="flex justify-end  ">
+                {format(
+                  toZonedTime(new Date(message.createdAt), "Asia/Dhaka"),
+                  "hh:mm a"
+                )}
+              </small>
+
+              {isOwnMessage && (
+                <span
+                  className={cn(
+                    message.isRead ? "text-primary" : ""
+                  )}
+                >
+                  {message.isRead ? (
+                    <CheckCheck className="h-3 w-3 sm:h-3.5 sm:w-3.5 " />
+                  ) : (
+                    <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                  )}
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         <DropdownMenu>
@@ -116,7 +152,7 @@ const isOnlyEmoji = (text) => {
 
           <DropdownMenuContent align={isOwnMessage ? "end" : "start"}>
             <DropdownMenuItem
-              onClick={() => onEdit && onEdit(message.id)}
+              onClick={() => onEdit && onEdit(message._id)}
               className="cursor-pointer"
             >
               <Pencil className="mr-2 h-4 w-4" />
@@ -124,7 +160,7 @@ const isOnlyEmoji = (text) => {
             </DropdownMenuItem>
 
             <DropdownMenuItem
-              onClick={() => onDelete && onDelete(message.id)}
+              onClick={() => onDelete && onDelete(message._id)}
               className="cursor-pointer text-destructive focus:text-destructive"
             >
               <Trash2 className="mr-2 h-4 w-4" />
@@ -133,33 +169,6 @@ const isOnlyEmoji = (text) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-
-      {showTimestamp && (
-        <div
-          className={cn(
-            "flex items-center gap-1 mt-1.5 text-[10px] sm:text-xs text-muted-foreground",
-            isOwnMessage && "flex-row-reverse"
-          )}
-        >
-          <span className="font-medium">
-            {format(new Date(message.createdAt), "HH:mm")}
-          </span>
-
-          {isOwnMessage && (
-            <span
-              className={cn(
-                message.isRead ? "text-primary" : "text-muted-foreground"
-              )}
-            >
-              {message.isRead ? (
-                <CheckCheck className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-              ) : (
-                <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-              )}
-            </span>
-          )}
-        </div>
-      )}
     </div>
   );
 };

@@ -15,6 +15,9 @@ const Chat = () => {
   const auth = useAppSelector((state) => state.auth);
 
   const { conversationId: urlConversationId } = useParams(); // detect from URL
+
+  console.log("URL conversationId:", urlConversationId);
+
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [showChat, setShowChat] = useState(false);
 
@@ -26,7 +29,7 @@ const Chat = () => {
     if (!convData?.data?.conversations) return;
 
     let conv = convData.data.conversations.find(
-      (c) => c._id === urlConversationId
+      (c) => c.id === urlConversationId
     );
 
     if (conv) {
@@ -37,6 +40,8 @@ const Chat = () => {
       setSelectedConversation({ _id: urlConversationId, participant: {} });
       if (isMobile) setShowChat(true);
     }
+
+    
   }, [urlConversationId, convData, isMobile]);
 
   // Fetch messages for selected conversation

@@ -27,6 +27,9 @@ const GigCard = ({ gig }) => {
        text: `Hi, I want to chat about your this gig. " ${gig.gigTitle}"`,
      }).unwrap();
 
+       
+     console.log("Start conversation response:", res);
+
      const conversationId = res.data._id;
 
      navigate(

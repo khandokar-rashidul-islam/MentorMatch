@@ -165,7 +165,7 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "inbox/:username/:userId",
+        path: "inbox/:username/:conversationId",
         element: <Chat />,
       },
     ],

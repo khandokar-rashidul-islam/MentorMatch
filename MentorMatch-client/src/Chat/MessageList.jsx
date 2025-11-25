@@ -28,9 +28,8 @@ export const MessageList = ({
 
           const showTimestamp =
             index === 0 ||
-            msg.sender._id !== messages[index - 1].sender._id ||
-            msg.createdAt - messages[index - 1].createdAt > 5 * 60 * 1000;
-
+            msg.sender._id !== messages[index - 1].sender._id || new Date(msg.createdAt) - new Date(messages[index - 1].createdAt) > 1 * 60 * 1000;
+  
           return (
             <MessageBubble
               key={msg._id}

@@ -32,7 +32,7 @@ export const ChatHeader = ({ participant, onBack }) => {
           <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border-2 border-border/50">
             <AvatarImage src={participant.avatar} alt={participant.name} />
             <AvatarFallback className="text-sm font-semibold">
-              {participant.name[0]}
+              {participant.name}
             </AvatarFallback>
           </Avatar>
 
