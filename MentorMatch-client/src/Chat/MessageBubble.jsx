@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-
 export const MessageBubble = ({
   message,
   isOwnMessage,
@@ -17,6 +16,16 @@ export const MessageBubble = ({
   onEdit,
   onDelete,
 }) => {
+const isOnlyEmoji = (text) => {
+  const trimmed = text.trim();
+
+  // Matches *only emojis*, no letters, no numbers
+  const emojiRegex = /^(?:\p{Extended_Pictographic}|\p{Emoji})+$/u;
+
+  return emojiRegex.test(trimmed);
+};
+
+  console.log(message);
 
   console.log("message in bubble:", isOwnMessage);
   return (
@@ -36,13 +45,24 @@ export const MessageBubble = ({
           className={cn(
             "rounded-xl px-2 py-2 shadow ",
             isOwnMessage
-              ? "bg-primary text-secondary rounded-br-md"
-              : "bg-muted rounded-bl-md"
+              ? "bg-primary text-white rounded-br-none"
+              : "bg-muted rounded-bl-none",
+            (message.attachments?.length > 0 ||  isOnlyEmoji(message.text) )&& "bg-transparent "
           )}
         >
           {/* TEXT MESSAGE */}
           {message.text && (
-            <p className="whitespace-pre-line mb-2">{message.text}</p>
+            <p
+              className={`whitespace-pre-line
+              ${isOnlyEmoji(message.text) && "text-3xl"} 
+                ${
+                message.attachments?.length > 0
+                  ? `bg-primary p-2 rounded-lg ${isOwnMessage?"rounded-br-none":"rounded-bl-none"}  `
+                  : ""
+              } `}
+            >
+              {message.text}
+            </p>
           )}
 
           {/* ATTACHMENTS */}
@@ -54,7 +74,7 @@ export const MessageBubble = ({
                   <img
                     src={file.url}
                     alt={file.name}
-                    className="rounded-lg max-h-60 border"
+                    className="rounded-lg max-w-xs max-h-60 border"
                   />
                 </a>
               ) : (
