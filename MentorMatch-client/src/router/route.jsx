@@ -37,6 +37,9 @@ import AdminLogin from "../admin/admin-pages/AdminLogin";
 import AdminDashboard from "../admin/admin-pages/AdminDashboard";
 import MentorApproval from "@/admin/admin-pages/MentorApproval";
 import Chat from "@/Chat/chatHome/Chat";
+import Payment from "@/pages/payement/Payment";
+import PaymentSucess from "@/pages/payement/PaymentSucess";
+import PaymentFailed from "@/pages/payement/PaymentFailed";
 
 const router = createBrowserRouter([
   {
@@ -155,6 +158,9 @@ const router = createBrowserRouter([
           { path: "mentor-apply", element: <ApplyForMentor /> },
           { path: "mentor-profile/:id", element: <TutorDetails /> },
           { path: "gig-details/:id", element: <GigDetails /> },
+          { path: "payment", element: <Payment /> },
+          { path: "payment-success", element: <PaymentSucess /> },
+          { path: "payment-failed", element: <PaymentFailed /> },
         ],
       },
 

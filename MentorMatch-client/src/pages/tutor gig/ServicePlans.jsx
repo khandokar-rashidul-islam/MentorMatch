@@ -1,12 +1,13 @@
-import React from 'react'
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Calendar, Users, CheckCircle, Star } from "lucide-react";
+import PlanModal from "./PlanModal";
 
-const ServicePlans = ({ plans }) => {
 
+const ServicePlans = ({ plans,gigId }) => {
   const instant = plans?.instant;
   const weekly_basic = plans?.weekly.basic;
   const weekly_intensive = plans?.weekly.intensive;
@@ -17,6 +18,13 @@ const ServicePlans = ({ plans }) => {
 
   //dummy data
   const popular = true;
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
+
+  const handleSelectPlan = (planInfo) => {
+    setSelectedPlan(planInfo);
+    setOpenModal(true);
+  };
 
   return (
     <Card>
@@ -90,6 +98,14 @@ const ServicePlans = ({ plans }) => {
                         variant="outline"
                         className=" w-full cursor-pointer"
                         size="sm"
+                        onClick={() =>
+                          handleSelectPlan({
+                            title: "Instant Session",
+                            price: instant?.price,
+                            features: instant?.features,
+                            type:'instant'
+                          })
+                        }
                       >
                         Book Now
                       </Button>
@@ -154,6 +170,15 @@ const ServicePlans = ({ plans }) => {
                     variant={popular === false ? "default" : "outline"}
                     className="w-full mt-auto"
                     size="sm"
+                    onClick={() =>
+                      handleSelectPlan({
+                        title: "Weekly Basic",
+                        price: weekly_basic?.price,
+                        features: weekly_basic?.features,
+                        type:'weekly',
+                        package:'basic'
+                      })
+                    }
                   >
                     Select Plan
                   </Button>
@@ -210,6 +235,15 @@ const ServicePlans = ({ plans }) => {
                     variant={popular === true ? "default" : "outline"}
                     className="w-full mt-auto"
                     size="sm"
+                    onClick={() =>
+                      handleSelectPlan({
+                        title: "Weekly Intensive",
+                        price: weekly_intensive?.price,
+                        features: weekly_intensive?.features,
+                        type:'weekly',
+                        package:'intensive'
+                      })
+                    }
                   >
                     Select Plan
                   </Button>
@@ -320,6 +354,15 @@ const ServicePlans = ({ plans }) => {
                     variant={popular === false ? "default" : "outline"}
                     className="w-full mt-auto"
                     size="sm"
+                    onClick={() =>
+                      handleSelectPlan({
+                        title: "Monthly Standard",
+                        price: monthly_standard?.price,
+                        features: monthly_standard?.features,
+                        type:'monthly',
+                        package:'standard'
+                      })
+                    }
                   >
                     Select Plan
                   </Button>
@@ -376,6 +419,15 @@ const ServicePlans = ({ plans }) => {
                     variant={popular === true ? "default" : "outline"}
                     className="w-full mt-auto"
                     size="sm"
+                    onClick={() =>
+                      handleSelectPlan({
+                        title: "Monthly Elite",
+                        price: monthly_elite?.price,
+                        features: monthly_elite?.features,
+                        type:'monthly',
+                        package:'elite'
+                      })
+                    }
                   >
                     Select Plan
                   </Button>
@@ -432,6 +484,13 @@ const ServicePlans = ({ plans }) => {
                     variant={popular === false ? "default" : "outline"}
                     className="w-full mt-auto"
                     size="sm"
+                    onClick={()=>handleSelectPlan({
+                      title: "Monthly Premium",
+                      price: monthly_premium?.price,
+                      features: monthly_premium?.features,
+                      type:'monthly',
+                      package:'premium'
+                    })}
                   >
                     Select Plan
                   </Button>
@@ -441,7 +500,13 @@ const ServicePlans = ({ plans }) => {
           </TabsContent>
         </Tabs>
       </CardContent>
+      <PlanModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        plan={selectedPlan}
+        gigId={gigId}
+      />
     </Card>
   );
 };
-export default ServicePlans
+export default ServicePlans;

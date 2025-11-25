@@ -50,6 +50,7 @@ const GigDetails = () => {
   const services = gig.data.services || [];
 
   console.log("Gig Data:", gig);
+  console.log("gigid:",gig.data._id)
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <main className="w-11/12 mx-auto px-4 md:px-6 lg:px-8 py-6 pt-20">
@@ -108,7 +109,7 @@ const GigDetails = () => {
             )}
 
             {/* === Booking Plans === */}
-            {plans && <ServicePlans plans={plans} />}
+            {plans && <ServicePlans plans={plans} gigId={gig.data._id} />}
 
             {/* === FAQ Section === */}
             {faqs.length > 0 && <FAQSection faqs={faqs} />}
