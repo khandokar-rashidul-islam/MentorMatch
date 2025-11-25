@@ -9,10 +9,33 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, Clock, Users, BookOpen, MessageCircle } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useStartConversationMutation } from "@/redux/features/chat/chatApi";
 
 const GigCard = ({ gig }) => {
-  // console.log(gig)
+
+
+ const navigate = useNavigate();
+ const [startConversation, { isLoading }] = useStartConversationMutation();
+
+ const handleStartChat = async () => {
+   try {
+     const mentorId = gig.user._id;
+
+     const res = await startConversation({
+       mentorId,
+       text: `Hi, I want to chat about your this gig. " ${gig.gigTitle}"`,
+     }).unwrap();
+
+     const conversationId = res.data._id;
+
+     navigate(
+       `/dashboard/inbox/${gig.user.mentorProfile.name}/${conversationId}`
+     );
+   } catch (err) {
+     console.error("Conversation start failed:", err);
+   }
+ };
   return (
     <Card
       key={gig._id}
@@ -120,19 +143,17 @@ const GigCard = ({ gig }) => {
 
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row sm:justify-between gap-2 pt-2">
-          <Link
-            to={`/dashboard/inbox/${gig.user.mentorProfile.name}/${gig.user.mentorProfile.user}`}
-            className="flex-1 "
+          <Button
+            variant="outline"
+            size="sm"
+            className=" w-full flex flex-1 items-center cursor-pointer justify-center gap-2 py-2  "
+            onClick={handleStartChat}
+            disabled={isLoading}
+         
           >
-            <Button
-              variant="outline"
-              size="sm"
-              className=" w-full flex items-center cursor-pointer justify-center gap-2 py-2  "
-            >
-              <MessageCircle className="h-4 w-4" />
-              Chat
-            </Button>
-          </Link>
+            <MessageCircle className="h-4 w-4" />
+            {isLoading ? "Creating..." : "Chat"}
+          </Button>
 
           <Link
             to={`/dashboard/learner/gig-details/${gig._id}`}

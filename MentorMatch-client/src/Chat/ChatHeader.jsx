@@ -11,6 +11,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export const ChatHeader = ({ participant, onBack }) => {
+
+
+  
   return (
     <div className="h-14 sm:h-16 border-b border-border px-3 sm:px-6 flex items-center justify-between bg-card shadow-sm shrink-0">
       <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">

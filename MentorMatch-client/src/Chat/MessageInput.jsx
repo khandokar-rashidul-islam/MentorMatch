@@ -6,37 +6,62 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Send, Paperclip, Smile, Image, FileText, X } from "lucide-react";
+
+import {
+  Send,
+  Paperclip,
+  Smile,
+  Image as ImgIcon,
+  FileText,
+  X,
+} from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 
-export const MessageInput = ({ onSendMessage }) => {
+export const MessageInput = ({ onSendMessage, conversationId, mentorId }) => {
   const [message, setMessage] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [emojiOpen, setEmojiOpen] = useState(false);
-  const [attachmentOpen, setAttachmentOpen] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleSend = () => {
-    if (message.trim() || selectedFiles.length > 0) {
-      onSendMessage(message);
-      setMessage("");
-      setSelectedFiles([]);
-    }
+    if (!message.trim() && selectedFiles.length === 0) return;
+
+    onSendMessage(message.trim(), selectedFiles, conversationId, mentorId);
+
+    setMessage("");
+    setSelectedFiles([]);
   };
 
-  const handleEmojiClick = (emojiData) => {
-    setMessage((prev) => prev + emojiData.emoji);
+  const handleEmojiClick = (emoji) => {
+    setMessage((prev) => prev + emoji.emoji);
     setEmojiOpen(false);
   };
 
   const handleFileSelect = (e) => {
     const files = Array.from(e.target.files || []);
-    setSelectedFiles((prev) => [...prev, ...files]);
-    setAttachmentOpen(false);
+
+    const filesWithPreview = files.map((file) => {
+      if (file.type.startsWith("image/")) {
+        return Object.assign(file, { preview: URL.createObjectURL(file) });
+      }
+      return file;
+    });
+
+    setSelectedFiles((prev) => [...prev, ...filesWithPreview]);
+    e.target.value = "";
   };
 
   const removeFile = (index) => {
+    const file = selectedFiles[index];
+    if (file.preview) URL.revokeObjectURL(file.preview);
+
     setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const openFileDialog = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    fileInputRef.current?.click();
   };
 
   const handleKeyPress = (e) => {
@@ -47,157 +72,96 @@ export const MessageInput = ({ onSendMessage }) => {
   };
 
   return (
-    <div className="border-t border-border p-3 sm:p-4 bg-card shadow-sm shrink-0">
-      <div className="">
-        {selectedFiles.length > 0 && (
-          <div className="mb-3 flex flex-wrap gap-2">
-            {selectedFiles.map((file, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 bg-secondary rounded-lg px-3 py-2 text-sm"
+    <div className="border-t border-border p-4 bg-card shadow-sm">
+      {/* FILE PREVIEWS */}
+      {selectedFiles.length > 0 && (
+        <div className="mb-3 max-h-40 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {selectedFiles.map((file, i) => (
+            <div
+              key={i}
+              className="relative p-2 rounded-lg border bg-secondary shadow-sm"
+            >
+              {/* IMAGE PREVIEW */}
+              {file.type.startsWith("image/") ? (
+                <img
+                  src={file.preview}
+                  alt={file.name}
+                  className="w-full h-28 object-cover rounded-md"
+                />
+              ) : (
+                /* FILE ICON PREVIEW */
+                <div className="flex flex-col items-center justify-center h-28">
+                  <FileText className="h-10 w-10 text-muted-foreground" />
+                  <p className="text-xs truncate mt-1">{file.name}</p>
+                </div>
+              )}
+
+              {/* REMOVE BUTTON */}
+              <button
+                className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1"
+                onClick={() => removeFile(i)}
               >
-                {file.type.startsWith("image/") ? (
-                  <Image className="h-4 w-4" />
-                ) : (
-                  <FileText className="h-4 w-4" />
-                )}
-                <span className="max-w-[150px] truncate">{file.name}</span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-5 w-5 hover:bg-destructive/10"
-                  onClick={() => removeFile(index)}
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="flex items-end gap-2">
-            
-         {/* create custome oreder  */}
-         <div>
-           <Button variant="outline" className=" ">Custom order</Button>
-         </div>
-
-          <div className="hidden sm:flex gap-2">
-            <Popover open={attachmentOpen} onOpenChange={setAttachmentOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 shrink-0"
-                >
-                  <Paperclip className="h-4 w-4" />
-                </Button>
-              </PopoverTrigger>
-
-              <PopoverContent className="w-48 p-2" side="top">
-                <div className="flex flex-col gap-1">
-                  <Button
-                    variant="ghost"
-                    className="justify-start"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Image className="h-4 w-4 mr-2" />
-                    Images
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    className="justify-start"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <FileText className="h-4 w-4 mr-2" />
-                    Documents
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
-
-            <Popover open={emojiOpen} onOpenChange={setEmojiOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 shrink-0"
-                >
-                  <Smile className="h-4 w-4" />
-                </Button>
-              </PopoverTrigger>
-
-              <PopoverContent className="w-auto p-0 border-0" side="top">
-                <EmojiPicker onEmojiClick={handleEmojiClick} />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          {/* Mobile attachment */}
-          <div className="sm:hidden">
-            <Popover open={attachmentOpen} onOpenChange={setAttachmentOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 shrink-0"
-                >
-                  <Paperclip className="h-4 w-4" />
-                </Button>
-              </PopoverTrigger>
-
-              <PopoverContent className="w-48 p-2" side="top">
-                <div className="flex flex-col gap-1">
-                  <Button
-                    variant="ghost"
-                    className="justify-start text-sm"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Image className="h-4 w-4 mr-2" />
-                    Images
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    className="justify-start text-sm"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <FileText className="h-4 w-4 mr-2" />
-                    Documents
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept="image/*,.pdf,.doc,.docx,.txt"
-            onChange={handleFileSelect}
-            className="hidden"
-          />
-
-          <Textarea
-            placeholder="Type a message..."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            className="min-h-[40px] sm:min-h-[44px] max-h-32 resize-none text-sm sm:text-base"
-            rows={1}
-          />
-
-          <Button
-            onClick={handleSend}
-            disabled={!message.trim() && selectedFiles.length === 0}
-            size="icon"
-            className="h-10 w-10 sm:h-11 sm:w-11 shrink-0 shadow-md bg-primary hover:bg-primary/90"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
         </div>
+      )}
+
+      <div className="flex items-end gap-2">
+        <Button variant="outline">Custom order</Button>
+
+        {/* ATTACH FILE BUTTON */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-10 w-10"
+          onPointerDown={openFileDialog}
+        >
+          <Paperclip className="h-4 w-4" />
+        </Button>
+
+        {/* EMOJI PICKER */}
+        <Popover open={emojiOpen} onOpenChange={setEmojiOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-10 w-10">
+              <Smile className="h-5 w-5" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent side="top" className="p-0 border-0 shadow-none">
+            <EmojiPicker onEmojiClick={handleEmojiClick} />
+          </PopoverContent>
+        </Popover>
+
+        {/* HIDDEN FILE INPUT */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          accept="image/*,.pdf,.doc,.docx,.txt"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+
+        {/* MESSAGE INPUT */}
+        <Textarea
+          placeholder="Type a message..."
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyPress={handleKeyPress}
+          rows={1}
+          className="min-h-[44px] max-h-36 resize-none text-sm flex-1"
+        />
+
+        {/* SEND BUTTON */}
+        <Button
+          size="icon"
+          onClick={handleSend}
+          disabled={!message.trim() && selectedFiles.length === 0}
+          className="h-11 w-11 bg-primary hover:bg-primary/90 shadow-md"
+        >
+          <Send className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );

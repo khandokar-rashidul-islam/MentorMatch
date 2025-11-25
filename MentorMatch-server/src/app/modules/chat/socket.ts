@@ -6,6 +6,7 @@ import config from "../../config";
 import { IMessageAttachment } from "./chat.interface";
 import ChatService from "./chat.service";
 import { TUserRole } from "../user/user.constant";
+import { UserModel } from "../user/user.model";
 
 // Extend socket type
 interface AuthenticatedSocket extends DefaultSocket {
@@ -21,7 +22,7 @@ export const initSocket = (io: SocketIOServer) => {
   io.use((socket: DefaultSocket, next) => {
     try {
       const cookies = cookie.parse(socket.handshake.headers.cookie || "");
-      const token = cookies["accessToken"]; // your cookie name
+      const token = cookies["accessToken"]; // cookie name
 
       if (!token) {
         return next(new Error("Unauthorized: No token"));
@@ -58,7 +59,19 @@ export const initSocket = (io: SocketIOServer) => {
       `User connected: ${authSocket.user.userId} (socket: ${socket.id})`
     );
 
-    /* Join conversation room */
+
+    const userId = socket.handshake.auth.userId;
+
+    // Mark user online
+    UserModel.findByIdAndUpdate(userId, { isOnline: true });
+    io.emit("userOnline", { userId });
+
+    socket.on("disconnect", async () => {
+      await UserModel.findByIdAndUpdate(userId, { isOnline: false });
+      io.emit("userOffline", { userId });
+    });
+
+    // Join conversation room 
     socket.on("joinRoom", (conversationId: string) => {
       socket.join(conversationId);
       console.log(
@@ -66,14 +79,14 @@ export const initSocket = (io: SocketIOServer) => {
       );
     });
 
-    /* Typing indicator */
+    // Typing indicator 
     socket.on("typing", (data: { conversationId: string }) => {
       io.to(data.conversationId).emit("typing", {
         userId: authSocket.user.userId,
       });
     });
 
-    /* Send message */
+    // Send message 
     socket.on(
       "sendMessage",
       async (data: {
@@ -99,7 +112,7 @@ export const initSocket = (io: SocketIOServer) => {
       }
     );
 
-    /* Mark messages as read */
+    // Mark messages as read 
     socket.on("markAsRead", async (data: { conversationId: string }) => {
       try {
         await ChatService.markMessagesAsRead(

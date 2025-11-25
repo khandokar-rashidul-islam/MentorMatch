@@ -25,6 +25,22 @@ const buildFormData = ({ conversationId, mentorId, text, files }) => {
 
 export const chatApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+
+
+    //* -------------------------------------------------------------------------- */
+    //* start conversation                                                     */
+    //* -------------------------------------------------------------------------- */
+
+    startConversation: builder.mutation({
+      query: ({ mentorId, text }) => ({
+        url: "/chat/conversation/start",
+        method: "POST",
+        body: { mentorId, text },
+      }),
+
+      invalidatesTags: ["Conversations"],
+    }),
+
     /* ---------------------------------------------------------------------- */
     /* GET MY CONVERSATIONS (Inbox)                                           */
     /* ---------------------------------------------------------------------- */
@@ -108,6 +124,7 @@ export const chatApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useStartConversationMutation,
   useGetConversationsQuery,
   useGetMessagesQuery,
   useSendMessageMutation,

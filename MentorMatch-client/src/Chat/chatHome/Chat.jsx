@@ -6,6 +6,7 @@ import { ChatWindow } from "../ChatWindow";
 import { useAppSelector } from "@/redux/hooks";
 import { useGetConversationsQuery, useGetMessagesQuery } from "@/redux/features/chat/chatApi";
 import { connectSocket, getSocket } from "../../redux/features/chat/socket";
+import { useParams } from "react-router";
 
 
 
@@ -13,12 +14,30 @@ const Chat = () => {
   const isMobile = useIsMobile();
   const auth = useAppSelector((state) => state.auth);
 
-
+  const { conversationId: urlConversationId } = useParams(); // detect from URL
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [showChat, setShowChat] = useState(false);
 
   // Fetch conversation list
   const { data: convData, isLoading: convLoading } = useGetConversationsQuery();
+
+  // Find selected conversation based on URL
+  useEffect(() => {
+    if (!convData?.data?.conversations) return;
+
+    let conv = convData.data.conversations.find(
+      (c) => c._id === urlConversationId
+    );
+
+    if (conv) {
+      setSelectedConversation(conv);
+      if (isMobile) setShowChat(true);
+    } else if (urlConversationId) {
+      // If conversation not in list yet, create a minimal object to trigger message query
+      setSelectedConversation({ _id: urlConversationId, participant: {} });
+      if (isMobile) setShowChat(true);
+    }
+  }, [urlConversationId, convData, isMobile]);
 
   // Fetch messages for selected conversation
   const conversationId = selectedConversation?.id;
@@ -31,7 +50,7 @@ const Chat = () => {
   } = useGetMessagesQuery(conversationId, {
     skip: !conversationId,
   });
-  
+
   //! need to work letter
   // Connect socket on mount
   useEffect(() => {
@@ -58,7 +77,7 @@ const Chat = () => {
   if (convLoading) {
     return <div>Loading conversations...</div>;
   }
-  if(messageLoading){
+  if (messageLoading) {
     return <div>Loading messages...</div>;
   }
 
