@@ -58,13 +58,14 @@ const isOnlyEmoji = (text) => {
             <p
               className={`whitespace-pre-line
               ${isOnlyEmoji(message.text) && "text-3xl"} 
+
                 ${
-                  message.attachments?.length > 0
-                    ? `bg-primary p-2 rounded-lg ${
-                        isOwnMessage ? "rounded-br-none" : "rounded-bl-none"
-                      }  `
-                    : ""
-                } `}
+                  (message.attachments?.length > 0 && isOwnMessage)
+                    &&`bg-primary p-2 rounded-lg rounded-br-none  `
+                    
+                }
+                ${(message.attachments?.length > 0 && !isOwnMessage) && "bg-muted p-2 rounded-lg rounded-bl-none"}
+                `}
             >
               {message.text}
             </p>
