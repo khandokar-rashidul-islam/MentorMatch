@@ -1,30 +1,33 @@
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router";
+import { useDispatch,} from "react-redux";
 
 import { ConversationList } from "../ConversationList";
 import { ChatWindow } from "../ChatWindow";
+
+import { connectSocket, getSocket } from "@/redux/features/chat/socket";
+
+
 import { useAppSelector } from "@/redux/hooks";
-import { useGetConversationsQuery, useGetMessagesQuery } from "@/redux/features/chat/chatApi";
-import { connectSocket, getSocket } from "../../redux/features/chat/socket";
-import { useParams } from "react-router";
-
-
+import {
+  useGetConversationsQuery,
+  useGetMessagesQuery,
+} from "@/redux/features/chat/chatApi";
+import { initOnlineStatusListeners } from "@/redux/features/chat/initOnlineStatusListeners";
 
 const Chat = () => {
   const isMobile = useIsMobile();
+  const dispatch = useDispatch();
   const auth = useAppSelector((state) => state.auth);
-
-  const { conversationId: urlConversationId } = useParams(); // detect from URL
-
-  console.log("URL conversationId:", urlConversationId);
+  const { conversationId: urlConversationId } = useParams();
 
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [showChat, setShowChat] = useState(false);
 
-  // Fetch conversation list
   const { data: convData, isLoading: convLoading } = useGetConversationsQuery();
 
-  // Find selected conversation based on URL
+  // Determine selected conversation based on URL
   useEffect(() => {
     if (!convData?.data?.conversations) return;
 
@@ -36,39 +39,38 @@ const Chat = () => {
       setSelectedConversation(conv);
       if (isMobile) setShowChat(true);
     } else if (urlConversationId) {
-      // If conversation not in list yet, create a minimal object to trigger message query
       setSelectedConversation({ _id: urlConversationId, participant: {} });
       if (isMobile) setShowChat(true);
     }
-
-    
   }, [urlConversationId, convData, isMobile]);
 
-  // Fetch messages for selected conversation
   const conversationId = selectedConversation?.id;
-  console.log("Selected conversationId:", conversationId);
 
   const {
     data: msgData,
     isLoading: messageLoading,
     refetch: refetchMessages,
-  } = useGetMessagesQuery(conversationId, {
-    skip: !conversationId,
-  });
+  } = useGetMessagesQuery(conversationId, { skip: !conversationId });
 
-  //! need to work letter
-  // Connect socket on mount
+  //! Initialize socket + online status listeners
   useEffect(() => {
-    if (auth?.accessToken) {
-      connectSocket(auth.accessToken);
-    }
-  }, [auth?.accessToken]);
+    if (!auth.user) return;
+    const socket = connectSocket();
+    const cleanup = initOnlineStatusListeners(dispatch);
 
-  // Auto-join room when conversation changes
+    // Notify server that current user is online
+    socket.emit("user-online", auth.user._id);
+
+    return () => {
+      if (cleanup) cleanup();
+      socket.emit("user-offline", auth.user._id);
+    };
+  }, [auth.user, dispatch]);
+
+  //! Auto-join conversation room
   useEffect(() => {
     const socket = getSocket();
     if (!socket || !conversationId) return;
-
     socket.emit("joinRoom", conversationId);
   }, [conversationId]);
 
@@ -76,23 +78,15 @@ const Chat = () => {
     setSelectedConversation(conv);
     if (isMobile) setShowChat(true);
   };
-
   const handleBackToList = () => setShowChat(false);
 
-  if (convLoading) {
-    return <div>Loading conversations...</div>;
-  }
-  if (messageLoading) {
-    return <div>Loading messages...</div>;
-  }
-
-  console.log("convData:", convData);
-  console.log("msgData:", msgData);
+  if (convLoading) return <div>Loading conversations...</div>;
+  if (messageLoading) return <div>Loading messages...</div>;
 
   return (
     <div className="fixed top-20 left-0 right-0 flex items-center justify-center">
       <div className="w-11/12 h-[87vh] flex border rounded-lg shadow-lg bg-background overflow-hidden">
-        {/* LEFT: Conversation list */}
+        {/* Conversation List */}
         {(!isMobile || !showChat) && (
           <ConversationList
             conversations={convData?.data?.conversations || []}
@@ -102,7 +96,7 @@ const Chat = () => {
           />
         )}
 
-        {/* RIGHT: Chat window */}
+        {/* Chat Window */}
         {(!isMobile || showChat) && selectedConversation && (
           <ChatWindow
             conversation={selectedConversation}

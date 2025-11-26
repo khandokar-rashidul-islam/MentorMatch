@@ -511,8 +511,7 @@ export const deleteMessage = async (
       .sort({ createdAt: -1 })
       .lean();
 
-    conv.lastMessage =
-      last?.text ?? (last?.attachments?.length ? "Attachment" : "");
+    conv.lastMessage = last?.text ?? (last?.attachments?.length ? "Attachment" : "");
     conv.lastMessageAt = last?.createdAt ?? conv.lastMessageAt;
     await conv.save();
   }

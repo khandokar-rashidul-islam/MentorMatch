@@ -1,6 +1,14 @@
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MoreVertical, Video, Phone, ArrowLeft, MessageSquareX, Trash2, Ban, Flag } from "lucide-react";
+import {
+  MoreVertical,
+  ArrowLeft,
+  MessageSquareX,
+  Trash2,
+  Ban,
+  Flag,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,11 +17,16 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { useAppSelector } from "@/redux/hooks";
 
 export const ChatHeader = ({ participant, onBack }) => {
 
-
+  const onlineUsers = useAppSelector((state) => state.presence.online??{} );
+  const isOnline = onlineUsers[participant?._id || participant?.id]?.isOnline ?? false;
   
+  console.log("ChatHeader onlineUsers:", onlineUsers);
+   console.log("ChatHeader participant:", participant, "isOnline:", isOnline);
+
   return (
     <div className="h-14 sm:h-16 border-b border-border px-3 sm:px-6 flex items-center justify-between bg-card shadow-sm shrink-0">
       <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
@@ -36,7 +49,7 @@ export const ChatHeader = ({ participant, onBack }) => {
             </AvatarFallback>
           </Avatar>
 
-          {participant.isOnline && (
+          {isOnline && (
             <div className="absolute bottom-0 right-0 h-2.5 w-2.5 sm:h-3 sm:w-3 bg-green-500 rounded-full border-2 border-card shadow-sm" />
           )}
         </div>
@@ -47,9 +60,8 @@ export const ChatHeader = ({ participant, onBack }) => {
               {participant.name}
             </h2>
           </div>
-
           <p className="text-[10px] sm:text-xs text-muted-foreground">
-            {participant.isOnline ? "Active now" : "Offline"}
+            {isOnline ? "Active now" : "Offline"}
           </p>
         </div>
       </div>
@@ -60,45 +72,28 @@ export const ChatHeader = ({ participant, onBack }) => {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 sm:h-9 sm:w-9 "
+              className="h-8 w-8 sm:h-9 sm:w-9"
             >
               <MoreVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => console.log("Clear chat")}
-            >
-              <MessageSquareX className="h-4 w-4 mr-2" />
-              Clear chat
+            <DropdownMenuItem onClick={() => console.log("Clear chat")}>
+              <MessageSquareX className="h-4 w-4 mr-2" /> Clear chat
             </DropdownMenuItem>
-
             <DropdownMenuItem
-              className="cursor-pointer"
               onClick={() => console.log("Delete conversation")}
             >
               <Trash2 className="h-4 w-4 mr-2 text-destructive" />
               <span className="text-destructive">Delete conversation</span>
             </DropdownMenuItem>
-
             <DropdownMenuSeparator />
-
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => console.log("Block user")}
-            >
-              <Ban className="h-4 w-4 mr-2" />
-              Block user
+            <DropdownMenuItem onClick={() => console.log("Block user")}>
+              <Ban className="h-4 w-4 mr-2" /> Block user
             </DropdownMenuItem>
-
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => console.log("Report user")}
-            >
-              <Flag className="h-4 w-4 mr-2" />
-              Report
+            <DropdownMenuItem onClick={() => console.log("Report user")}>
+              <Flag className="h-4 w-4 mr-2" /> Report
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
