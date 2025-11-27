@@ -10,7 +10,7 @@ export const ConversationList = ({
   loading,
 }) => {
 
-  console.log("ConversationList conversations:", conversations);
+   console.log("ConversationList conversations:", conversations);
   return (
     <div className="w-full md:w-80 lg:w-96 bg-chat-sidebar border-r border-border flex flex-col h-full">
       <div className="p-4 sm:p-6 border-b border-border shrink-0">

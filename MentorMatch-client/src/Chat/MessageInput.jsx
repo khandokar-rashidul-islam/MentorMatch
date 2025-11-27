@@ -16,13 +16,19 @@ import {
   X,
 } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
+import { getSocket } from "@/redux/features/chat/socket";
+import { useAppSelector } from "@/redux/hooks";
 
-export const MessageInput = ({ onSendMessage, conversationId, mentorId }) => {
+export const MessageInput = ({
+  onSendMessage,
+  conversationId,
+  mentorId,
+}) => {
   const [message, setMessage] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const fileInputRef = useRef(null);
-
+const currentUser = useAppSelector((state) => state.auth.user?._id);
   const handleSend = () => {
     if (!message.trim() && selectedFiles.length === 0) return;
 
@@ -70,6 +76,22 @@ export const MessageInput = ({ onSendMessage, conversationId, mentorId }) => {
       handleSend();
     }
   };
+
+//handle typing indicator
+let typingTimeout = null;
+const socket = getSocket();
+
+const handleTyping = () => {
+  if (!conversationId || !socket) return;
+
+  socket.emit("typing", { conversationId, userId: currentUser });
+
+  if (typingTimeout) clearTimeout(typingTimeout);
+
+  typingTimeout = setTimeout(() => {
+    socket.emit("stop-typing", { conversationId, userId: currentUser });
+  }, 2000);
+};
 
   return (
     <div className="border-t border-border p-4 bg-card shadow-sm">
@@ -147,7 +169,10 @@ export const MessageInput = ({ onSendMessage, conversationId, mentorId }) => {
         <Textarea
           placeholder="Type a message..."
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            setMessage(e.target.value);
+            handleTyping();
+          }}
           onKeyPress={handleKeyPress}
           rows={1}
           className="min-h-[44px] max-h-36 resize-none text-sm flex-1"

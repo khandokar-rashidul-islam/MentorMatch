@@ -14,6 +14,7 @@ export interface IUser {
   activeRole: "learner" | "mentor"; // currently active role
   status: "in-progress" | "blocked";
   isDeleted: boolean;
+  lastSeen?: number | null;
 }
 
 export interface RegisterData {

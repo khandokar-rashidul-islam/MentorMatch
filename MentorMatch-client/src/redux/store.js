@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { baseApi } from "./api/baseApi";
 import authReducer from "./features/auth/authSlice";
 import presenceReducer from "./features/chat/onlineStatus";
+import typingReducer from "./features/chat/typing";
 import {
   persistStore,
   FLUSH,
@@ -17,6 +18,7 @@ export const store = configureStore({
     [baseApi.reducerPath]: baseApi.reducer,
     auth: authReducer,
     presence: presenceReducer,
+    typing: typingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

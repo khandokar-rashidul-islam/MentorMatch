@@ -52,22 +52,28 @@ const Chat = () => {
     refetch: refetchMessages,
   } = useGetMessagesQuery(conversationId, { skip: !conversationId });
 
-  //! Initialize socket + online status listeners
+  // Initialize socket + online status listeners
   useEffect(() => {
-    if (!auth.user) return;
+    if (!auth.user?._id) return;
     const socket = connectSocket();
     const cleanup = initOnlineStatusListeners(dispatch);
 
-    // Notify server that current user is online
-    socket.emit("user-online", auth.user._id);
+    try {
+      const s = getSocket();
+      if (s && s.connected) {
+        s.emit("presence:request");
+      }
+    } catch (e) {
+      console.warn("presence request failed:", e);
+    }
 
     return () => {
       if (cleanup) cleanup();
       socket.emit("user-offline", auth.user._id);
     };
-  }, [auth.user, dispatch]);
+  }, [auth.user?._id, dispatch]);
 
-  //! Auto-join conversation room
+  // Auto-join conversation room
   useEffect(() => {
     const socket = getSocket();
     if (!socket || !conversationId) return;

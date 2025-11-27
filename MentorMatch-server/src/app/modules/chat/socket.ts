@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */ /* eslint-disable no-unused-vars */
 import { Server as SocketIOServer, Socket as DefaultSocket } from "socket.io";
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
@@ -21,16 +20,14 @@ interface AuthenticatedSocket extends DefaultSocket {
 const userSockets: Map<string, Set<string>> = new Map();
 
 export const initSocket = (io: SocketIOServer) => {
-  // Socket auth middleware
+  // Middleware: authenticate socket via JWT in cookie
   io.use((socket: DefaultSocket, next) => {
     try {
       const cookies = cookie.parse(socket.handshake.headers.cookie || "");
       const token = cookies["accessToken"];
-
       if (!token) return next(new Error("Unauthorized: No token"));
 
       const decoded = jwt.verify(token, config.jwt_access_secret as string);
-
       if (
         typeof decoded === "object" &&
         decoded !== null &&
@@ -56,87 +53,97 @@ export const initSocket = (io: SocketIOServer) => {
 
     console.log(`User connected: ${userId} (socket: ${socket.id})`);
 
-    // Add socket to the user's set
+    // Track sockets for this user
     if (!userSockets.has(userId)) userSockets.set(userId, new Set());
-    const sockets = userSockets.get(userId);
-    if (sockets) {
-      sockets.add(socket.id);
+    const sockets = userSockets.get(userId)!;
+    sockets.add(socket.id);
 
-      // Only broadcast "online" when first socket connects
-      if (sockets.size === 1) {
-        io.emit("presence:update", {
-          userId,
-          isOnline: true,
-          totalSockets: sockets.size,
-        });
-        UserModel.findByIdAndUpdate(userId, { isOnline: true }).catch(
-          console.error
-        );
-      }
+    // Only broadcast online if first socket connected
+    if (sockets.size === 1) {
+      io.emit("presence:update", {
+        userId,
+        isOnline: true,
+        totalSockets: sockets.size,
+      });
+      UserModel.findByIdAndUpdate(userId, { isOnline: true }).catch(
+        console.error
+      );
     }
 
-    // Listen for joining conversation rooms
+    /** ------------------- Rooms ------------------- **/
     socket.on("joinRoom", (conversationId: string) => {
       socket.join(conversationId);
       console.log(`User ${userId} joined room ${conversationId}`);
     });
 
-    // Typing indicator
+    /** ------------------- Typing ------------------- **/
     socket.on("typing", ({ conversationId }: { conversationId: string }) => {
-      io.to(conversationId).emit("typing", { userId });
+      io.to(conversationId).emit("typing", { conversationId, userId });
     });
+    socket.on(
+      "stop-typing",
+      ({ conversationId }: { conversationId: string }) => {
+        io.to(conversationId).emit("stop-typing", { conversationId, userId });
+      }
+    );
 
-    // Send message placeholder
+    /** ------------------- Messages ------------------- **/
     socket.on("sendMessage", async (data: any) => {
-      // Implement your ChatService logic here
+      // Broadcast new message to room
       io.to(data.conversationId).emit("new-message", data);
     });
 
-    // Mark messages as read placeholder
     socket.on("markAsRead", async (data: { conversationId: string }) => {
       io.to(data.conversationId).emit("messages-read", { userId });
     });
 
-    // Handle disconnect
+    /** ------------------- Presence ------------------- **/
+socket.on("presence:request", async () => {
+  const snapshot = await Promise.all(
+    Array.from(userSockets.entries()).map(async ([uid, sockets]) => {
+      const user = await UserModel.findById(uid).lean();
+      return {
+        userId: uid,
+        isOnline: sockets.size > 0,
+        totalSockets: sockets.size,
+        lastSeen: sockets.size === 0 ? user?.lastSeen : undefined,
+      };
+    })
+  );
+
+  socket.emit("presence:bulk", snapshot);
+});
+
+    /** ------------------- Disconnect ------------------- **/
     socket.on("disconnect", () => {
       console.log(`Socket disconnected: ${socket.id} (user: ${userId})`);
-
       const sockets = userSockets.get(userId);
-      if (sockets) {
-        sockets.delete(socket.id);
+      if (!sockets) return;
 
-        if (sockets.size === 0) {
-          // All sockets disconnected
-          userSockets.delete(userId);
-          io.emit("presence:update", {
-            userId,
-            isOnline: false,
-            totalSockets: 0,
-          });
-          UserModel.findByIdAndUpdate(userId, { isOnline: false }).catch(
-            console.error
-          );
-        } else {
-          // Update totalSockets for other tabs
-          io.emit("presence:update", {
-            userId,
-            isOnline: true,
-            totalSockets: sockets.size,
-          });
-        }
-      }
-    });
+      sockets.delete(socket.id);
 
-    // Optional: send presence snapshot on request
-    socket.on("presence:request", () => {
-      const snapshot = Array.from(userSockets.entries()).map(
-        ([uid, sockets]) => ({
-          userId: uid,
-          isOnline: sockets.size > 0,
+      if (sockets.size === 0) {
+        // All sockets disconnected → offline
+        userSockets.delete(userId);
+        const lastSeenTime = Date.now();
+        io.emit("presence:update", {
+          userId,
+          isOnline: false,
+          totalSockets: 0,
+          lastSeen: lastSeenTime,
+        });
+        UserModel.findByIdAndUpdate(userId, {
+          isOnline: false,
+          lastSeen: lastSeenTime,
+        }).catch(console.error);
+      } else {
+        // Still online on other tabs
+        io.emit("presence:update", {
+          userId,
+          isOnline: true,
           totalSockets: sockets.size,
-        })
-      );
-      socket.emit("presence:bulk", snapshot);
+        });
+      }
     });
   });
 };

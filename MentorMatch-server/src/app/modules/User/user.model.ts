@@ -23,6 +23,7 @@ const userSchema = new Schema<IUser>(
       default: "in-progress",
     },
     isDeleted: { type: Boolean, default: false },
+    lastSeen: { type: Number, default: null },
   },
   {
     timestamps: true

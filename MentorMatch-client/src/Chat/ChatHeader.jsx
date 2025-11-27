@@ -1,6 +1,4 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import {
   MoreVertical,
   ArrowLeft,
@@ -18,14 +16,27 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useAppSelector } from "@/redux/hooks";
+import { formatLastSeen } from "@/lib/formatLastSeen";
 
-export const ChatHeader = ({ participant, onBack }) => {
+export const ChatHeader = ({ participant, onBack, conversationId }) => {
+  const onlineUsers = useAppSelector((s) => s.presence?.online || {});
+  const lastSeenStore = useAppSelector((s) => s.presence?.lastSeen || {});
+  const typing = useAppSelector((s) => s.typing.typing || {});
 
-  const onlineUsers = useAppSelector((state) => state.presence.online??{} );
-  const isOnline = onlineUsers[participant?._id || participant?.id]?.isOnline ?? false;
-  
-  console.log("ChatHeader onlineUsers:", onlineUsers);
-   console.log("ChatHeader participant:", participant, "isOnline:", isOnline);
+  /** -------------------------------
+   *  Unified presence logic
+   * -------------------------------- */
+  const presence = onlineUsers[participant?.id] || {};
+  const lastSeenTimestamp = lastSeenStore[participant?.id];
+
+  const isOnline = presence?.isOnline === true;
+  const isTyping = typing?.[conversationId]?.[participant?.id] || false;
+
+  const lastSeenText = isOnline
+    ? isTyping
+      ? "Typing..."
+      : "Active now"
+    : formatLastSeen(lastSeenTimestamp);
 
   return (
     <div className="h-14 sm:h-16 border-b border-border px-3 sm:px-6 flex items-center justify-between bg-card shadow-sm shrink-0">
@@ -41,6 +52,7 @@ export const ChatHeader = ({ participant, onBack }) => {
           </Button>
         )}
 
+        {/* Avatar + Online Dot */}
         <div className="relative shrink-0">
           <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border-2 border-border/50">
             <AvatarImage src={participant.avatar} alt={participant.name} />
@@ -54,18 +66,19 @@ export const ChatHeader = ({ participant, onBack }) => {
           )}
         </div>
 
+        {/* Name + Status */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h2 className="font-semibold text-foreground text-sm sm:text-base truncate">
-              {participant.name}
-            </h2>
-          </div>
+          <h2 className="font-semibold text-foreground text-sm sm:text-base truncate">
+            {participant.name}
+          </h2>
+
           <p className="text-[10px] sm:text-xs text-muted-foreground">
-            {isOnline ? "Active now" : "Offline"}
+            {lastSeenText}
           </p>
         </div>
       </div>
 
+      {/* Dropdown */}
       <div className="flex items-center gap-1 sm:gap-2 shrink-0">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -82,16 +95,20 @@ export const ChatHeader = ({ participant, onBack }) => {
             <DropdownMenuItem onClick={() => console.log("Clear chat")}>
               <MessageSquareX className="h-4 w-4 mr-2" /> Clear chat
             </DropdownMenuItem>
+
             <DropdownMenuItem
               onClick={() => console.log("Delete conversation")}
             >
               <Trash2 className="h-4 w-4 mr-2 text-destructive" />
               <span className="text-destructive">Delete conversation</span>
             </DropdownMenuItem>
+
             <DropdownMenuSeparator />
+
             <DropdownMenuItem onClick={() => console.log("Block user")}>
               <Ban className="h-4 w-4 mr-2" /> Block user
             </DropdownMenuItem>
+
             <DropdownMenuItem onClick={() => console.log("Report user")}>
               <Flag className="h-4 w-4 mr-2" /> Report
             </DropdownMenuItem>

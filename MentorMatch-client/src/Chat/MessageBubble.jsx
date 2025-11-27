@@ -1,7 +1,14 @@
 import { format } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import { cn } from "@/lib/utils";
-import { Check, CheckCheck, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import {
+  Check,
+  CheckCheck,
+  ClockIcon,
+  MoreVertical,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,18 +24,14 @@ export const MessageBubble = ({
   onEdit,
   onDelete,
 }) => {
+  const isOnlyEmoji = (text) => {
+    const trimmed = text.trim();
 
+    // Matches *only emojis*, no letters, no numbers
+    const emojiRegex = /^(?:\p{Extended_Pictographic}|\p{Emoji})+$/u;
 
-const isOnlyEmoji = (text) => {
-  const trimmed = text.trim();
-
-  // Matches *only emojis*, no letters, no numbers
-  const emojiRegex = /^(?:\p{Extended_Pictographic}|\p{Emoji})+$/u;
-
-  return emojiRegex.test(trimmed);
-};
-
-  
+    return emojiRegex.test(trimmed);
+  };
 
   return (
     <div
@@ -60,11 +63,15 @@ const isOnlyEmoji = (text) => {
               ${isOnlyEmoji(message.text) && "text-3xl"} 
 
                 ${
-                  (message.attachments?.length > 0 && isOwnMessage)
-                    &&`bg-primary p-2 rounded-lg rounded-br-none  `
-                    
+                  message.attachments?.length > 0 &&
+                  isOwnMessage &&
+                  `bg-primary p-2 rounded-lg rounded-br-none  `
                 }
-                ${(message.attachments?.length > 0 && !isOwnMessage) && "bg-muted p-2 rounded-lg rounded-bl-none"}
+                ${
+                  message.attachments?.length > 0 &&
+                  !isOwnMessage &&
+                  "bg-muted p-2 rounded-lg rounded-bl-none"
+                }
                 `}
             >
               {message.text}
@@ -124,15 +131,13 @@ const isOnlyEmoji = (text) => {
               </small>
 
               {isOwnMessage && (
-                <span
-                  className={cn(
-                    message.isRead ? "text-primary" : ""
-                  )}
-                >
-                  {message.isRead ? (
+                <span className={cn(message.isRead ? "text-primary" : "")}>
+                  {message.seen ? (
                     <CheckCheck className="h-3 w-3 sm:h-3.5 sm:w-3.5 " />
-                  ) : (
+                  ) : message.isRead ? (
                     <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                  ) : (
+                    <ClockIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                   )}
                 </span>
               )}
