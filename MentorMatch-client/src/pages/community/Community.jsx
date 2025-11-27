@@ -280,7 +280,7 @@ const Community = () => {
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
+                            <div className="flex flex-wrap items-center gap-2 mb-2">
                               <span className="font-semibold">
                                 {post.author}
                               </span>
