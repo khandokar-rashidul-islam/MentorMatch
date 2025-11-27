@@ -40,6 +40,7 @@ import Chat from "@/Chat/chatHome/Chat";
 import Payment from "@/pages/payement/Payment";
 import PaymentSucess from "@/pages/payement/PaymentSucess";
 import PaymentFailed from "@/pages/payement/PaymentFailed";
+import Community from "@/pages/community/Community";
 
 const router = createBrowserRouter([
   {
@@ -139,6 +140,7 @@ const router = createBrowserRouter([
           { path: "learner-profile", element: <LearnerProfile /> },
           { path: "mentor-profile", element: <TutorDetails /> },
           { path: "mentor-profile/edit", element: <EditTutorProfile /> },
+          { path: "community", element: <Community /> },
         ],
       },
       //learner
@@ -161,6 +163,7 @@ const router = createBrowserRouter([
           { path: "payment", element: <Payment /> },
           { path: "payment-success", element: <PaymentSucess /> },
           { path: "payment-failed", element: <PaymentFailed /> },
+          { path: "community", element: <Community /> },
         ],
       },
 
