@@ -78,9 +78,11 @@ const Bookings = () => {
       {/* Grid */}
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {dummyBookings.map((booking) => (
+          // booking card
           <div
             key={booking.id}
             className="
+            flex flex-col justify-between
               bg-white dark:bg-primary/5
               border border-gray-200 dark:border-gray-700 
               rounded-xl p-5 shadow-sm
