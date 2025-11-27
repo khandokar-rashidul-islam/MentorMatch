@@ -121,7 +121,7 @@ const Community = () => {
                 <Card>
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
-                      <Avatar className="h-10 w-10">
+                      <Avatar className="h-10 w-10 max-sm:hidden">
                         <AvatarFallback>You</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 w-full">
