@@ -79,6 +79,8 @@ const messageSchema = new Schema<IMessage>(
     customOrder: customOrderSchema,
 
     isRead: { type: Boolean, default: false },
+    readAt: { type: Date, default: null },
+    isDelivered: { type: Boolean, default: false },
 
     // Edit / delete controls
     editedAt: { type: Date, default: null },

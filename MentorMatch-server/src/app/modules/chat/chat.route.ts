@@ -69,7 +69,7 @@ router.get(
 
 // Mark Messages as Read
 router.patch(
-  "/message/read",
+  "/messages/read",
   auth(USER_ROLES.LEARNER, USER_ROLES.MENTOR),
   validateRequest(markAsReadValidation),
   ChatController.markAsRead

@@ -70,6 +70,7 @@ export const sendMessage = catchAsync(async (req, res) => {
 
   if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized");
   if (!activeRole) throw new AppError(httpStatus.BAD_REQUEST, "Invalid role");
+   const io = req.app.get("io");
 
   const payload: any = {
     conversationId: req.body.conversationId,
@@ -79,6 +80,7 @@ export const sendMessage = catchAsync(async (req, res) => {
     text: req.body.text,
     customOrder: req.body.customOrder ?? undefined,
     attachments: [], // will be filled below
+    io, // pass socket io instance
   };
 
   // If files were uploaded
@@ -87,10 +89,6 @@ export const sendMessage = catchAsync(async (req, res) => {
   }
 
   const { message, conversation } = await ChatService.sendMessage(payload);
-
-  // Emit via socket
-  const io = req.app.get("io");
-  io.to(conversation._id.toString()).emit("new-message", message);
 
   sendResponse(res, {
     success: true,
@@ -135,21 +133,43 @@ export const getMessages = catchAsync(async (req, res) => {
 // ---------------------------
 export const markAsRead = catchAsync(async (req, res) => {
   const userId = req.user?.id;
-  const { conversationId } = req.body;
+  const activeRole = req.user?.activeRole as "mentor" | "learner";
 
   if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized");
+  if (!activeRole) throw new AppError(httpStatus.BAD_REQUEST, "Invalid role");
 
-  await ChatService.markMessagesAsRead(conversationId, userId);
+  const { messageId, conversationId } = req.body;
 
-  // Emit socket read event
+  if (!messageId || !conversationId) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "messageId & conversationId required"
+    );
+  }
+
+  const updatedMessage = await ChatService.markMessageAsRead({
+    messageId,
+    userId,
+  });
+
+  if (!updatedMessage) {
+    throw new AppError(httpStatus.NOT_FOUND, "Message not found");
+  }
+
+  // Emit socket event
   const io = req.app.get("io");
-  io.to(conversationId).emit("messages-read", { userId });
+  io.to(conversationId).emit("messages-read", {
+    messageId,
+    conversationId,
+    readerId: userId,
+    readAt: updatedMessage.readAt,
+  });
 
-  sendResponse(res, {
+  return sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Messages marked as read",
-    data: null,
+    message: "Message marked as read",
+    data: updatedMessage,
   });
 });
 

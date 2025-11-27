@@ -200,6 +200,7 @@ export const sendMessage = async (payload: {
   text?: string;
   customOrder?: any;
   attachmentFiles?: Express.Multer.File[];
+  io?: any;
 }) => {
   const {
     conversationId,
@@ -209,6 +210,7 @@ export const sendMessage = async (payload: {
     text,
     customOrder,
     attachmentFiles,
+    io,
   } = payload;
 
   // 1. Conversation logic (same as your code)
@@ -271,7 +273,7 @@ export const sendMessage = async (payload: {
   // 4. Create message
   const session = await mongoose.startSession();
   session.startTransaction();
-  
+
   try {
     const messageDoc = await MessageModel.create(
       [
@@ -283,6 +285,7 @@ export const sendMessage = async (payload: {
           attachments,
           customOrder,
           isRead: false,
+          isDelivered: false,
         },
       ],
       { session }
@@ -314,6 +317,22 @@ export const sendMessage = async (payload: {
         },
       ],
     });
+
+    //5. AUTO-DELIVER (receiver online → delivered)
+
+    if (io) {
+      const roomId = conversation._id.toString();
+
+      // emit message
+      io.to(roomId).emit("new-message", populated);
+
+      // mark delivered
+      await MessageModel.findByIdAndUpdate(message._id, { isDelivered: true });
+
+      io.to(roomId).emit("message-delivered", {
+        messageId: message._id,
+      });
+    }
 
     return { message: populated, conversation };
   } catch (err) {
@@ -386,41 +405,31 @@ export const getMessages = async (
 /* Mark messages as read                                                       */
 /* -------------------------------------------------------------------------- */
 
-export const markMessagesAsRead = async (
-  conversationId: string,
-  userId: string
-) => {
-  if (!conversationId || !userId)
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "conversationId and userId required"
-    );
+const markMessageAsRead = async ({
+  messageId,
+  userId,
+}: {
+  messageId: string;
+  userId: string;
+}) => {
+  const message = await MessageModel.findById(messageId);
 
-  const conversation = await ConversationModel.findById(conversationId);
-  if (!conversation)
-    throw new AppError(httpStatus.NOT_FOUND, "Conversation not found");
+  if (!message) return null;
 
-  if (
-    conversation.learnerId.toString() !== userId &&
-    conversation.mentorId.toString() !== userId
-  ) {
-    throw new AppError(
-      httpStatus.FORBIDDEN,
-      "You are not a participant of this conversation"
-    );
+  // Sender cannot mark their own message as read
+  if (message.sender.toString() === userId.toString()) {
+    throw new AppError(httpStatus.FORBIDDEN, "Sender cannot mark as read");
   }
 
-  await MessageModel.updateMany(
-    {
-      conversation: conversation._id,
-      sender: { $ne: new ObjectId(userId) },
-      isRead: false,
-    },
-    { $set: { isRead: true } }
-  );
+  if (message.isRead) return message;
 
-  return true;
+  message.isRead = true;
+  message.readAt = new Date();
+
+  await message.save();
+  return message;
 };
+
 
 /* -------------------------------------------------------------------------- */
 /* Edit message                                                                */
@@ -511,7 +520,8 @@ export const deleteMessage = async (
       .sort({ createdAt: -1 })
       .lean();
 
-    conv.lastMessage = last?.text ?? (last?.attachments?.length ? "Attachment" : "");
+    conv.lastMessage =
+      last?.text ?? (last?.attachments?.length ? "Attachment" : "");
     conv.lastMessageAt = last?.createdAt ?? conv.lastMessageAt;
     await conv.save();
   }
@@ -532,7 +542,7 @@ export const ChatService = {
   listConversationsForUser,
   sendMessage,
   getMessages,
-  markMessagesAsRead,
+  markMessageAsRead,
   editMessage,
   deleteMessage,
 };

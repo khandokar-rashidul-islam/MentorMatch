@@ -1,14 +1,7 @@
 import { format } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import { cn } from "@/lib/utils";
-import {
-  Check,
-  CheckCheck,
-  ClockIcon,
-  MoreVertical,
-  Pencil,
-  Trash2,
-} from "lucide-react";
+import { Check, CheckCheck, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,27 +10,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-export const MessageBubble = ({
-  message,
-  isOwnMessage,
-  showTimestamp,
-  onEdit,
-  onDelete,
-}) => {
+export const MessageBubble = ({ message, isOwnMessage, onEdit, onDelete }) => {
   const isOnlyEmoji = (text) => {
-    const trimmed = text.trim();
-
-    // Matches *only emojis*, no letters, no numbers
+    if (!text) return false;
     const emojiRegex = /^(?:\p{Extended_Pictographic}|\p{Emoji})+$/u;
-
-    return emojiRegex.test(trimmed);
+    return emojiRegex.test(text.trim());
   };
 
   return (
     <div
       className={cn(
         "flex flex-col animate-in fade-in-0 slide-in-from-bottom-2 duration-300 group",
-        isOwnMessage ? "items-end " : "items-start"
+        isOwnMessage ? "items-end" : "items-start"
       )}
     >
       <div
@@ -48,31 +32,25 @@ export const MessageBubble = ({
       >
         <div
           className={cn(
-            "rounded-xl px-2 py-2 shadow ",
+            "rounded-xl px-2 py-2 shadow",
             isOwnMessage
               ? "bg-primary text-white rounded-br-none"
               : "bg-muted rounded-bl-none",
             (message.attachments?.length > 0 || isOnlyEmoji(message.text)) &&
-              "bg-transparent "
+              "bg-transparent"
           )}
         >
-          {/* TEXT MESSAGE */}
+          {/* TEXT */}
           {message.text && (
             <p
-              className={`whitespace-pre-line
-              ${isOnlyEmoji(message.text) && "text-3xl"} 
-
-                ${
-                  message.attachments?.length > 0 &&
-                  isOwnMessage &&
-                  `bg-primary p-2 rounded-lg rounded-br-none  `
-                }
-                ${
-                  message.attachments?.length > 0 &&
-                  !isOwnMessage &&
-                  "bg-muted p-2 rounded-lg rounded-bl-none"
-                }
-                `}
+              className={cn(
+                "whitespace-pre-line",
+                isOnlyEmoji(message.text) && "text-3xl",
+                message.attachments?.length > 0 &&
+                  (isOwnMessage
+                    ? "bg-primary p-2 rounded-lg rounded-br-none"
+                    : "bg-muted p-2 rounded-lg rounded-bl-none")
+              )}
             >
               {message.text}
             </p>
@@ -81,7 +59,6 @@ export const MessageBubble = ({
           {/* ATTACHMENTS */}
           {message.attachments?.map((file, i) => (
             <div key={i} className="mt-2">
-              {/* IMAGE ATTACHMENT */}
               {file.type === "image" ? (
                 <a href={file.url} target="_blank">
                   <img
@@ -91,17 +68,14 @@ export const MessageBubble = ({
                   />
                 </a>
               ) : (
-                /* FILE ATTACHMENT */
                 <a
                   href={file.url}
                   target="_blank"
                   className="flex items-center gap-3 p-2 bg-white/70 border rounded-lg text-black"
                 >
-                  {/* File Icon */}
                   <div className="h-10 w-10 bg-gray-200 rounded flex items-center justify-center">
                     📄
                   </div>
-
                   <div className="flex-1">
                     <p className="text-sm font-semibold truncate">
                       {file.name}
@@ -116,35 +90,34 @@ export const MessageBubble = ({
           ))}
 
           {/* TIMESTAMP & STATUS */}
-          {showTimestamp && (
-            <div
-              className={cn(
-                "flex items-center gap-1 mt-1.5 text-[10px] sm:text-xs  ",
-                isOwnMessage && "flex-row-reverse"
+          <div
+            className={cn(
+              "flex items-center gap-1 mt-1.5 text-[10px] sm:text-xs",
+              isOwnMessage && "flex-row-reverse"
+            )}
+          >
+            <small>
+              {format(
+                toZonedTime(new Date(message.createdAt), "Asia/Dhaka"),
+                "hh:mm a"
               )}
-            >
-              <small className="flex justify-end  ">
-                {format(
-                  toZonedTime(new Date(message.createdAt), "Asia/Dhaka"),
-                  "hh:mm a"
-                )}
-              </small>
+            </small>
 
-              {isOwnMessage && (
-                <span className={cn(message.isRead ? "text-primary" : "")}>
-                  {message.seen ? (
-                    <CheckCheck className="h-3 w-3 sm:h-3.5 sm:w-3.5 " />
-                  ) : message.isRead ? (
-                    <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                  ) : (
-                    <ClockIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                  )}
-                </span>
-              )}
-            </div>
-          )}
+            {isOwnMessage && (
+              <span>
+                {message.isRead ? (
+                  <CheckCheck className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-blue-500" />
+                ) : message.isDelivered ? (
+                  <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-gray-400" />
+                ) : (
+                  <></>
+                )}
+              </span>
+            )}
+          </div>
         </div>
 
+        {/* OPTIONS MENU */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -155,22 +128,18 @@ export const MessageBubble = ({
               <MoreVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-
           <DropdownMenuContent align={isOwnMessage ? "end" : "start"}>
             <DropdownMenuItem
-              onClick={() => onEdit && onEdit(message._id)}
+              onClick={() => onEdit?.(message._id)}
               className="cursor-pointer"
             >
-              <Pencil className="mr-2 h-4 w-4" />
-              Edit
+              <Pencil className="mr-2 h-4 w-4" /> Edit
             </DropdownMenuItem>
-
             <DropdownMenuItem
-              onClick={() => onDelete && onDelete(message._id)}
+              onClick={() => onDelete?.(message._id)}
               className="cursor-pointer text-destructive focus:text-destructive"
             >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete
+              <Trash2 className="mr-2 h-4 w-4" /> Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -56,7 +56,10 @@ export const chatApi = baseApi.injectEndpoints({
         { type: "Messages", id: conversationId },
       ],
 
-      async onCacheEntryAdded( conversationId,{ updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
+      async onCacheEntryAdded(
+        conversationId,
+        { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
+      ) {
         await cacheDataLoaded;
         const socket = getSocket();
         if (!socket) return;
@@ -105,8 +108,7 @@ export const chatApi = baseApi.injectEndpoints({
               }
               return m;
             });
-            
-          } );
+          });
         };
 
         // Message seen event (server may send messageIds or message object)
@@ -165,16 +167,44 @@ export const chatApi = baseApi.injectEndpoints({
     /* MARK MESSAGES AS READ                                                   */
     /* ---------------------------------------------------------------------- */
     markAsRead: builder.mutation({
-      query: ({ conversationId }) => ({
-        url: "/chat/message/read",
+      query: ({ conversationId, messageId }) => ({
+        url: "/chat/messages/read",
         method: "PATCH",
-        body: { conversationId },
+        body: { conversationId, messageId },
       }),
 
-      async onQueryStarted({ conversationId }) {
+      async onQueryStarted(
+        { conversationId, messageId },
+        { dispatch, queryFulfilled }
+      ) {
         const socket = getSocket();
-        if (socket) {
-          socket.emit("markAsRead", { conversationId });
+        if (socket && messageId) {
+          // Emit socket event to notify other participants
+          socket.emit("messages-read", {
+            conversationId,
+            messageId,
+          });
+        }
+
+        try {
+          const { data } = await queryFulfilled;
+
+          // Optimistically update cache for this conversation
+          dispatch(
+            chatApi.util.updateQueryData(
+              "getMessages",
+              conversationId,
+              (draft) => {
+                draft.data.messages = draft.data.messages.map((m) =>
+                  m._id === messageId
+                    ? { ...m, isRead: true, readAt: data.data.readAt }
+                    : m
+                );
+              }
+            )
+          );
+        } catch (err) {
+          console.error("Mark as read failed", err);
         }
       },
     }),

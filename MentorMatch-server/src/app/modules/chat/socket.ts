@@ -89,30 +89,44 @@ export const initSocket = (io: SocketIOServer) => {
 
     /** ------------------- Messages ------------------- **/
     socket.on("sendMessage", async (data: any) => {
+        // Acknowledge delivery to sender
+        const { conversationId,message } = data;
+        socket.to(conversationId).emit("message-delivered", {
+          conversationId,
+          messageId: message._id,
+        });
       // Broadcast new message to room
       io.to(data.conversationId).emit("new-message", data);
     });
 
-    socket.on("markAsRead", async (data: { conversationId: string }) => {
-      io.to(data.conversationId).emit("messages-read", { userId });
+    //messages-read event
+    socket.on("messages-read", ({ conversationId, readerId }) => {
+      if (!conversationId || !readerId) return;
+
+      // Notify only users in this conversation
+      io.to(conversationId).emit("messages-read", {
+        conversationId,
+        readerId,
+        timestamp: new Date(),
+      });
     });
 
     /** ------------------- Presence ------------------- **/
-socket.on("presence:request", async () => {
-  const snapshot = await Promise.all(
-    Array.from(userSockets.entries()).map(async ([uid, sockets]) => {
-      const user = await UserModel.findById(uid).lean();
-      return {
-        userId: uid,
-        isOnline: sockets.size > 0,
-        totalSockets: sockets.size,
-        lastSeen: sockets.size === 0 ? user?.lastSeen : undefined,
-      };
-    })
-  );
+    socket.on("presence:request", async () => {
+      const snapshot = await Promise.all(
+        Array.from(userSockets.entries()).map(async ([uid, sockets]) => {
+          const user = await UserModel.findById(uid).lean();
+          return {
+            userId: uid,
+            isOnline: sockets.size > 0,
+            totalSockets: sockets.size,
+            lastSeen: sockets.size === 0 ? user?.lastSeen : undefined,
+          };
+        })
+      );
 
-  socket.emit("presence:bulk", snapshot);
-});
+      socket.emit("presence:bulk", snapshot);
+    });
 
     /** ------------------- Disconnect ------------------- **/
     socket.on("disconnect", () => {

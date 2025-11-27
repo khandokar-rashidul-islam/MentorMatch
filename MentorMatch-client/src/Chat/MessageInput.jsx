@@ -166,6 +166,7 @@ const handleTyping = () => {
         />
 
         {/* MESSAGE INPUT */}
+        {/*-- Textarea expands with content then it breaks need to works */}
         <Textarea
           placeholder="Type a message..."
           value={message}
@@ -175,7 +176,7 @@ const handleTyping = () => {
           }}
           onKeyPress={handleKeyPress}
           rows={1}
-          className="min-h-[44px] max-h-36 resize-none text-sm flex-1"
+          className="min-h-[44px] max-h-36 resize-none text-sm flex-1 "
         />
 
         {/* SEND BUTTON */}

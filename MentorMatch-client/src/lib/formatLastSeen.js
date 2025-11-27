@@ -1,8 +1,12 @@
-
 export const formatLastSeen = (timestamp) => {
-  if (!timestamp) return "Offline";
+  if (timestamp === null || timestamp === undefined) return "Offline";
 
-  const diff = Date.now() - timestamp;
+  const time = Number(timestamp);
+  if (isNaN(time)) return "Offline";
+
+  const diff = Date.now() - time;
+  if (diff < 0) return "Offline";
+
   const mins = Math.floor(diff / 60000);
 
   if (mins < 1) return "Active a moment ago";
@@ -14,4 +18,3 @@ export const formatLastSeen = (timestamp) => {
   const days = Math.floor(hrs / 24);
   return `Active ${days} day${days > 1 ? "s" : ""} ago`;
 };
-

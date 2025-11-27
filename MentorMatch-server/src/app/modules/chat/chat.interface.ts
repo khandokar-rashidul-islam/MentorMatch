@@ -50,6 +50,8 @@ export interface IMessage {
   customOrder?: ICustomOrder;
 
   isRead: boolean;
+  readAt?: Date | null;
+  isDelivered: boolean;
 
   // Editing / Deleting
   editedAt?: Date | null;

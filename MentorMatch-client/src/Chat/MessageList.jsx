@@ -18,24 +18,24 @@ export const MessageList = ({
     if (viewport) {
       viewport.scrollTop = viewport.scrollHeight; // always scroll to bottom
     }
-  }, [messages]); 
+  }, [messages]);
 
   return (
     <ScrollArea className="h-full px-4 py-4" ref={scrollRef}>
       <div className="space-y-3 pb-4">
-        {messages.map((msg, index) => {
+        {messages.map((msg) => {
           const isOwn = msg.sender._id === currentUserId;
 
-          const showTimestamp =
-            index === 0 ||
-            msg.sender._id !== messages[index - 1].sender._id || new Date(msg.createdAt) - new Date(messages[index - 1].createdAt) > 1 * 60 * 1000;
-  
+          // const showTimestamp =
+          //   index === 0 ||
+          //   msg.sender._id !== messages[index - 1].sender._id ||
+          //   new Date(msg.createdAt) - new Date(messages[index - 1].createdAt) > 1 * 60 * 1000;
+
           return (
             <MessageBubble
               key={msg._id}
               message={msg}
               isOwnMessage={isOwn}
-              showTimestamp={showTimestamp}
               onEdit={onEditMessage}
               onDelete={onDeleteMessage}
             />
