@@ -22,7 +22,6 @@ const Chat = () => {
   const activeRole = auth?.user?.activeRole;
   const auth = useAppSelector((state) => state.auth);
   const { conversationId: urlConversationId } = useParams();
-
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [showChat, setShowChat] = useState(false);
 
