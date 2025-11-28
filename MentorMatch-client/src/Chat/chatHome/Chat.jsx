@@ -113,11 +113,11 @@ const Chat = () => {
   console.log("messageData:", msgData?.data.messages);
 
   return (
-    <div className="w-full pt-25 mb-4 flex items-center justify-center">
-      <div className="w-11/12 h-[87vh] grid md:grid-cols-12  border rounded-lg shadow-lg bg-background ">
+    <div className="w-full  pt-25 mb-4 flex items-center justify-center my-auto">
+      <div className="w-11/12 h-[79vh] grid md:grid-cols-12  border rounded-lg shadow-lg bg-background ">
         {/* Conversation List */}
         {(!isMobile || !showChat) && (
-          <div className="w-full h-[87vh] md:col-span-4">
+          <div className="w-full h-[79vh] md:col-span-4">
             <ConversationList
               conversations={convData?.data?.conversations || []}
               selectedId={selectedConversation?.id}
@@ -129,7 +129,7 @@ const Chat = () => {
 
         {/* Chat Window */}
         {(!isMobile || showChat) && selectedConversation && (
-          <div className="w-full h-[87vh] md:col-span-8">
+          <div className="w-full h-[79vh] md:col-span-8">
             <ChatWindow
               conversation={selectedConversation}
               messages={msgData?.data?.messages ?? []}

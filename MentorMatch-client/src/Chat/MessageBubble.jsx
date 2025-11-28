@@ -29,7 +29,7 @@ export const MessageBubble = ({ message, isOwnMessage, onEdit, onDelete }) => {
           {/* main text  */}
           <div
             className={cn(
-              "rounded-xl px-2 py-2 shadow max-w-[200px] [@media(min-width:460px)]:max-w-[320px]  xl:max-w-[500px]! wrap-break-word",
+              "rounded-xl px-2 py-2 shadow max-w-[200px] !-- [@media(min-width:460px)]:max-w-[320px]--! lg:max-w-[320px] xl:max-w-[500px]! wrap-break-word",
               isOwnMessage
                 ? "bg-primary text-white rounded-br-none"
                 : "bg-muted rounded-bl-none",

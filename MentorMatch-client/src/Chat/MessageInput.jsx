@@ -129,7 +129,7 @@ export const MessageInput = ({ onSendMessage, conversationId, mentorId }) => {
         </div>
       )}
 
-      <div className="w-full flex flex-col-reverse [@media(min-width:460px)]:flex-row  [@media(min-width:460px)]:items-end gap-2  ">
+      <div className="w-full flex flex-col-reverse [@media(min-width:460px)]:flex-row  [@media(min-width:460px)]:items-end md:flex-wrap lg:flex-nowrap gap-2  ">
         <div className="flex items-center">
           <Button variant="outline">
             <ClipboardList className="h-5 w-5 sm:mr-2" />
