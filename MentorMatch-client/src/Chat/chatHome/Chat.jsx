@@ -19,8 +19,8 @@ import { initOnlineStatusListeners } from "@/redux/features/chat/initOnlineStatu
 const Chat = () => {
   const isMobile = useIsMobile();
   const dispatch = useDispatch();
-  const activeRole = auth?.user?.activeRole;
   const auth = useAppSelector((state) => state.auth);
+  const activeRole = auth?.user?.activeRole;
   const { conversationId: urlConversationId } = useParams();
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [showChat, setShowChat] = useState(false);
