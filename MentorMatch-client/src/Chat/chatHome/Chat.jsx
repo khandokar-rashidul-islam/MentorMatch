@@ -1,3 +1,4 @@
+// chat main outlet
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
@@ -18,30 +19,41 @@ import { initOnlineStatusListeners } from "@/redux/features/chat/initOnlineStatu
 const Chat = () => {
   const isMobile = useIsMobile();
   const dispatch = useDispatch();
+  const activeRole = auth?.user?.activeRole;
   const auth = useAppSelector((state) => state.auth);
   const { conversationId: urlConversationId } = useParams();
 
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [showChat, setShowChat] = useState(false);
 
-  // Fetch conversations
-  const { data: convData, isLoading: convLoading } = useGetConversationsQuery();
-
-  /**
-   * Select conversation based on URL param
-   */
+  // 🔥 Fetch conversations based on role (fixes cache issue)
+  const {
+    data: convData,
+    isLoading: convLoading,
+    refetch: refetchConversations,
+  } = useGetConversationsQuery(activeRole, {
+    skip: !activeRole,
+  });
+  // 🔥 When role changes, force refetch
   useEffect(() => {
-    if (!convData?.conversations) return;
+    if (activeRole) {
+      refetchConversations();
+    }
+  }, [activeRole, refetchConversations]);
 
-    const found = convData.conversations.find(
+  // Select conversation based on URL param
+
+  useEffect(() => {
+    if (!convData?.data?.conversations) return;
+
+    let conv = convData.data.conversations.find(
       (c) => c.id === urlConversationId
     );
 
-    if (found) {
-      setSelectedConversation(found);
+    if (conv) {
+      setSelectedConversation(conv);
       if (isMobile) setShowChat(true);
     } else if (urlConversationId) {
-      // URL has an id but data not yet loaded
       setSelectedConversation({ id: urlConversationId, participant: {} });
       if (isMobile) setShowChat(true);
     }
@@ -49,9 +61,7 @@ const Chat = () => {
 
   const conversationId = selectedConversation?.id;
 
-  /**
-   * Fetch messages of selected conversation
-   */
+  // Fetch messages of selected conversation
   const {
     data: msgData,
     isLoading: messageLoading,
@@ -60,9 +70,7 @@ const Chat = () => {
     skip: !conversationId,
   });
 
-  /**
-   * Initialize socket + presence listener
-   */
+  // Initialize socket + presence listener
   useEffect(() => {
     if (!auth.user?._id) return;
 
@@ -84,9 +92,8 @@ const Chat = () => {
     };
   }, [auth.user?._id, dispatch]);
 
-  /**
-   * Join socket room when conversation changes
-   */
+  // Join socket room when conversation changes
+
   useEffect(() => {
     const socket = getSocket();
     if (socket && conversationId) {
@@ -107,26 +114,30 @@ const Chat = () => {
   console.log("messageData:", msgData?.data.messages);
 
   return (
-    <div className="fixed top-20 left-0 right-0 flex items-center justify-center">
-      <div className="w-11/12 h-[87vh] flex border rounded-lg shadow-lg bg-background overflow-hidden">
+    <div className="w-full pt-25 mb-4 flex items-center justify-center">
+      <div className="w-11/12 h-[87vh] grid md:grid-cols-12  border rounded-lg shadow-lg bg-background ">
         {/* Conversation List */}
         {(!isMobile || !showChat) && (
-          <ConversationList
-            conversations={convData?.conversations || []}
-            selectedId={selectedConversation?.id}
-            onSelectConversation={handleSelectConversation}
-            loading={convLoading}
-          />
+          <div className="w-full h-[87vh] md:col-span-4">
+            <ConversationList
+              conversations={convData?.data?.conversations || []}
+              selectedId={selectedConversation?.id}
+              onSelectConversation={handleSelectConversation}
+              loading={convLoading}
+            />
+          </div>
         )}
 
         {/* Chat Window */}
         {(!isMobile || showChat) && selectedConversation && (
-          <ChatWindow
-            conversation={selectedConversation}
-            messages={msgData?.data?.messages ?? []}
-            onBack={isMobile ? handleBackToList : undefined}
-            refetchMessages={refetchMessages}
-          />
+          <div className="w-full h-[87vh] md:col-span-8">
+            <ChatWindow
+              conversation={selectedConversation}
+              messages={msgData?.data?.messages ?? []}
+              onBack={isMobile ? handleBackToList : undefined}
+              refetchMessages={refetchMessages}
+            />
+          </div>
         )}
       </div>
     </div>

@@ -40,8 +40,8 @@ export const ChatHeader = ({ participant, onBack, conversationId }) => {
     : "Offline";
 
   return (
-    <div className="h-14 sm:h-16 border-b border-border px-3 sm:px-6 flex items-center justify-between bg-card shadow-sm shrink-0">
-      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+    <div className="h-14 sm:h-16 border-b border-border px-3 sm:px-6 w-full flex flex-wrap  items-center  justify-between bg-card shadow-sm ">
+      <div className="w-full flex  items-center gap-2 sm:gap-3 flex-1 min-w-0">
         {onBack && (
           <Button
             variant="ghost"

@@ -67,7 +67,7 @@ const TutorDetails = () => {
     );
 
   return (
-    <div className="min-h-screen mt-20 bg-gradient-subtle">
+    <div className="min-h-screen mt-20 bg-gradient-subtle mb-4">
       <main className="w-11/12 mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Breadcrumbs */}
         {/* <div className="mb-4 sm:mb-6">

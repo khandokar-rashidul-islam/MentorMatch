@@ -199,7 +199,7 @@ const {
 
   if (isLoading) return <p>Loading profile...</p>;
   return (
-    <div className="pt-28 w-11/12 mx-auto">
+    <div className="pt-28 w-11/12 mx-auto mb-4">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className=" space-y-6 animate-fade-in"

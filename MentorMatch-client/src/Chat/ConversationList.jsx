@@ -12,8 +12,8 @@ export const ConversationList = ({
 
    console.log("ConversationList conversations:", conversations);
   return (
-    <div className="w-full md:w-80 lg:w-96 bg-chat-sidebar border-r border-border flex flex-col h-full">
-      <div className="p-4 sm:p-6 border-b border-border shrink-0">
+    <div className="w-full  border-r border-border flex flex-col h-full">
+      <div className="p-4 sm:p-6 border-b border-border ">
         <h2 className="text-xl sm:text-2xl font-bold mb-4 text-foreground">
           Messages
         </h2>

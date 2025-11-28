@@ -138,7 +138,7 @@ console.log("messageData:", messages);
         conversationId={conversation?.id}
       />
 
-      <div className="flex-1 min-h-0">
+      <div className="w-full flex-1 min-h-0">
         <MessageList
           messages={messages}
           currentUserId={currentUser}

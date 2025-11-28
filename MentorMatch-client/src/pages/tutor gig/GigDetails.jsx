@@ -52,7 +52,7 @@ const GigDetails = () => {
   console.log("Gig Data:", gig);
   console.log("gigid:",gig.data._id)
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen mb-4 bg-gradient-subtle">
       <main className="w-11/12 mx-auto px-4 md:px-6 lg:px-8 py-6 pt-20">
         {/* === Gig Header === */}
         <div className="mb-8">

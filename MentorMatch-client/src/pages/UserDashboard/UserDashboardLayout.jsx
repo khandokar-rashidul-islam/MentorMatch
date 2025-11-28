@@ -22,8 +22,9 @@ const UserDashboard = () => {
       <Navigate to="/dashboard/learner/all-gigs" replace />
     );
   }
+  console.log(user.activeRole)
 
-   const shouldHideFooter = location.pathname.startsWith("/dashboard/inbox");
+   const shouldHideFooter = location.pathname.startsWith(`/dashboard/${user.activeRole}/inbox`);
 
   return (
     <>

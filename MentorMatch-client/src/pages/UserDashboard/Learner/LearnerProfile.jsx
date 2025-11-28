@@ -158,7 +158,7 @@ const LearnerProfile = () => {
 
 
   return (
-    <div className="w-11/12 mx-auto pt-24 min-h-screen">
+    <div className="w-11/12 mx-auto mb-4 pt-24 min-h-screen">
       <div className="max-w-5xl mx-auto p-4 space-y-6">
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row items-center gap-6 bg-white dark:bg-gray-900 shadow-lg rounded-xl p-6">

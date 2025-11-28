@@ -21,8 +21,9 @@ export const MessageList = ({
   }, [messages]);
 
   return (
-    <ScrollArea className="h-full px-4 py-4" ref={scrollRef}>
-      <div className="space-y-3 pb-4">
+    <ScrollArea className="h-full w-full  px-4 py-4" ref={scrollRef}>
+
+      <div className="w-full space-y-3 pb-4">
         {messages.map((msg) => {
           const isOwn = (msg.sender?._id || msg.senderId) === currentUserId;
 

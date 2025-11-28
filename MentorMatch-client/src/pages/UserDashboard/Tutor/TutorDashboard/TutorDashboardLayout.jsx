@@ -16,7 +16,7 @@ const TutorDashboardLayout = () => {
    }
    
   return (
-    <div className="relative flex gap-2 justify-between  mb-4 min-h-screen w-full">
+    <div className="relative flex gap-2 justify-between  min-h-screen w-full">
       <div className="mb-4 absolute z-10">
         <TutorSidebar collapsed={collapsed} setCollapsed={setCollapsed} />
       </div>

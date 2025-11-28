@@ -148,7 +148,7 @@ const Wallet = () => {
   };
 
   return (
-    <div className="pt-20 w-11/12 mx-auto">
+    <div className="pt-20 w-11/12 mx-auto mb-4">
       <div className="space-y-6">
         {/* Balance Overview */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

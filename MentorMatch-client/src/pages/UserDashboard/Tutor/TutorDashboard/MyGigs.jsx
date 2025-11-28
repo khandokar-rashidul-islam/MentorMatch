@@ -112,7 +112,7 @@ export default function MyGigs() {
   };
 
   return (
-    <div className="pt-20 min-h-screen bg-background space-y-6 w-11/12 mx-auto">
+    <div className="pt-20 min-h-screen mb-4 bg-background space-y-6 w-11/12 mx-auto">
       <Toaster />
       
 

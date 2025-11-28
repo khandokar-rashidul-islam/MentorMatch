@@ -74,7 +74,7 @@ const Notify = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-subtle w-11/12 mx-auto pt-20 ">
+    <div className="min-h-screen bg-gradient-subtle w-11/12 mb-4 mx-auto pt-20 ">
 
       <main className="px-4 py-8">
         <div className="flex items-center justify-between flex-wrap gap-4 mb-8">

@@ -77,7 +77,7 @@ const trendingTopics = [
 const Community = () => {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen py-25 w-11/12 mx-auto">
+    <div className="min-h-screen py-25 w-11/12 mx-auto mb-4">
       <main className="">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main Content */}

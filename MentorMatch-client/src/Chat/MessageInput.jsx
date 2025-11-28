@@ -129,8 +129,8 @@ export const MessageInput = ({ onSendMessage, conversationId, mentorId }) => {
         </div>
       )}
 
-      <div className="w-full  flex items-end gap-2">
-        <div>
+      <div className="w-full flex flex-col-reverse [@media(min-width:460px)]:flex-row  [@media(min-width:460px)]:items-end gap-2  ">
+        <div className="flex items-center">
           <Button variant="outline">
             <ClipboardList className="h-5 w-5 sm:mr-2" />
             <span className="hidden sm:inline">Custom order</span>
@@ -167,37 +167,38 @@ export const MessageInput = ({ onSendMessage, conversationId, mentorId }) => {
           onChange={handleFileSelect}
           className="hidden"
         />
+        <div className="w-full flex justify-between flex-end items-end gap-2 ">
+          {/* MESSAGE INPUT */}
+          {/*-- Textarea expands with content then it breaks need to works */}
+          <div className="flex-1 min-w-0 ">
+            <TextareaAutosize
+              placeholder="Type a message..."
+              value={message}
+              onChange={(e) => {
+                setMessage(e.target.value);
+                handleTyping();
+              }}
+              minRows={1}
+              maxRows={5}
+              onKeyPress={handleKeyPress}
+              rows={1}
+              className={cn(
+                "flex w-full min-w-[130px] max-w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none",
+                "min-h-[44px]"
+              )}
+            />
+          </div>
 
-        {/* MESSAGE INPUT */}
-        {/*-- Textarea expands with content then it breaks need to works */}
-        <div className="flex-1 min-w-0 ">
-          <TextareaAutosize
-            placeholder="Type a message..."
-            value={message}
-            onChange={(e) => {
-              setMessage(e.target.value);
-              handleTyping();
-            }}
-            minRows={1}
-            maxRows={5}
-            onKeyPress={handleKeyPress}
-            rows={1}
-            className={cn(
-              "flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none",
-              "min-h-[44px]"
-            )}
-          />
+          {/* SEND BUTTON */}
+          <Button
+            size="icon"
+            onClick={handleSend}
+            disabled={!message.trim() && selectedFiles.length === 0}
+            className="h-11 w-11 bg-primary hover:bg-primary/90 shadow-md"
+          >
+            <Send className="h-4 w-4" />
+          </Button>
         </div>
-
-        {/* SEND BUTTON */}
-        <Button
-          size="icon"
-          onClick={handleSend}
-          disabled={!message.trim() && selectedFiles.length === 0}
-          className="h-11 w-11 bg-primary hover:bg-primary/90 shadow-md"
-        >
-          <Send className="h-4 w-4" />
-        </Button>
       </div>
     </div>
   );

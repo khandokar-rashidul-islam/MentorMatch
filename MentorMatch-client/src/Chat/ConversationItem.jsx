@@ -15,7 +15,7 @@ export const ConversationItem = ({ conversation, isSelected, onClick }) => {
           " hover:bg-primary-foreground border-l-4 border-l-primary bg-primary/10"
       )}
     >
-      <div className="relative shrink-0">
+      <div className="relative ">
         <Avatar className="h-12 w-12 sm:h-14 sm:w-14 border-2 border-border/50">
           <AvatarImage src={participant.avatar} alt={participant.name} />
           <AvatarFallback className="text-lg font-semibold">
@@ -24,7 +24,7 @@ export const ConversationItem = ({ conversation, isSelected, onClick }) => {
         </Avatar>
 
         {participant.isOnline && (
-          <div className="absolute bottom-0 right-0 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-chat-sidebar shadow-sm" />
+          <div className="absolute bottom-0 right-0 h-3.5 w-3.5 bg-green-500 rounded-full border-2  shadow-sm" />
         )}
       </div>
 
@@ -36,7 +36,7 @@ export const ConversationItem = ({ conversation, isSelected, onClick }) => {
             </h3>
           </div>
 
-          <span className="text-[10px] sm:text-xs text-muted-foreground shrink-0 whitespace-nowrap">
+          <span className="text-[10px] sm:text-xs text-muted-foreground  whitespace-nowrap">
             {formatDistanceToNow(timestamp, { addSuffix: true }).replace(
               "about ",
               ""

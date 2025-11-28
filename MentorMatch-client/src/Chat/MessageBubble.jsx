@@ -20,16 +20,16 @@ export const MessageBubble = ({ message, isOwnMessage, onEdit, onDelete }) => {
   return (
     <div
       className={cn(
-        "flex flex-col animate-in fade-in-0 slide-in-from-bottom-2 duration-300 group",
-        isOwnMessage ? "items-end" : "items-start"
+        "flex flex-col w-full  animate-in fade-in-0 slide-in-from-bottom-2 duration-300 group",
+        isOwnMessage ? "items-end " : "items-start"
       )}
     >
-      <div className={cn("flex flex-col  gap-2", isOwnMessage && "flex-col")}>
-        <div className={cn("flex items-center gap-2",isOwnMessage&&"flex-row-reverse")}>
+      <div className={cn("flex flex-col w-full   gap-2", isOwnMessage && "flex-col")}>
+        <div className={cn("flex items-center w-full  gap-2",isOwnMessage&&"flex-row-reverse")}>
           {/* main text  */}
           <div
             className={cn(
-              "rounded-xl px-2 py-2 shadow",
+              "rounded-xl px-2 py-2 shadow max-w-[200px] [@media(min-width:460px)]:max-w-[320px]  xl:max-w-[500px]! wrap-break-word",
               isOwnMessage
                 ? "bg-primary text-white rounded-br-none"
                 : "bg-muted rounded-bl-none",
