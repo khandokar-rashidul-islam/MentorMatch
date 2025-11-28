@@ -45,6 +45,10 @@ export const chatApi = baseApi.injectEndpoints({
     getConversations: builder.query({
       query: () => "/chat/conversation",
       providesTags: ["Conversations"],
+      transformResponse: (response) => {
+        // backend → sendResponse returns: { success, data: {...} }
+        return response.data;
+      },
     }),
 
     /* ---------------------------------------------------------------------- */

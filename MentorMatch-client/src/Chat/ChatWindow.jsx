@@ -129,7 +129,7 @@ export const ChatWindow = ({ conversation, messages, onBack }) => {
       description: `Deleting message ${messageId}`,
       variant: "destructive",
     });
-
+console.log("messageData:", messages);
   return (
     <div className="flex flex-col h-full w-full bg-background">
       <ChatHeader

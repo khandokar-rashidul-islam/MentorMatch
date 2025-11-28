@@ -141,6 +141,7 @@ const router = createBrowserRouter([
           { path: "mentor-profile", element: <TutorDetails /> },
           { path: "mentor-profile/edit", element: <EditTutorProfile /> },
           { path: "community", element: <Community /> },
+          {path: "inbox",element: <Chat />},
         ],
       },
       //learner
@@ -164,6 +165,7 @@ const router = createBrowserRouter([
           { path: "payment-success", element: <PaymentSucess /> },
           { path: "payment-failed", element: <PaymentFailed /> },
           { path: "community", element: <Community /> },
+          { path: "inbox",element: <Chat />},
         ],
       },
 

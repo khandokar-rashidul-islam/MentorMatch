@@ -111,62 +111,67 @@ export const createOrGetConversation = async (
 
 export const listConversationsForUser = async (
   userId: string,
+  activeRole: "mentor" | "learner",
   query: Record<string, any> = {}
 ) => {
   if (!userId) throw new AppError(httpStatus.BAD_REQUEST, "userId required");
 
-  // Base query: conversations where user is participant
-  const baseQuery = ConversationModel.find({
-    $or: [
-      { learnerId: new ObjectId(userId) },
-      { mentorId: new ObjectId(userId) },
-    ],
-  });
+  // ----------------------------------------
+  // ROLE-BASED FILTERING  ✔
+  // ----------------------------------------
+  const filter =
+    activeRole === "mentor"
+      ? { mentorId: new ObjectId(userId) }
+      : { learnerId: new ObjectId(userId) };
 
-  // Build query with QueryBuilder (search, sort, pagination, fields)
+  // ----------------------------------------
+  // QUERY BUILDER (search/sort/pagination)
+  // ----------------------------------------
+  const baseQuery = ConversationModel.find(filter);
+
   const convsQuery = new QueryBuilder(baseQuery, query)
-    .search(["lastMessage"]) // optional: search by last message
-    .sort() // default sort
-    .paginate() // page & limit
-    .fields(); // select fields (default -__v)
+    .search(["lastMessage"])
+    .sort()
+    .paginate()
+    .fields();
 
   const convs = await convsQuery.modelQuery
     .populate([
       {
         path: "learnerId",
-        select: "email",
+        select: "email learnerProfile",
         populate: {
           path: "learnerProfile",
-          model: "LearnerProfile",
           select: "name profileImage profession",
         },
       },
       {
         path: "mentorId",
-        select: "email",
+        select: "email mentorProfile",
         populate: {
           path: "mentorProfile",
-          model: "MentorProfile",
           select: "name profileImage profession approvalStatus",
         },
       },
     ])
     .lean();
 
-  // Transform for frontend
+  // ----------------------------------------
+  // TRANSFORM FOR FRONTEND INBOX   ✔
+  // ----------------------------------------
   const transformed = convs.map((c: any) => {
-    const isUserLearner = c.learnerId?._id?.toString() === userId;
-    const other = isUserLearner ? c.mentorId : c.learnerId;
-    const otherRole = isUserLearner ? "mentor" : "learner";
+    const other = activeRole === "mentor" ? c.learnerId : c.mentorId;
+
     const name =
       other?.learnerProfile?.name ||
       other?.mentorProfile?.name ||
       other?.email ||
       "Unknown";
+
     const avatar =
       other?.learnerProfile?.profileImage ||
       other?.mentorProfile?.profileImage ||
-      undefined;
+      null;
 
     return {
       id: c._id.toString(),
@@ -174,19 +179,19 @@ export const listConversationsForUser = async (
         id: other._id.toString(),
         name,
         avatar,
-        role: otherRole,
-        isOnline: false, // integrate with socket later
+        role: activeRole === "mentor" ? "learner" : "mentor",
+        isOnline: false, // <-- integrate presence later
       },
       lastMessage: c.lastMessage || "",
       timestamp: c.lastMessageAt || c.updatedAt,
     };
   });
 
-  // Pagination info
   const pagination = await convsQuery.countTotal();
 
   return { conversations: transformed, pagination };
 };
+
 
 /* -------------------------------------------------------------------------- */
 /* Send message                                                                */

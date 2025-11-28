@@ -24,7 +24,7 @@ export const MessageList = ({
     <ScrollArea className="h-full px-4 py-4" ref={scrollRef}>
       <div className="space-y-3 pb-4">
         {messages.map((msg) => {
-          const isOwn = msg.sender._id === currentUserId;
+          const isOwn = (msg.sender?._id || msg.senderId) === currentUserId;
 
           // const showTimestamp =
           //   index === 0 ||

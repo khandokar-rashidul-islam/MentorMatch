@@ -201,6 +201,7 @@ const Unavbar = () => {
         </div>
 
         <div className=" flex items-center gap-2 ">
+          {/* notification link */}
           {role == "mentor" && (
             <Link to={"/dashboard/mentor/notification"}>
               <Button variant="ghost">
@@ -215,7 +216,24 @@ const Unavbar = () => {
               </Button>
             </Link>
           )}
-          <MailIcon size={19} className="mx-1" />
+
+          {/* inbox link */}
+
+          {role == "mentor" && (
+            <Link to={"/dashboard/mentor/inbox"}>
+              <Button variant="ghost">
+                <MailIcon size={19} className="mx-1" />
+              </Button>
+            </Link>
+          )}
+          {role == "learner" && (
+            <Link to={"/dashboard/learner/inbox"}>
+              <Button variant="ghost">
+                <MailIcon size={19} className="mx-1" />
+              </Button>
+            </Link>
+          )}
+
           <ModeToggle />
           {/* dropdown manu */}
           <DropdownMenu>
@@ -245,7 +263,6 @@ const Unavbar = () => {
                   )}
                 </Avatar>
               </DropdownMenuTrigger>
-
             </div>
             {/* dropdown content */}
             <DropdownMenuContent

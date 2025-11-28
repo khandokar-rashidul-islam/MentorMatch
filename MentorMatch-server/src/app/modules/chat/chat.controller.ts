@@ -48,10 +48,11 @@ export const createOrGetConversation = catchAsync(async (req, res) => {
 // ---------------------------
 export const getMyConversations = catchAsync(async (req, res) => {
   const userId = req.user?.id;
-
+  const activeRole = req.user?.activeRole as "mentor" | "learner";
   if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized");
+  if (!activeRole) throw new AppError(httpStatus.BAD_REQUEST, "Invalid role");
 
-  const result = await ChatService.listConversationsForUser(userId);
+  const result = await ChatService.listConversationsForUser(userId, activeRole,req.query);
 
   sendResponse(res, {
     success: true,
