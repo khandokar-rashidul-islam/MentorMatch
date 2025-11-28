@@ -43,12 +43,10 @@ export const chatApi = baseApi.injectEndpoints({
     /* GET MY CONVERSATIONS (Inbox)                                           */
     /* ---------------------------------------------------------------------- */
     getConversations: builder.query({
-      query: () => "/chat/conversation",
+      query: (role) => `/chat/conversation?role=${role}`,
       providesTags: ["Conversations"],
-      transformResponse: (response) => {
-        // backend → sendResponse returns: { success, data: {...} }
-        return response.data;
-      },
+      refetchOnMountOrArgChange: true,
+      refetchOnFocus: true,
     }),
 
     /* ---------------------------------------------------------------------- */
