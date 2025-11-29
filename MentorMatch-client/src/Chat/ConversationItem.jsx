@@ -2,11 +2,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useAppSelector } from "@/redux/hooks";
 
 export const ConversationItem = ({ conversation, isSelected, onClick }) => {
-  const { participant, lastMessage, timestamp, unreadCount } = conversation;
-  console.log(conversation)
 
+  const { participant, lastMessage, timestamp, unreadCount } = conversation;
+  const onlineUsers = useAppSelector((s) => s.presence?.online || {});
+  const userId = participant?.id || participant?._id;
+
+  // Check online status
+  const isOnline = !!onlineUsers[userId]?.isOnline;
+
+  console.log(conversation);
   return (
     <button
       onClick={onClick}
@@ -24,9 +31,11 @@ export const ConversationItem = ({ conversation, isSelected, onClick }) => {
           </AvatarFallback>
         </Avatar>
 
-        {participant.isOnline ? (
-          <div className="absolute bottom-1 right-1 h-2 w-2  bg-green-500 rounded-full border-2  shadow-sm" ></div>
-        ):(<div className="absolute bottom-1 right-1 h-2 w-2 bg-gray-500 rounded-full border-2  shadow-sm" ></div>)}
+        {isOnline ? (
+          <div className="absolute bottom-1 right-1 h-2 w-2  bg-green-500 rounded-full border-2  shadow-sm"></div>
+        ) : (
+          <div className="absolute bottom-1 right-1 h-2 w-2 bg-gray-500 rounded-full border-2  shadow-sm"></div>
+        )}
       </div>
 
       <div className="flex-1 ">
@@ -46,9 +55,7 @@ export const ConversationItem = ({ conversation, isSelected, onClick }) => {
         </div>
 
         <div className="flex items-center justify-between gap-2 ">
-          <p
-            className=" text-xs sm:text-sm text-muted-foreground  truncate line-clamp-1 max-w-[150px] sm:max-w-[200px]"
-          >
+          <p className=" text-xs sm:text-sm text-muted-foreground  truncate line-clamp-1 max-w-[150px] sm:max-w-[200px]">
             {lastMessage || "No messages yet"}
           </p>
 

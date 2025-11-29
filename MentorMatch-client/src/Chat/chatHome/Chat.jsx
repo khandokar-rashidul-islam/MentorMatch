@@ -25,7 +25,7 @@ const Chat = () => {
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [showChat, setShowChat] = useState(false);
 
-  // 🔥 Fetch conversations based on role (fixes cache issue)
+  // Fetch conversations based on role (fixes cache issue)
   const {
     data: convData,
     isLoading: convLoading,
@@ -33,7 +33,7 @@ const Chat = () => {
   } = useGetConversationsQuery(activeRole, {
     skip: !activeRole,
   });
-  // 🔥 When role changes, force refetch
+  //  When role changes, force refetch
   useEffect(() => {
     if (activeRole) {
       refetchConversations();
