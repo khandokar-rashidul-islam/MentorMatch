@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import config from "../../config";
 import { UserModel } from "../user/user.model";
 import { TUserRole } from "../user/user.constant";
+import { ConversationModel, MessageModel } from "./chat.model";
 
 // Extend socket type
 interface AuthenticatedSocket extends DefaultSocket {
@@ -89,12 +90,12 @@ export const initSocket = (io: SocketIOServer) => {
 
     /** ------------------- Messages ------------------- **/
     socket.on("sendMessage", async (data: any) => {
-        // Acknowledge delivery to sender
-        const { conversationId,message } = data;
-        socket.to(conversationId).emit("message-delivered", {
-          conversationId,
-          messageId: message._id,
-        });
+      // Acknowledge delivery to sender
+      const { conversationId, message } = data;
+      socket.to(conversationId).emit("message-delivered", {
+        conversationId,
+        messageId: message._id,
+      });
       // Broadcast new message to room
       io.to(data.conversationId).emit("new-message", data);
     });
@@ -110,6 +111,7 @@ export const initSocket = (io: SocketIOServer) => {
         timestamp: new Date(),
       });
     });
+
 
     /** ------------------- Presence ------------------- **/
     socket.on("presence:request", async () => {

@@ -2,14 +2,14 @@
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { useDispatch } from "react-redux";
+
 
 import { ConversationList } from "../ConversationList";
 import { ChatWindow } from "../ChatWindow";
 
 import { connectSocket, getSocket } from "@/redux/features/chat/socket";
 
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   useGetConversationsQuery,
   useGetMessagesQuery,
@@ -18,7 +18,7 @@ import { initOnlineStatusListeners } from "@/redux/features/chat/initOnlineStatu
 
 const Chat = () => {
   const isMobile = useIsMobile();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const auth = useAppSelector((state) => state.auth);
   const activeRole = auth?.user?.activeRole;
   const { conversationId: urlConversationId } = useParams();

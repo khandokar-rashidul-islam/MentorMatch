@@ -1,58 +1,111 @@
 import { ChatHeader } from "./ChatHeader";
 import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
-import { Toaster, toast } from "../../src/hooks/use-toast";
+import { Toaster } from "@/hooks/use-toast";
 import {
   useSendMessageMutation,
   useMarkAsReadMutation,
+  useEditMessageMutation,
+  useDeleteMessageMutation,
   chatApi,
 } from "@/redux/features/chat/chatApi";
-import { useAppSelector } from "@/redux/hooks";
-import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useEffect, useState } from "react";
 import { getSocket } from "@/redux/features/chat/socket";
 
 export const ChatWindow = ({ conversation, messages, onBack }) => {
   const currentUser = useAppSelector((state) => state.auth.user._id);
+  const conversationId = conversation.id || conversation._id;
+  const socket = getSocket();
+   const dispatch = useAppDispatch();
   const [sendMessage] = useSendMessageMutation();
   const [markAsRead] = useMarkAsReadMutation();
-  const socket = getSocket();
+  const [editMessage] = useEditMessageMutation();
+  const [deleteMessage] = useDeleteMessageMutation();
 
-  const conversationId = conversation.id || conversation._id;
+  const [editingMessage, setEditingMessage] = useState(null);
+  const [editingText, setEditingText] = useState("");
 
-  /** --- 1. Listen for delivered & read events --- */
-  useEffect(() => {
-    if (!socket) return;
 
-    const handleDelivered = ({ messageIds }) => {
-      // Optimistically update cache
+  /** --- 1. Realtime delivered & read events --- */
+useEffect(() => {
+  if (!socket || !conversationId) return;
+
+  const handleEdit = ({ conversationId: convId, message }) => {
+    if (convId !== conversationId) return;
+
+    // Update messages cache
+    dispatch(
       chatApi.util.updateQueryData("getMessages", conversationId, (draft) => {
-        draft.data.messages.forEach((msg) => {
-          if (messageIds.includes(msg._id)) msg.isDelivered = true;
-        });
-      });
-    };
+        draft.data.messages = draft.data.messages.map((m) =>
+          m._id === message._id ? message : m
+        );
+      })
+    );
 
-    const handleRead = ({ messageId }) => {
+    // Update last message in conversation
+    dispatch(
+      chatApi.util.updateQueryData("getConversations", undefined, (draft) => {
+        draft.data = draft.data.map((conv) =>
+          conv._id === convId
+            ? {
+                ...conv,
+                lastMessage: message.text,
+                lastMessageAt: message.editedAt || message.createdAt,
+              }
+            : conv
+        );
+      })
+    );
+  };
+
+  const handleDelete = ({ conversationId: convId, messageId }) => {
+    if (convId !== conversationId) return;
+
+    dispatch(
       chatApi.util.updateQueryData("getMessages", conversationId, (draft) => {
-        draft.data.messages.forEach((msg) => {
-          if (msg._id === messageId) {
-            msg.isRead = true;
-            msg.readAt = new Date().toISOString();
-          }
+        draft.data.messages = draft.data.messages.map((m) =>
+          m._id === messageId
+            ? { ...m, text: "[deleted]", attachments: [], isDeleted: true }
+            : m
+        );
+      })
+    );
+
+    // Update last message if deleted
+    dispatch(
+      chatApi.util.updateQueryData("getConversations", undefined, (draft) => {
+        draft.data = draft.data.map((conv) => {
+          if (conv._id !== convId) return conv;
+          const lastMsg = conv.messages
+            ?.slice()
+            .reverse()
+            .find((m) => !m.isDeleted);
+          return {
+            ...conv,
+            lastMessage: lastMsg?.text || "[deleted]",
+            lastMessageAt:
+              lastMsg?.editedAt ||
+              lastMsg?.createdAt ||
+              new Date().toISOString(),
+          };
         });
-      });
-    };
+      })
+    );
+  };
 
-    socket.on("message:delivered", handleDelivered);
-    socket.on("messages-read", handleRead);
+  socket.on("message-edited", handleEdit);
+  socket.on("message-deleted", handleDelete);
 
-    return () => {
-      socket.off("message:delivered", handleDelivered);
-      socket.off("messages-read", handleRead);
-    };
-  }, [socket, conversationId]);
+  return () => {
+    socket.off("message-edited", handleEdit);
+    socket.off("message-deleted", handleDelete);
+  };
+}, [socket, conversationId, dispatch]);
 
-  /** --- 2. Auto-mark messages as delivered when received --- */
+
+
+  /** --- 2. Auto-mark delivered & read --- */
   useEffect(() => {
     if (!socket || !messages?.length) return;
 
@@ -66,70 +119,63 @@ export const ChatWindow = ({ conversation, messages, onBack }) => {
         messageIds: undelivered,
         receiverId: currentUser,
       });
-
       chatApi.util.updateQueryData("getMessages", conversationId, (draft) => {
         draft.data.messages.forEach((msg) => {
           if (undelivered.includes(msg._id)) msg.isDelivered = true;
         });
       });
     }
-  }, [messages, conversationId, currentUser, socket]);
 
-  /** --- 3. Auto-mark messages as read when they appear --- */
-  useEffect(() => {
-    if (!socket || !messages?.length) return;
-
-    const unreadMessages = messages.filter(
+    const unread = messages.filter(
       (msg) => !msg.isRead && msg.sender._id !== currentUser
     );
-
-    unreadMessages.forEach((msg) => {
-      // Emit socket event
+    unread.forEach((msg) => {
       socket.emit("messages-read", { conversationId, readerId: currentUser });
-
-      // Call backend API
       markAsRead({ conversationId, messageId: msg._id }).catch(console.error);
-
-      // Optimistically update UI
       chatApi.util.updateQueryData("getMessages", conversationId, (draft) => {
-        const messageToUpdate = draft.data.messages.find(
-          (m) => m._id === msg._id
-        );
-        if (messageToUpdate) {
-          messageToUpdate.isRead = true;
-          messageToUpdate.readAt = new Date().toISOString();
+        const m = draft.data.messages.find((x) => x._id === msg._id);
+        if (m) {
+          m.isRead = true;
+          m.readAt = new Date().toISOString();
         }
       });
     });
   }, [messages, conversationId, currentUser, socket, markAsRead]);
 
-  /** --- 4. Send message --- */
-  const handleSend = async (text, files, conversationId, mentorId) => {
-    try {
-      await sendMessage({ conversationId, mentorId, text, files }).unwrap();
-    } catch (err) {
-      console.error("Send message failed:", err);
-      toast({
-        title: "Send failed",
-        description: "Message not sent",
-        variant: "destructive",
+  /** --- 3. Send / Edit message --- */
+  const handleSendMessage = (text, files) => {
+    if (editingMessage) {
+      editMessage({
+        messageId: editingMessage._id,
+        text,
+        attachments: files,
+        conversationId,
       });
+      setEditingMessage(null);
+      setEditingText("");
+    } else {
+      sendMessage({
+        conversationId,
+        mentorId: conversation?.participant?._id,
+        text,
+        files,
+      }).catch(console.error);
     }
   };
 
-  const handleEditMessage = (messageId) =>
-    toast({
-      title: "Edit message",
-      description: `Editing message ${messageId}`,
-    });
+  const handleEditClick = (message) => {
+    if (message.isDeleted) return;
+    setEditingMessage(message);
+    setEditingText(message.text);
+  };
 
-  const handleDeleteMessage = (messageId) =>
-    toast({
-      title: "Delete message",
-      description: `Deleting message ${messageId}`,
-      variant: "destructive",
-    });
-console.log("messageData:", messages);
+  const handleDeleteClick = (messageId) => {
+    deleteMessage({ messageId, conversationId }).catch(console.error);
+  };
+
+
+
+
   return (
     <div className="flex flex-col h-full w-full bg-background">
       <ChatHeader
@@ -137,20 +183,22 @@ console.log("messageData:", messages);
         onBack={onBack}
         conversationId={conversation?.id}
       />
-
       <div className="w-full flex-1 min-h-0">
         <MessageList
           messages={messages}
           currentUserId={currentUser}
-          onEditMessage={handleEditMessage}
-          onDeleteMessage={handleDeleteMessage}
+          onEdit={handleEditClick}
+          onDelete={handleDeleteClick}
         />
       </div>
-
       <MessageInput
         conversationId={conversation?.id}
         mentorId={conversation?.participant?._id}
-        onSendMessage={handleSend}
+        onSendMessage={handleSendMessage}
+        editingMessage={editingMessage}
+        editingText={editingText}
+        setEditingText={setEditingText}
+        cancelEdit={() => setEditingMessage(null)}
       />
       <Toaster />
     </div>

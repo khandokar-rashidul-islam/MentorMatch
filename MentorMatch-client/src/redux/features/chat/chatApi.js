@@ -1,7 +1,6 @@
 import { baseApi } from "@/redux/api/baseApi";
 import { getSocket } from "./socket";
 
-
 // Utility to convert File[] → FormData for uploading attachments
 const buildFormData = ({ conversationId, mentorId, text, files }) => {
   const formData = new FormData();
@@ -210,6 +209,209 @@ export const chatApi = baseApi.injectEndpoints({
         }
       },
     }),
+
+    /* ---------------------------------------------------------------------- */
+    /* Delete message                                                          */
+    /* ---------------------------------------------------------------------- */
+    deleteMessage: builder.mutation({
+      query: ({ messageId }) => ({
+        url: `/chat/message/delete/${messageId}`,
+        method: "DELETE",
+      }),
+
+      async onQueryStarted(
+        { messageId, conversationId },
+        { dispatch, queryFulfilled }
+      ) {
+        // Optimistic update → mark message as deleted locally
+        const patch = dispatch(
+          chatApi.util.updateQueryData(
+            "getMessages",
+            conversationId,
+            (draft) => {
+              if (!draft?.data?.messages) return;
+              draft.data.messages = draft.data.messages.map((m) =>
+                m._id === messageId
+                  ? {
+                      ...m,
+                      text: "[deleted]",
+                      attachments: [],
+                      isDeleted: true,
+                    }
+                  : m
+              );
+            }
+          )
+        );
+
+        const convPatch = dispatch(
+          chatApi.util.updateQueryData(
+            "getConversations",
+            undefined,
+            (draft) => {
+              if (!draft?.data) return;
+              draft.data = draft.data.map((conv) =>
+                conv._id === conversationId
+                  ? {
+                      ...conv,
+                      lastMessage: "[deleted]",
+                      lastMessageAt: new Date().toISOString(),
+                    }
+                  : conv
+              );
+            }
+          )
+        );
+
+        try {
+          const { data } = await queryFulfilled;
+
+          // Update messages with server response
+          dispatch(
+            chatApi.util.updateQueryData(
+              "getMessages",
+              conversationId,
+              (draft) => {
+                if (!draft?.data?.messages) return;
+                draft.data.messages = draft.data.messages.map((m) =>
+                  m._id === messageId ? data.data : m
+                );
+              }
+            )
+          );
+
+          // Update last message based on latest non-deleted message
+          dispatch(
+            chatApi.util.updateQueryData(
+              "getConversations",
+              undefined,
+              (draft) => {
+                if (!draft?.data) return;
+                draft.data = draft.data.map((conv) => {
+                  if (conv._id !== conversationId) return conv;
+                  const messages = conv.messages || [];
+                  const lastMsg = messages.reverse().find((m) => !m.isDeleted);
+                  return {
+                    ...conv,
+                    lastMessage: lastMsg?.text || "[deleted]",
+                    lastMessageAt:
+                      lastMsg?.editedAt ||
+                      lastMsg?.createdAt ||
+                      new Date().toISOString(),
+                  };
+                });
+              }
+            )
+          );
+        } catch (err) {
+          console.error("Delete failed", err);
+          patch.undo();
+          convPatch.undo();
+        }
+      },
+    }),
+
+    /* ---------------------------------------------------------------------- */
+    /* Edit message                                                            */
+    /* ---------------------------------------------------------------------- */
+    editMessage: builder.mutation({
+      query: ({ messageId, text, attachments }) => ({
+        url: `/chat/message/edit/${messageId}`,
+        method: "PATCH",
+        body: { text, attachments },
+      }),
+
+      async onQueryStarted(
+        { messageId, text, attachments, conversationId },
+        { dispatch, queryFulfilled }
+      ) {
+        // Optimistic update → update message locally
+        const patch = dispatch(
+          chatApi.util.updateQueryData(
+            "getMessages",
+            conversationId,
+            (draft) => {
+              if (!draft?.data?.messages) return;
+              draft.data.messages = draft.data.messages.map((m) =>
+                m._id === messageId
+                  ? {
+                      ...m,
+                      text,
+                      attachments,
+                      editedAt: new Date().toISOString(),
+                    }
+                  : m
+              );
+            }
+          )
+        );
+
+        const convPatch = dispatch(
+          chatApi.util.updateQueryData(
+            "getConversations",
+            undefined,
+            (draft) => {
+              if (!draft?.data) return;
+              draft.data = draft.data.map((conv) =>
+                conv._id === conversationId
+                  ? {
+                      ...conv,
+                      lastMessage: text,
+                      lastMessageAt: new Date().toISOString(),
+                    }
+                  : conv
+              );
+            }
+          )
+        );
+
+        try {
+          const { data } = await queryFulfilled;
+
+          // Replace message with server response
+          dispatch(
+            chatApi.util.updateQueryData(
+              "getMessages",
+              conversationId,
+              (draft) => {
+                if (!draft?.data?.messages) return;
+                draft.data.messages = draft.data.messages.map((m) =>
+                  m._id === messageId ? data.data : m
+                );
+              }
+            )
+          );
+
+          // Update last message in conversation
+          dispatch(
+            chatApi.util.updateQueryData(
+              "getConversations",
+              undefined,
+              (draft) => {
+                if (!draft?.data) return;
+                draft.data = draft.data.map((conv) => {
+                  if (conv._id !== conversationId) return conv;
+                  const messages = conv.messages || [];
+                  const lastMsg = messages.reverse().find((m) => !m.isDeleted);
+                  return {
+                    ...conv,
+                    lastMessage: lastMsg?.text || "[deleted]",
+                    lastMessageAt:
+                      lastMsg?.editedAt ||
+                      lastMsg?.createdAt ||
+                      new Date().toISOString(),
+                  };
+                });
+              }
+            )
+          );
+        } catch (err) {
+          console.error("Edit failed", err);
+          patch.undo();
+          convPatch.undo();
+        }
+      },
+    }),
   }),
 });
 
@@ -219,4 +421,6 @@ export const {
   useGetMessagesQuery,
   useSendMessageMutation,
   useMarkAsReadMutation,
+  useDeleteMessageMutation,
+  useEditMessageMutation,
 } = chatApi;

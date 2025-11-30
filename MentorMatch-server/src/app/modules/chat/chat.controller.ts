@@ -191,9 +191,13 @@ export const editMessage = catchAsync(async (req, res) => {
   if (!updated) {
     throw new AppError(httpStatus.NOT_FOUND, "Message not found");
   }
-  // Emit socket edit event
+ 
+  // Emit socket edit event (FIXED PAYLOAD)
   const io = req.app.get("io");
-  io.to(updated.conversation.toString()).emit("message-edited", updated);
+  io.to(updated.conversation.toString()).emit("message-edited", {
+    conversationId: updated.conversation.toString(),
+    message: updated,
+  });
 
   sendResponse(res, {
     success: true,
@@ -202,6 +206,7 @@ export const editMessage = catchAsync(async (req, res) => {
     data: updated,
   });
 });
+
 
 // ---------------------------
 // Delete message (Soft Delete)
@@ -214,16 +219,18 @@ export const deleteMessage = catchAsync(async (req, res) => {
     throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized");
   }
 
-  // Service handles: check if message.senderId === userId
   const deleted = await ChatService.deleteMessage(messageId, userId);
 
   if (!deleted) {
     throw new AppError(httpStatus.NOT_FOUND, "Message not found");
   }
 
-  // Emit socket delete event
+  // Emit socket delete event (FIXED PAYLOAD)
   const io = req.app.get("io");
-  io.to(deleted.conversation.toString()).emit("message-deleted", deleted);
+  io.to(deleted.conversation.toString()).emit("message-deleted", {
+    conversationId: deleted.conversation.toString(),
+    messageId: deleted._id.toString(),
+  });
 
   sendResponse(res, {
     success: true,
@@ -232,6 +239,7 @@ export const deleteMessage = catchAsync(async (req, res) => {
     data: deleted,
   });
 });
+
 
 // ---------------------------
 // Export

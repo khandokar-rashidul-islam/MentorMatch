@@ -5,8 +5,8 @@ import { useEffect, useRef } from "react";
 export const MessageList = ({
   messages,
   currentUserId,
-  onEditMessage,
-  onDeleteMessage,
+  onEdit,
+  onDelete,
 }) => {
   const scrollRef = useRef(null);
 
@@ -37,8 +37,8 @@ export const MessageList = ({
               key={msg._id}
               message={msg}
               isOwnMessage={isOwn}
-              onEdit={onEditMessage}
-              onDelete={onDeleteMessage}
+              onEdit={onEdit}
+              onDelete={onDelete}
             />
           );
         })}
