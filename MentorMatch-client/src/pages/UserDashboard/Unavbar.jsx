@@ -201,6 +201,9 @@ const Unavbar = () => {
         </div>
 
         <div className=" flex items-center gap-2 ">
+          {
+            role=="mentor"?(<p className="text-primary">Mentor</p>):(<p className="text-primary">Learner</p>)
+          }
           {/* notification link */}
           {role == "mentor" && (
             <Link to={"/dashboard/mentor/notification"}>
