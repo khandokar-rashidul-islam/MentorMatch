@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { getSocket } from "@/redux/features/chat/socket";
 import { useAppSelector } from "@/redux/hooks";
 import EmojiPicker from "emoji-picker-react";
-import { ClipboardList, Paperclip, Send, Smile, X } from "lucide-react";
+import { ClipboardList, FileText, Paperclip, Send, Smile, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
