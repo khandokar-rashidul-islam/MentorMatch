@@ -94,11 +94,11 @@ const Unavbar = () => {
         path: "/dashboard/learner/community",
         icon: <MessageSquareText size={16} />,
       },
-      {
-        label: "bookmarks",
-        path: "/dashboard/learner/bookmarks",
-        icon: <BookMarked size={16} />,
-      },
+      // {
+      //   label: "bookmarks",
+      //   path: "/dashboard/learner/bookmarks",
+      //   icon: <BookMarked size={16} />,
+      // },
     ],
     mentor: [
       {

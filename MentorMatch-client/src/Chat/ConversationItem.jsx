@@ -61,7 +61,7 @@ export const ConversationItem = ({ conversation, isSelected, onClick }) => {
           </p>
 
           {unreadCount > 0 && (
-            <Badge className="bg-primary text-primary-foreground h-5 min-w-5 flex items-center justify-center rounded-full px-1.5 text-xs font-semibold shadow-sm">
+            <Badge className="bg-primary text-primary-foreground dark:text-black p-0 w-3 h-3  flex items-center justify-center rounded-full  text-[9px] font-bold shadow-sm">
               {unreadCount}
             </Badge>
           )}
