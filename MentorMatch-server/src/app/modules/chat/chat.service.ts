@@ -157,7 +157,36 @@ export const listConversationsForUser = async (
     .lean();
 
   // ----------------------------------------
-  // TRANSFORM FOR FRONTEND INBOX   ✔
+  // UNREAD MESSAGE COUNTS  
+  // ----------------------------------------
+
+  const conversationIds = convs.map((c: any) => c._id);
+
+  const unreadCounts = await MessageModel.aggregate([
+    {
+      $match: {
+        conversation: { $in: conversationIds },
+        isRead: false,
+        sender: { $ne: new ObjectId(userId) }, // not my own messages
+      },
+    },
+    {
+      $group: {
+        _id: "$conversation",
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  // convert unreadCounts array → map for faster lookup
+  const unreadMap: Record<string, number> = {};
+  unreadCounts.forEach((u) => {
+    unreadMap[u._id.toString()] = u.count;
+  });
+
+
+  // ----------------------------------------
+  // TRANSFORM FOR FRONTEND INBOX   
   // ----------------------------------------
   const transformed = convs.map((c: any) => {
     const other = activeRole === "mentor" ? c.learnerId : c.mentorId;
@@ -180,10 +209,11 @@ export const listConversationsForUser = async (
         name,
         avatar,
         role: activeRole === "mentor" ? "learner" : "mentor",
-        isOnline: false, // <-- integrate presence later
+        isOnline: false,
       },
       lastMessage: c.lastMessage || "",
       timestamp: c.lastMessageAt || c.updatedAt,
+      unreadCount: unreadMap[c._id.toString()] || 0,
     };
   });
 

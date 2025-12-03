@@ -7,6 +7,7 @@ import { useAppSelector } from "@/redux/hooks";
 export const ConversationItem = ({ conversation, isSelected, onClick }) => {
 
   const { participant, lastMessage, timestamp, unreadCount } = conversation;
+
   const onlineUsers = useAppSelector((s) => s.presence?.online || {});
   const userId = participant?.id || participant?._id;
 
@@ -34,7 +35,7 @@ export const ConversationItem = ({ conversation, isSelected, onClick }) => {
         {isOnline ? (
           <div className="absolute bottom-1 right-1 h-2 w-2  bg-green-500 rounded-full border-2  shadow-sm"></div>
         ) : (
-          <div className="absolute bottom-1 right-1 h-2 w-2 bg-gray-500 rounded-full border-2  shadow-sm"></div>
+          <div className="absolute bottom-1 right-1 h-2 w-2 bg-transparent rounded-full shadow-sm"></div>
         )}
       </div>
 
