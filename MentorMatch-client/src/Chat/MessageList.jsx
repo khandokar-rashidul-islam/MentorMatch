@@ -2,12 +2,7 @@ import { MessageBubble } from "./MessageBubble";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useRef } from "react";
 
-export const MessageList = ({
-  messages,
-  currentUserId,
-  onEdit,
-  onDelete,
-}) => {
+export const MessageList = ({ messages, currentUserId, onEdit, onDelete }) => {
   const scrollRef = useRef(null);
 
   // AUTO SCROLL TO BOTTOM WHEN MESSAGES CHANGE
@@ -22,7 +17,6 @@ export const MessageList = ({
 
   return (
     <ScrollArea className="h-full w-full  px-4 py-4" ref={scrollRef}>
-
       <div className="w-full space-y-3 pb-4">
         {messages.map((msg) => {
           const isOwn = (msg.sender?._id || msg.senderId) === currentUserId;

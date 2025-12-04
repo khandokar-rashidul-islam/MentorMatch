@@ -52,7 +52,11 @@ export const getMyConversations = catchAsync(async (req, res) => {
   if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized");
   if (!activeRole) throw new AppError(httpStatus.BAD_REQUEST, "Invalid role");
 
-  const result = await ChatService.listConversationsForUser(userId, activeRole,req.query);
+  const result = await ChatService.listConversationsForUser(
+    userId,
+    activeRole,
+    req.query
+  );
 
   sendResponse(res, {
     success: true,
@@ -71,7 +75,7 @@ export const sendMessage = catchAsync(async (req, res) => {
 
   if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized");
   if (!activeRole) throw new AppError(httpStatus.BAD_REQUEST, "Invalid role");
-   const io = req.app.get("io");
+  const io = req.app.get("io");
 
   const payload: any = {
     conversationId: req.body.conversationId,
@@ -191,7 +195,7 @@ export const editMessage = catchAsync(async (req, res) => {
   if (!updated) {
     throw new AppError(httpStatus.NOT_FOUND, "Message not found");
   }
- 
+
   // Emit socket edit event (FIXED PAYLOAD)
   const io = req.app.get("io");
   io.to(updated.conversation.toString()).emit("message-edited", {
@@ -206,7 +210,6 @@ export const editMessage = catchAsync(async (req, res) => {
     data: updated,
   });
 });
-
 
 // ---------------------------
 // Delete message (Soft Delete)
@@ -239,7 +242,6 @@ export const deleteMessage = catchAsync(async (req, res) => {
     data: deleted,
   });
 });
-
 
 // ---------------------------
 // Export

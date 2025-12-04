@@ -17,7 +17,7 @@ export const ChatWindow = ({ conversation, messages, onBack }) => {
   const currentUser = useAppSelector((state) => state.auth.user._id);
   const conversationId = conversation.id || conversation._id;
   const socket = getSocket();
-   const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const [sendMessage] = useSendMessageMutation();
   const [markAsRead] = useMarkAsReadMutation();
   const [editMessage] = useEditMessageMutation();
@@ -26,84 +26,81 @@ export const ChatWindow = ({ conversation, messages, onBack }) => {
   const [editingMessage, setEditingMessage] = useState(null);
   const [editingText, setEditingText] = useState("");
 
-
   /** --- 1. Realtime delivered & read events --- */
-useEffect(() => {
-  if (!socket || !conversationId) return;
+  useEffect(() => {
+    if (!socket || !conversationId) return;
 
-  const handleEdit = ({ conversationId: convId, message }) => {
-    if (convId !== conversationId) return;
+    const handleEdit = ({ conversationId: convId, message }) => {
+      if (convId !== conversationId) return;
 
-    // Update messages cache
-    dispatch(
-      chatApi.util.updateQueryData("getMessages", conversationId, (draft) => {
-        draft.data.messages = draft.data.messages.map((m) =>
-          m._id === message._id ? message : m
-        );
-      })
-    );
+      // Update messages cache
+      dispatch(
+        chatApi.util.updateQueryData("getMessages", conversationId, (draft) => {
+          draft.data.messages = draft.data.messages.map((m) =>
+            m._id === message._id ? message : m
+          );
+        })
+      );
 
-    // Update last message in conversation
-    dispatch(
-      chatApi.util.updateQueryData("getConversations", undefined, (draft) => {
-        draft.data = draft.data.map((conv) =>
-          conv._id === convId
-            ? {
-                ...conv,
-                lastMessage: message.text,
-                lastMessageAt: message.editedAt || message.createdAt,
-              }
-            : conv
-        );
-      })
-    );
-  };
+      // Update last message in conversation
+      dispatch(
+        chatApi.util.updateQueryData("getConversations", undefined, (draft) => {
+          draft.data = draft.data.map((conv) =>
+            conv._id === convId
+              ? {
+                  ...conv,
+                  lastMessage: message.text,
+                  lastMessageAt: message.editedAt || message.createdAt,
+                }
+              : conv
+          );
+        })
+      );
+    };
 
-  const handleDelete = ({ conversationId: convId, messageId }) => {
-    if (convId !== conversationId) return;
+    const handleDelete = ({ conversationId: convId, messageId }) => {
+      if (convId !== conversationId) return;
 
-    dispatch(
-      chatApi.util.updateQueryData("getMessages", conversationId, (draft) => {
-        draft.data.messages = draft.data.messages.map((m) =>
-          m._id === messageId
-            ? { ...m, text: "[deleted]", attachments: [], isDeleted: true }
-            : m
-        );
-      })
-    );
+      dispatch(
+        chatApi.util.updateQueryData("getMessages", conversationId, (draft) => {
+          draft.data.messages = draft.data.messages.map((m) =>
+            m._id === messageId
+              ? { ...m, text: "[deleted]", attachments: [], isDeleted: true }
+              : m
+          );
+        })
+      );
 
-    // Update last message if deleted
-    dispatch(
-      chatApi.util.updateQueryData("getConversations", undefined, (draft) => {
-        draft.data = draft.data.map((conv) => {
-          if (conv._id !== convId) return conv;
-          const lastMsg = conv.messages
-            ?.slice()
-            .reverse()
-            .find((m) => !m.isDeleted);
-          return {
-            ...conv,
-            lastMessage: lastMsg?.text || "[deleted]",
-            lastMessageAt:
-              lastMsg?.editedAt ||
-              lastMsg?.createdAt ||
-              new Date().toISOString(),
-          };
-        });
-      })
-    );
-  };
+      // Update last message if deleted
+      dispatch(
+        chatApi.util.updateQueryData("getConversations", undefined, (draft) => {
+          draft.data = draft.data.map((conv) => {
+            if (conv._id !== convId) return conv;
+            const lastMsg = conv.messages
+              ?.slice()
+              .reverse()
+              .find((m) => !m.isDeleted);
+            return {
+              ...conv,
+              lastMessage: lastMsg?.text || "[deleted]",
+              lastMessageAt:
+                lastMsg?.editedAt ||
+                lastMsg?.createdAt ||
+                new Date().toISOString(),
+            };
+          });
+        })
+      );
+    };
 
-  socket.on("message-edited", handleEdit);
-  socket.on("message-deleted", handleDelete);
+    socket.on("message-edited", handleEdit);
+    socket.on("message-deleted", handleDelete);
 
-  return () => {
-    socket.off("message-edited", handleEdit);
-    socket.off("message-deleted", handleDelete);
-  };
-}, [socket, conversationId, dispatch]);
-
-
+    return () => {
+      socket.off("message-edited", handleEdit);
+      socket.off("message-deleted", handleDelete);
+    };
+  }, [socket, conversationId, dispatch]);
 
   /** --- 2. Auto-mark delivered & read --- */
   useEffect(() => {
@@ -172,9 +169,6 @@ useEffect(() => {
   const handleDeleteClick = (messageId) => {
     deleteMessage({ messageId, conversationId }).catch(console.error);
   };
-
-
-
 
   return (
     <div className="flex flex-col h-full w-full bg-background">

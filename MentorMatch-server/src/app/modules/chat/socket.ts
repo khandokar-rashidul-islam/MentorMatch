@@ -112,7 +112,6 @@ export const initSocket = (io: SocketIOServer) => {
       });
     });
 
-
     /** ------------------- Presence ------------------- **/
     socket.on("presence:request", async () => {
       const snapshot = await Promise.all(

@@ -3,7 +3,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
-
 import { ConversationList } from "../ConversationList";
 import { ChatWindow } from "../ChatWindow";
 

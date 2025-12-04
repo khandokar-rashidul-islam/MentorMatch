@@ -1,10 +1,21 @@
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { getSocket } from "@/redux/features/chat/socket";
 import { useAppSelector } from "@/redux/hooks";
 import EmojiPicker from "emoji-picker-react";
-import { ClipboardList, FileText, Paperclip, Send, Smile, X } from "lucide-react";
+import {
+  ClipboardList,
+  FileText,
+  Paperclip,
+  Send,
+  Smile,
+  X,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
@@ -107,7 +118,10 @@ export const MessageInput = ({
       {editingMessage && (
         <div className="flex items-center justify-between mb-2 px-3 py-1 bg-muted-foreground/10 rounded-sm text-sm text-muted-foreground">
           Editing message...
-          <button onClick={cancelEdit} className="font-bold hover:bg-muted-foreground/20 px-2 py-1 rounded-sm">
+          <button
+            onClick={cancelEdit}
+            className="font-bold hover:bg-muted-foreground/20 px-2 py-1 rounded-sm"
+          >
             Cencel
           </button>
         </div>

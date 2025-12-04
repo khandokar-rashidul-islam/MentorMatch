@@ -44,8 +44,39 @@ export const chatApi = baseApi.injectEndpoints({
     getConversations: builder.query({
       query: (role) => `/chat/conversation?role=${role}`,
       providesTags: ["Conversations"],
-      refetchOnMountOrArgChange: true,
-      refetchOnFocus: true,
+      async onCacheEntryAdded(
+        arg,
+        { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
+      ) {
+        await cacheDataLoaded;
+        const socket = getSocket();
+        if (!socket) return;
+
+        const handleIncrementUnread = ({ conversationId, incrementBy }) => {
+          updateCachedData((draft) => {
+            const conv = draft.data?.conversations?.find(
+              (c) => c.id === conversationId
+            );
+            if (conv) conv.unreadCount = (conv.unreadCount || 0) + incrementBy;
+          });
+        };
+
+        const handleResetUnread = ({ conversationId }) => {
+          updateCachedData((draft) => {
+            const conv = draft.data?.conversations?.find(
+              (c) => c.id === conversationId
+            );
+            if (conv) conv.unreadCount = 0;
+          });
+        };
+
+        socket.on("increment-unread", handleIncrementUnread);
+        socket.on("reset-unread", handleResetUnread);
+
+        await cacheEntryRemoved;
+        socket.off("increment-unread", handleIncrementUnread);
+        socket.off("reset-unread", handleResetUnread);
+      },
     }),
 
     /* ---------------------------------------------------------------------- */
