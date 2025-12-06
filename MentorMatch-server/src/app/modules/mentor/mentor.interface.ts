@@ -46,17 +46,23 @@ export interface IMentorProfileExtra {
     instant?: {
       price: number;
       description: string;
+      durationSessions: number;
+      durationPerSessionMinutes: number;
       features: string[];
     };
     weekly?: {
       basic?: {
         price: number;
         description: string;
+        durationSessions: number;
+        durationPerSessionMinutes: number;
         features: string[];
       };
       intensive?: {
         price: number;
         description: string;
+        durationSessions: number;
+        durationPerSessionMinutes: number;
         features: string[];
       };
     };
@@ -64,16 +70,22 @@ export interface IMentorProfileExtra {
       standard?: {
         price: number;
         description: string;
+        durationSessions: number;
+        durationPerSessionMinutes: number;
         features: string[];
       };
       premium?: {
         price: number;
         description: string;
+        durationSessions: number;
+        durationPerSessionMinutes: number;
         features: string[];
       };
       elite?: {
         price: number;
         description: string;
+        durationSessions: number;
+        durationPerSessionMinutes: number;
         features: string[];
       };
     };

@@ -58,7 +58,7 @@ export const mentorEditSchema = mentorProfileSchema.partial().extend({
     .array(
       z.object({
         day: z.string(),
-         time: z.string()
+        time: z.string(),
       })
     )
     .optional(),
@@ -68,6 +68,8 @@ export const mentorEditSchema = mentorProfileSchema.partial().extend({
         .object({
           price: z.number(),
           description: z.string(),
+          durationSessions: z.number(),
+          durationPerSessionMinutes: z.number(),
           features: z.array(z.string()),
         })
         .optional(),
@@ -77,6 +79,8 @@ export const mentorEditSchema = mentorProfileSchema.partial().extend({
             .object({
               price: z.number(),
               description: z.string(),
+              durationSessions: z.number(),
+              durationPerSessionMinutes: z.number(),
               features: z.array(z.string()),
             })
             .optional(),
@@ -84,6 +88,8 @@ export const mentorEditSchema = mentorProfileSchema.partial().extend({
             .object({
               price: z.number(),
               description: z.string(),
+              durationSessions: z.number(),
+              durationPerSessionMinutes: z.number(),
               features: z.array(z.string()),
             })
             .optional(),
@@ -95,6 +101,8 @@ export const mentorEditSchema = mentorProfileSchema.partial().extend({
             .object({
               price: z.number(),
               description: z.string(),
+              durationSessions: z.number(),
+              durationPerSessionMinutes: z.number(),
               features: z.array(z.string()),
             })
             .optional(),
@@ -102,6 +110,8 @@ export const mentorEditSchema = mentorProfileSchema.partial().extend({
             .object({
               price: z.number(),
               description: z.string(),
+              durationSessions: z.number(),
+              durationPerSessionMinutes: z.number(),
               features: z.array(z.string()),
             })
             .optional(),
@@ -109,6 +119,8 @@ export const mentorEditSchema = mentorProfileSchema.partial().extend({
             .object({
               price: z.number(),
               description: z.string(),
+              durationSessions: z.number(),
+              durationPerSessionMinutes: z.number(),
               features: z.array(z.string()),
             })
             .optional(),
@@ -125,8 +137,6 @@ export const mentorEditSchema = mentorProfileSchema.partial().extend({
     )
     .optional(),
 });
-
-
 
 //*gig related validation schemas
 
@@ -211,4 +221,3 @@ export const updateGigSchema = z.object({
       .optional(),
   }),
 });
-

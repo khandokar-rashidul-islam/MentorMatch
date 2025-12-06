@@ -6,8 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Calendar, Users, CheckCircle, Star } from "lucide-react";
 import PlanModal from "./PlanModal";
 
-
-const ServicePlans = ({ plans,gigId }) => {
+const ServicePlans = ({ plans, gigId }) => {
   const instant = plans?.instant;
   const weekly_basic = plans?.weekly.basic;
   const weekly_intensive = plans?.weekly.intensive;
@@ -73,6 +72,10 @@ const ServicePlans = ({ plans,gigId }) => {
                       <p className="text-xs sm:text-sm text-muted-foreground">
                         {instant?.description}
                       </p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
+                        {instant?.durationSessions} sessions •{" "}
+                        {instant?.durationPerSessionMinutes} minutes session
+                      </p>
                       <p className="text-2xl font-bold text-primary">
                         {instant?.price} taka
                       </p>
@@ -100,10 +103,15 @@ const ServicePlans = ({ plans,gigId }) => {
                         size="sm"
                         onClick={() =>
                           handleSelectPlan({
+                            gigId,
                             title: "Instant Session",
+                            type: "instant",
+                            packageName: null,
                             price: instant?.price,
+                            durationSessions: instant?.durationSessions,
+                            durationPerSessionMinutes:
+                              instant?.durationPerSessionMinutes,
                             features: instant?.features,
-                            type:'instant'
                           })
                         }
                       >
@@ -139,7 +147,15 @@ const ServicePlans = ({ plans,gigId }) => {
                   </h4>
                   {/* <p className="text-xs  text-muted-foreground mb-3 sm:mb-4">
                       {plan.sessions} <br />• {plan.duration}</p> */}
-
+                  <div>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {weekly_basic?.description}
+                    </p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {weekly_basic?.durationSessions} sessions •{" "}
+                      {weekly_basic?.durationPerSessionMinutes} minutes session
+                    </p>
+                  </div>
                   <div className="mb-3 sm:mb-4">
                     <div className="flex items-baseline flex-wrap gap-2">
                       <span className="text-2xl sm:text-3xl font-bold text-primary">
@@ -172,11 +188,15 @@ const ServicePlans = ({ plans,gigId }) => {
                     size="sm"
                     onClick={() =>
                       handleSelectPlan({
+                        gigId,
                         title: "Weekly Basic",
+                        type: "weekly",
+                        packageName: "basic",
                         price: weekly_basic?.price,
+                        durationSessions: weekly_basic?.durationSessions,
+                        durationPerSessionMinutes:
+                          weekly_basic?.durationPerSessionMinutes,
                         features: weekly_basic?.features,
-                        type:'weekly',
-                        package:'basic'
                       })
                     }
                   >
@@ -204,7 +224,16 @@ const ServicePlans = ({ plans,gigId }) => {
                   </h4>
                   {/* <p className="text-xs  text-muted-foreground mb-3 sm:mb-4">
                       {plan.sessions} <br />• {plan.duration}</p> */}
-
+                  <div>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {weekly_intensive?.description}
+                    </p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {weekly_intensive?.durationSessions} sessions •{" "}
+                      {weekly_intensive?.durationPerSessionMinutes} minutes
+                      session
+                    </p>
+                  </div>
                   <div className="mb-3 sm:mb-4">
                     <div className="flex items-baseline flex-wrap gap-2">
                       <span className="text-2xl sm:text-3xl font-bold text-primary">
@@ -237,11 +266,15 @@ const ServicePlans = ({ plans,gigId }) => {
                     size="sm"
                     onClick={() =>
                       handleSelectPlan({
+                        gigId,
                         title: "Weekly Intensive",
+                        type: "weekly",
+                        packageName: "intensive",
                         price: weekly_intensive?.price,
+                        durationSessions: weekly_intensive?.durationSessions,
+                        durationPerSessionMinutes:
+                          weekly_intensive?.durationPerSessionMinutes,
                         features: weekly_intensive?.features,
-                        type:'weekly',
-                        package:'intensive'
                       })
                     }
                   >
@@ -323,7 +356,16 @@ const ServicePlans = ({ plans,gigId }) => {
                   </h4>
                   {/* <p className="text-xs  text-muted-foreground mb-3 sm:mb-4">
                       {plan.sessions} <br />• {plan.duration}</p> */}
-
+                  <div>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {monthly_standard?.description}
+                    </p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {monthly_standard?.durationSessions} sessions •{" "}
+                      {monthly_standard?.durationPerSessionMinutes} minutes
+                      session
+                    </p>
+                  </div>
                   <div className="mb-3 sm:mb-4">
                     <div className="flex items-baseline flex-wrap gap-2">
                       <span className="text-2xl sm:text-3xl font-bold text-primary ">
@@ -356,11 +398,15 @@ const ServicePlans = ({ plans,gigId }) => {
                     size="sm"
                     onClick={() =>
                       handleSelectPlan({
+                        gigId,
                         title: "Monthly Standard",
+                        type: "monthly",
+                        packageName: "standard",
                         price: monthly_standard?.price,
+                        durationSessions: monthly_standard?.durationSessions,
+                        durationPerSessionMinutes:
+                          monthly_standard?.durationPerSessionMinutes,
                         features: monthly_standard?.features,
-                        type:'monthly',
-                        package:'standard'
                       })
                     }
                   >
@@ -388,7 +434,15 @@ const ServicePlans = ({ plans,gigId }) => {
                   </h4>
                   {/* <p className="text-xs  text-muted-foreground mb-3 sm:mb-4">
                       {plan.sessions} <br />• {plan.duration}</p> */}
-
+                  <div>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {monthly_elite?.description}
+                    </p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {monthly_elite?.durationSessions} sessions •{" "}
+                      {monthly_elite?.durationPerSessionMinutes} minutes session
+                    </p>
+                  </div>
                   <div className="mb-3 sm:mb-4">
                     <div className="flex items-baseline flex-wrap gap-2">
                       <span className="text-2xl sm:text-3xl font-bold text-primary">
@@ -421,11 +475,15 @@ const ServicePlans = ({ plans,gigId }) => {
                     size="sm"
                     onClick={() =>
                       handleSelectPlan({
+                        gigId,
                         title: "Monthly Elite",
+                        type: "monthly",
+                        packageName: "elite",
                         price: monthly_elite?.price,
+                        durationSessions: monthly_elite?.durationSessions,
+                        durationPerSessionMinutes:
+                          monthly_elite?.durationPerSessionMinutes,
                         features: monthly_elite?.features,
-                        type:'monthly',
-                        package:'elite'
                       })
                     }
                   >
@@ -453,7 +511,16 @@ const ServicePlans = ({ plans,gigId }) => {
                   </h4>
                   {/* <p className="text-xs  text-muted-foreground mb-3 sm:mb-4">
                       {plan.sessions} <br />• {plan.duration}</p> */}
-
+                  <div>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {monthly_premium?.description}
+                    </p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {monthly_premium?.durationSessions} sessions •{" "}
+                      {monthly_premium?.durationPerSessionMinutes} minutes
+                      session
+                    </p>
+                  </div>
                   <div className="mb-3 sm:mb-4">
                     <div className="flex items-baseline flex-wrap gap-2">
                       <span className="text-2xl sm:text-3xl font-bold text-primary">
@@ -484,13 +551,18 @@ const ServicePlans = ({ plans,gigId }) => {
                     variant={popular === false ? "default" : "outline"}
                     className="w-full mt-auto"
                     size="sm"
-                    onClick={()=>handleSelectPlan({
-                      title: "Monthly Premium",
-                      price: monthly_premium?.price,
-                      features: monthly_premium?.features,
-                      type:'monthly',
-                      package:'premium'
-                    })}
+                    onClick={() =>
+                      handleSelectPlan({
+                        gigId,
+                        title: "Monthly Premium",
+                        type: "monthly",
+                        packageName: "premium",
+                        price: monthly_premium?.price,
+                        durationSessions: monthly_premium?.durationSessions,
+                        durationPerSessionMinutes: monthly_premium?.durationPerSessionMinutes,
+                        features: monthly_premium?.features,
+                      })
+                    }
                   >
                     Select Plan
                   </Button>

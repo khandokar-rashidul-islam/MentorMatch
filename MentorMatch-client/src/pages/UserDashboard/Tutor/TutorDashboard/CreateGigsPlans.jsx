@@ -29,7 +29,7 @@ const CreateGigsPlans = ({
   return (
     <div className="p-4 bg-muted/30 rounded-lg border border-border/50 space-y-4">
       <h4 className="font-medium">{title}</h4>
-
+      {/* Price and Description */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Price */}
         <div className="space-y-2">
@@ -50,6 +50,7 @@ const CreateGigsPlans = ({
               />
             )}
           />
+
           {getError(errors, planPath, "price") && (
             <p className="text-sm text-destructive">
               {getError(errors, planPath, "price")}
@@ -70,6 +71,69 @@ const CreateGigsPlans = ({
           {getError(errors, planPath, "description") && (
             <p className="text-sm text-destructive">
               {getError(errors, planPath, "description")}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Duration and Sessions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Duration */}
+        <div className="space-y-2">
+          <Label>Duration</Label>
+          <Controller
+            name={`${planPath}.durationPerSessionMinutes`}
+            control={control}
+            rules={{
+              min: { value: 0, message: "Price can not be negative" },
+              max: {
+                value: 200,
+                message: "duration can not be more than 200 ",
+              },
+            }}
+            render={({ field }) => (
+              <Input
+                type="number"
+                {...field}
+                onChange={(e) => field.onChange(Number(e.target.value))}
+                className="bg-background"
+              />
+            )}
+          />
+
+          {getError(errors, planPath, "price") && (
+            <p className="text-sm text-destructive">
+              {getError(errors, planPath, "price")}
+            </p>
+          )}
+        </div>
+
+        {/* Description */}
+        <div className="space-y-2">
+          <Label>Sessions</Label>
+          <Controller
+            name={`${planPath}.durationSessions`}
+            control={control}
+            rules={{
+              min: { value: 0, message: "session cannot be negative" },
+              max: {
+                value: 30,
+                message: "session number should be less than 30",
+              },
+            }}
+            render={({ field }) => (
+              <Input
+                type="number"
+                {...field}
+                onChange={(e) => field.onChange(Number(e.target.value))}
+                className="bg-background"
+              />
+            )}
+          />
+
+          {getError(errors, planPath, "price") && (
+            <p className="text-sm text-destructive">
+              {getError(errors, planPath, "price")}
             </p>
           )}
         </div>

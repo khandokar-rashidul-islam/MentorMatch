@@ -154,11 +154,12 @@ export const registerUser = async (data: RegisterData) => {
       config.jwt_refresh_expires_in as string
     );
 
-    const { _id, role: userRoles, activeRole } = createdUser.toObject();
+    const { _id,email, role: userRoles, activeRole } = createdUser.toObject();
 
     // Attach common fields (name + image)
     const userWithProfile = {
       _id,
+      email,
       name: commonName,
       activeRole,
       userRoles,

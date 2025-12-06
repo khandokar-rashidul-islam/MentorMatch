@@ -86,11 +86,12 @@ export const loginUser = async (payload: LoginPayload) => {
     config.jwt_refresh_expires_in as string
   );
 
-  const { _id, role: userRoles, activeRole } = user.toObject();
+  const { _id, email, role: userRoles, activeRole } = user.toObject();
 
   // Attach common fields
   const userWithProfile = {
     _id,
+    email,
     name,
     activeRole,
     role: userRoles,
@@ -103,7 +104,6 @@ export const loginUser = async (payload: LoginPayload) => {
 //* logout user
 
 export const logoutUser = async (res: Response) => {
-
   res.clearCookie("accessToken", {
     httpOnly: true,
     secure: config.NODE_ENV === "production", // false in dev
@@ -153,6 +153,7 @@ export const getAuthenticatedUser = async (userId: string) => {
   return {
     user: {
       _id: user._id,
+      email: user.email,
       name: profileData?.name,
       activeRole: user.activeRole,
       role: user.role,
@@ -161,8 +162,6 @@ export const getAuthenticatedUser = async (userId: string) => {
   };
 };
 
-
-
 //* refresh access token
 
 export const refreshToken = async (token: string) => {
@@ -170,7 +169,7 @@ export const refreshToken = async (token: string) => {
   let decoded;
   try {
     decoded = verifyToken(token, config.jwt_refresh_secret as string);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   } catch (err) {
     // Directly throw AppError so globalErrorHandler sees the correct status
     throw new AppError(401, "Refresh token expired or invalid!");
@@ -215,6 +214,7 @@ export const refreshToken = async (token: string) => {
     accessToken: newAccessToken,
     user: {
       _id: user._id,
+      email: user.email,
       name,
       activeRole: user.activeRole,
       role: user.role,
@@ -222,4 +222,3 @@ export const refreshToken = async (token: string) => {
     },
   };
 };
-

@@ -3,7 +3,7 @@ import { GigDocument, IMentorProfile } from "./mentor.interface";
 import { APPROVAL_STATUS } from "../user/user.constant";
 
 // Mongoose schema definition for MentorProfile
- const mentorProfileSchema = new Schema<IMentorProfile>(
+const mentorProfileSchema = new Schema<IMentorProfile>(
   {
     user: {
       type: Schema.Types.ObjectId,
@@ -13,7 +13,7 @@ import { APPROVAL_STATUS } from "../user/user.constant";
     },
     profileImage: String,
     name: { type: String, required: true },
-    phone: { type: String, required: true},
+    phone: { type: String, required: true },
     birthDate: String,
     nidOrBirthCertId: String,
     bankAccountNo: String,
@@ -53,7 +53,7 @@ import { APPROVAL_STATUS } from "../user/user.constant";
     ],
     availability: [
       {
-        day: String, 
+        day: String,
         time: String,
       },
     ],
@@ -121,17 +121,23 @@ const GigSchema = new Schema<GigDocument>(
       instant: {
         price: Number,
         description: String,
+        durationSessions: Number,
+        durationPerSessionMinutes: Number,
         features: [String],
       },
       weekly: {
         basic: {
           price: Number,
           description: String,
+          durationSessions: Number,
+          durationPerSessionMinutes: Number,
           features: [String],
         },
         intensive: {
           price: Number,
           description: String,
+          durationSessions: Number,
+          durationPerSessionMinutes: Number,
           features: [String],
         },
       },
@@ -139,16 +145,22 @@ const GigSchema = new Schema<GigDocument>(
         standard: {
           price: Number,
           description: String,
+          durationSessions: Number,
+          durationPerSessionMinutes: Number,
           features: [String],
         },
         premium: {
           price: Number,
           description: String,
+          durationSessions: Number,
+          durationPerSessionMinutes: Number,
           features: [String],
         },
         elite: {
           price: Number,
           description: String,
+          durationSessions: Number,
+          durationPerSessionMinutes: Number,
           features: [String],
         },
       },
@@ -162,7 +174,6 @@ const GigSchema = new Schema<GigDocument>(
   },
   { timestamps: true }
 );
-
 
 // gig model
 export const GigModel = model<GigDocument>("Gig", GigSchema);

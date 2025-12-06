@@ -29,7 +29,7 @@ export const ConversationList = ({
           {loading && <p className="p-4 text-center text-muted">Loading...</p>}
 
           {!loading && conversations.length === 0 && (
-            <p className="p-4 text-center text-muted">No conversations</p>
+            <p className="p-4 text-center  ">No conversations</p>
           )}
 
           {conversations.map((conversation) => (
