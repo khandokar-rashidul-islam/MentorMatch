@@ -124,6 +124,7 @@ export const initiatePaymentService = async (payload: {
     sslSessionKey: apiResponse?.sessionkey || apiResponse?.session_key || null,
     paymentGatewayResponse: apiResponse || {},
   });
+  console.log(apiResponse?.GatewayPageURL)
 
   return {
     redirectUrl: apiResponse?.GatewayPageURL || "",

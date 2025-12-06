@@ -1,10 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Home, FileText } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const PaymentSucess = () => {
     const navigate = useNavigate();
+    const {id}=useParams()
   return (
     <div className='min-h-screen w-11/12 mx-auto px-4 md:px-6 lg:px-8 py-6 pt-20'>
         <Card className="text-center shadow-elegant border-success/20">
@@ -12,7 +13,8 @@ const PaymentSucess = () => {
             <div className="mx-auto w-20 h-20 bg-success/10 rounded-full flex items-center justify-center animate-pulse-glow">
               <CheckCircle className="h-12 w-12 text-success" />
             </div>
-            <div>
+            <div> 
+              <p className="text-primary font-semibold">{id}</p>
               <CardTitle className="text-3xl mb-2 text-success">Payment Successful!</CardTitle>
               <p className="text-muted-foreground text-lg">
                 Your booking has been confirmed

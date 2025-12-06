@@ -32,10 +32,11 @@ export const initiatePayment = catchAsync(
 // Called by SSLCommerz (POST)
 export const success = catchAsync(async (req: Request, res: Response) => {
   const transactionId = req.params.transactionId;
+  console.log("sucess",transactionId)
   await paymentService.handlePaymentSuccess(transactionId, req.body);
   // Redirect learner to frontend success page
   return res.redirect(
-    `${process.env.FRONTEND_URL}/dashboard/learner/payment-success`
+    `${process.env.FRONTEND_URL}/dashboard/learner/payment-success/${transactionId}`
   );
 });
 
@@ -43,7 +44,7 @@ export const fail = catchAsync(async (req: Request, res: Response) => {
   const transactionId = req.params.transactionId;
   await paymentService.handlePaymentFail(transactionId, req.body);
   return res.redirect(
-    `${process.env.FRONTEND_URL}/dashboard/learner/payment-failed`
+    `${process.env.FRONTEND_URL}/dashboard/learner/payment-failed/${transactionId}`
   );
 });
 

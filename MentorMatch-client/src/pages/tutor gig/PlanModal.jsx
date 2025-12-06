@@ -13,6 +13,7 @@ import {
 import { useNavigate } from "react-router";
 
 const PlanModal = ({ open, onClose, plan, gigId }) => {
+  console.log("from modal",plan)
   const navigate = useNavigate();
 
   if (!plan) return null;
@@ -22,7 +23,7 @@ const PlanModal = ({ open, onClose, plan, gigId }) => {
       `/dashboard/learner/payment?gig=${gigId}&plan=${encodeURIComponent(
         plan.title
       )}&price=${plan.price}&type=${plan.type}&package=${
-        plan.packageName ?? ""
+        plan.packageName ?? "instant"
       }`
     );
   };

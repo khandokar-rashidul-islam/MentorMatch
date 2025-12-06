@@ -111,7 +111,7 @@ const Payment = () => {
                 Choose your preferred payment method
               </p>
               <div className="grid gap-3">
-                <Button variant="outline" className="justify-start h-auto p-4">
+                {/* <Button variant="outline" className="justify-start h-auto p-4">
                   <div className="flex items-center gap-3 w-full">
                     <CreditCard className="h-5 w-5" />
                     <div className="text-left">
@@ -121,16 +121,16 @@ const Payment = () => {
                       </p>
                     </div>
                   </div>
-                </Button>
-                <Button variant="outline" className="justify-start h-auto p-4">
+                </Button> */}
+                <Button variant="outline" className="justify-start bg-primary/10! h-auto p-4">
                   <div className="flex items-center gap-3 w-full">
                     <div className="h-5 w-5 rounded-full bg-primary flex items-center justify-center">
-                      <span className="text-xs text-white">P</span>
+                      <span className="text-xs text-white">sZ</span>
                     </div>
                     <div className="text-left">
-                      <p className="font-medium">PayPal</p>
+                      <p className="font-medium"> SSLCOMMERZ</p>
                       <p className="text-xs text-muted-foreground">
-                        Pay securely with PayPal
+                        Pay securely with  SSLCOMMERZ
                       </p>
                     </div>
                   </div>

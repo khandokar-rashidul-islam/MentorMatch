@@ -2,10 +2,11 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { XCircle, ArrowLeft, Home, HelpCircle } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const PaymentFailed = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const errorMessage = "We couldn't process your payment. Please try again.";
   return (
     <div className="min-h-screen w-11/12 mx-auto px-4 md:px-6 lg:px-8 py-6 pt-20">
@@ -18,9 +19,10 @@ const PaymentFailed = () => {
             <CardTitle className="text-3xl mb-2 text-destructive">
               Payment Failed
             </CardTitle>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-muted-foreground text-lg mb-2">
               Your transaction could not be completed
             </p>
+            <p className="text-destructive">{id}</p>
           </div>
         </CardHeader>
 
