@@ -41,6 +41,7 @@ import Payment from "@/pages/payement/Payment";
 import PaymentSucess from "@/pages/payement/PaymentSucess";
 import PaymentFailed from "@/pages/payement/PaymentFailed";
 import Community from "@/pages/community/Community";
+import { MeetingRoom } from "@/pages/TeachRoom/MeetingRoom";
 
 const router = createBrowserRouter([
   {
@@ -141,7 +142,7 @@ const router = createBrowserRouter([
           { path: "mentor-profile", element: <TutorDetails /> },
           { path: "mentor-profile/edit", element: <EditTutorProfile /> },
           { path: "community", element: <Community /> },
-          {path: "inbox",element: <Chat />},
+          { path: "inbox", element: <Chat /> },
         ],
       },
       //learner
@@ -165,13 +166,8 @@ const router = createBrowserRouter([
           { path: "payment-success/:id", element: <PaymentSucess /> },
           { path: "payment-failed/:id", element: <PaymentFailed /> },
           { path: "community", element: <Community /> },
-          { path: "inbox",element: <Chat />},
+          { path: "inbox", element: <Chat /> },
         ],
-      },
-
-      {
-        path: "inbox/:username/:conversationId",
-        element: <Chat />,
       },
     ],
   },
@@ -199,7 +195,7 @@ const router = createBrowserRouter([
       },
     ],
   },
-
+  { path: "tech-room", element: <MeetingRoom /> },
   { path: "/*", Component: Error404 },
 ]);
 
