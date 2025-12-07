@@ -17,6 +17,7 @@ import {
   Link,
   Clock,
   PenTool,
+  MoreVertical,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -80,22 +81,9 @@ export function ControlBar({
   };
 
   return (
-    <div className="h-16 sm:h-20 px-2 sm:px-4 md:px-6 flex items-center justify-between  backdrop-blur-xl border-t border-border/50 animate-slide-up">
+    <div className="h-16 sm:h-18 px-2 sm:px-4 md:px-6 flex items-center justify-between  backdrop-blur-xl border-t border-border/50 animate-slide-up">
       {/* Left Section */}
       <div className="hidden sm:flex items-center gap-2 md:gap-3 min-w-0 md:min-w-[200px]">
-        <div className="flex items-center gap-1.5 md:gap-2 text-muted-foreground">
-          <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" />
-          <span className="text-xs md:text-sm font-medium">
-            {formatDuration(duration)}
-          </span>
-          <span className="text-xs md:text-sm opacity-60 hidden md:inline">
-            •
-          </span>
-          <span className="text-xs md:text-sm hidden md:inline">
-            {formatTime(currentTime)}
-          </span>
-        </div>
-
         <Tooltip>
           <TooltipTrigger asChild>
             <button
@@ -109,6 +97,18 @@ export function ControlBar({
             Copy meeting link
           </TooltipContent>
         </Tooltip>
+        <div className="flex items-center gap-1.5 md:gap-2 text-muted-foreground">
+          <Clock className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary " />
+          <span className="text-xs md:text-sm font-medium">
+            {formatDuration(duration)}
+          </span>
+          <span className="text-xs md:text-sm opacity-60 hidden md:inline">
+            •
+          </span>
+          <span className="text-xs md:text-sm hidden md:inline">
+            {formatTime(currentTime)}
+          </span>
+        </div>
 
         {isRecording && (
           <div className="flex items-center gap-1.5 px-2 py-0.5 bg-destructive/10 text-destructive rounded-full">
@@ -119,19 +119,19 @@ export function ControlBar({
       </div>
 
       {/* Center Controls */}
-      <div className="flex justify-center items-center gap-1 sm:gap-1.5 md:gap-2">
+      <div className="flex justify-center items-center gap-1.5 sm:gap-2 md:gap-2.5">
         {/* Mic */}
         <Tooltip>
           <TooltipTrigger asChild>
             <button
               onClick={onToggleMute}
               className={cn(
-                " w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12  flex justify-center items-center rounded-full  hover:bg-muted-foreground   ",
+                " w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12  flex justify-center items-center rounded-full  hover:bg-muted-foreground/30 bg-muted-foreground/20   ",
                 localState.isMuted && "control-btn-active"
               )}
             >
               {localState.isMuted ? (
-                <MicOff className="w-4 h-4 sm:w-5 sm:h-5" />
+                <MicOff className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 " />
               ) : (
                 <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
               )}
@@ -148,7 +148,7 @@ export function ControlBar({
             <button
               onClick={onToggleCamera}
               className={cn(
-                "w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex justify-center items-center rounded-full  hover:bg-muted-foreground     ",
+                "w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex justify-center items-center rounded-full  hover:bg-muted-foreground/30 bg-muted-foreground/20  ",
                 localState.isCameraOff && "control-btn-active"
               )}
             >
@@ -170,13 +170,13 @@ export function ControlBar({
             <button
               onClick={onToggleScreenShare}
               className={cn(
-                "control-btn w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex justify-center items-center rounded-full  hover:bg-muted-foreground ",
+                "control-btn w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex justify-center items-center rounded-full  hover:bg-muted-foreground/30 bg-muted-foreground/20  ",
                 localState.isScreenSharing && "control-btn-primary",
                 "invisible sm:visible" // <-- key fix
               )}
             >
               {localState.isScreenSharing ? (
-                <MonitorOff className="w-4 h-4 sm:w-5 sm:h-5" />
+                <MonitorOff className="w-4 h-4 sm:w-5 sm:h-5 text-primary " />
               ) : (
                 <Monitor className="w-4 h-4 sm:w-5 sm:h-5" />
               )}
@@ -190,8 +190,8 @@ export function ControlBar({
         {/* Settings Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="control-btn w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex justify-center items-center rounded-full  hover:bg-muted-foreground  ">
-              <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
+            <button className="control-btn w-6 h-10 sm:w-7 sm:h-11 md:w-7 md:h-12 flex justify-center items-center rounded-full hover:bg-muted-foreground/30 bg-muted-foreground/20   ">
+              <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </DropdownMenuTrigger>
 
@@ -302,7 +302,7 @@ export function ControlBar({
             <button
               onClick={onToggleChat}
               className={cn(
-                "w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex justify-center items-center rounded-full  hover:bg-muted-foreground ",
+                "w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex justify-center items-center rounded-full  hover:bg-muted-foreground/30 bg-muted-foreground/20  ",
                 chatOpen && "bg-accent text-accent-foreground"
               )}
             >
