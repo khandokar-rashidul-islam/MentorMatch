@@ -4,20 +4,48 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import * as paymentService from "./payment.service";
+import { GigModel } from "../mentor/mentor.model";
+import { LearnerProfileModel } from "../learner/learner.model";
+import { MentorProfileModel } from "../mentor/mentor.model";
 
 export const initiatePayment = catchAsync(
   async (req: Request, res: Response) => {
     const data = req.body;
-    const learner = (req as any).user?.id;
-    if (!learner) throw new Error("Unauthorized");
+    const userId = (req as any).user?.id;
+    if (!userId) throw new Error("Unauthorized");
 
+    if (!data.gig) throw new Error("Gig id (gig) is required in body");
+    if (!data.planType) throw new Error("planType is required in body");
+
+    // 1) find learner profile by logged-in user
+    const learnerProfile = await LearnerProfileModel.findOne({ user: userId });
+    if (!learnerProfile)
+      throw new Error("Learner profile not found for current user");
+
+    // 2) find gig and its owner (user)
+    const gig = await GigModel.findById(data.gig).populate("user");
+    if (!gig) throw new Error("Gig not found");
+
+    const gigOwnerUserId = (gig.user as any)?._id;
+    if (!gigOwnerUserId) throw new Error("Gig owner (user) not found");
+
+    // 3) find mentor profile for that gig owner user
+    const mentorProfile = await MentorProfileModel.findOne({
+      user: gigOwnerUserId,
+    });
+    if (!mentorProfile)
+      throw new Error("Mentor profile not found for gig owner");
+
+    // 4) call service with PROFILE ids (strings)
     const result = await paymentService.initiatePaymentService({
-      learner,
-      gig: data.gig,
+      learnerProfileId: learnerProfile._id.toString(),
+      mentorProfileId: mentorProfile._id.toString(),
+      gigId: gig._id.toString(),
       planType: data.planType,
       packageType: data.packageType,
       learnerName: data.learnerName,
       email: data.email,
+      phone: data.phone,
     });
 
     sendResponse(res, {
@@ -29,12 +57,10 @@ export const initiatePayment = catchAsync(
   }
 );
 
-// Called by SSLCommerz (POST)
+// Called by SSLCOMMERZ (POST)
 export const success = catchAsync(async (req: Request, res: Response) => {
   const transactionId = req.params.transactionId;
-  console.log("sucess",transactionId)
   await paymentService.handlePaymentSuccess(transactionId, req.body);
-  // Redirect learner to frontend success page
   return res.redirect(
     `${process.env.FRONTEND_URL}/dashboard/learner/payment-success/${transactionId}`
   );
@@ -49,28 +75,20 @@ export const fail = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const cancel = catchAsync(async (req: Request, res: Response) => {
-  // Some gateways call cancel with tran_id in body/query — handle if needed
+  const transactionId = req.params.transactionId;
+  await paymentService.handlePaymentFail(transactionId, {
+    status: "CANCELLED",
+  });
   return res.redirect(
     `${process.env.FRONTEND_URL}/dashboard/learner/payment-cancelled`
   );
 });
 
-/**
- * IPN: server-to-server asynchronous notification.
- * Validate the ipn with SSLCOMMERZ if you want (recommended).
- * For extra security implement server-side validation using SSLCOMMERZ validation API.
- */
 export const ipn = catchAsync(async (req: Request, res: Response) => {
   const ipnBody = req.body;
   const transactionId = ipnBody.tran_id || ipnBody.tran_id_from_api || null;
-  if (!transactionId) {
-    // some ipn payloads differ; log then respond
-    console.warn("IPN received with no tran_id", ipnBody);
-    return res.status(400).send("tran_id missing");
-  }
+  if (!transactionId) return res.status(400).send("tran_id missing");
 
-  // Basic update: if status indicates success, mark paid else failed
-  // You should validate with SSLCOMMERZ validation API here
   const status =
     ipnBody.status ||
     ipnBody.status_code ||
@@ -83,4 +101,42 @@ export const ipn = catchAsync(async (req: Request, res: Response) => {
   }
 
   res.status(200).send("IPN processed");
+});
+
+
+
+// ===================== LEARNER ORDERS =====================
+export const getLearnerOrders = catchAsync(async (req, res) => {
+  const userId = (req as any).user?.id;
+
+  // fetch learner profile id
+  const learner = await LearnerProfileModel.findOne({ user: userId });
+  if (!learner) throw new Error("Learner profile not found");
+
+  const orders = await paymentService.getLearnerOrdersService(learner._id.toString());
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Learner orders retrieved successfully",
+    data: orders,
+  });
+});
+
+// ===================== MENTOR ORDERS =====================
+export const getMentorOrders = catchAsync(async (req, res) => {
+  const userId = (req as any).user?.id;
+
+  // fetch mentor profile id
+  const mentor = await MentorProfileModel.findOne({ user: userId });
+  if (!mentor) throw new Error("Mentor profile not found");
+
+  const orders = await paymentService.getMentorOrdersService(mentor._id.toString());
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Mentor orders retrieved successfully",
+    data: orders,
+  });
 });

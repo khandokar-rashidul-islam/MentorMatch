@@ -17,4 +17,18 @@ router.post("/fail/:transactionId", paymentController.fail);
 router.post("/cancel/:transactionId", paymentController.cancel);
 router.post("/ipn", paymentController.ipn);
 
+// learner orders
+router.get(
+  "/learner/orders",
+  auth(USER_ROLES.LEARNER),
+  paymentController.getLearnerOrders
+);
+
+// mentor orders
+router.get(
+  "/mentor/orders",
+  auth(USER_ROLES.MENTOR),
+  paymentController.getMentorOrders
+);
+
 export const PaymentRoutes = router;
