@@ -1,108 +1,70 @@
-import { useState, useCallback } from "react";
+import { useVideoCall } from "@/context/useVideoCall";
+import { useAppSelector } from "@/redux/hooks";
 
-const mockParticipants = [
-  {
-    id: "1",
-    name: "You",
-    isMuted: false,
-    isCameraOff: false,
-    isScreenSharing: false,
-    isHost: true,
-    isSpeaking: false,
-    hasRaisedHand: false,
-    joinedAt: new Date(),
-  },
-  {
-    id: "2",
-    name: "Alex Morgan",
-    isMuted: false,
-    isCameraOff: false,
-    isScreenSharing: false,
-    isHost: false,
-    isSpeaking: true,
-    hasRaisedHand: false,
-    joinedAt: new Date(),
-  },
-];
+export const useMeeting = () => {
+  const { user } = useAppSelector((state) => state.auth);
 
-const mockMessages = [
-  {
-    id: "1",
-    senderId: "2",
-    senderName: "Alex Morgan",
-    content: "Hi! Can you hear me okay?",
-    timestamp: new Date(Date.now() - 120000),
-  },
-  {
-    id: "2",
-    senderId: "1",
-    senderName: "You",
-    content: "Yes, perfectly clear!",
-    timestamp: new Date(Date.now() - 60000),
-  },
-];
+  // 1. Get callStatus from the provider
+  const {
+    stream,
+    remoteStream,
+    callStatus, 
+    remoteUserId,
+    isMuted,
+    isCameraOff,
+    isScreenSharing,
+    toggleMute,
+    toggleCamera,
+    toggleScreenShare,
+    leaveMeeting,
+  } = useVideoCall();
 
-export function useMeeting() {
-  const [meetingState, setMeetingState] = useState({
-    meetingId: "meet-7x9k2m",
-    meetingTitle: "Video Call",
-    participants: mockParticipants,
-    messages: mockMessages,
-    isRecording: false,
+  // Map streams to Participant objects
+  const participants = [
+    {
+      id: "1",
+      name: user?.name || "You",
+      isLocal: true,
+      stream: stream,
+      isMuted: isMuted,
+      isCameraOff: isCameraOff,
+      isSpeaking: false,
+    },
+  ];
+
+  if (remoteStream) {
+    participants.push({
+      id: remoteUserId || "2",
+      name: "Remote User",
+      isLocal: false,
+      stream: remoteStream,
+      isMuted: false,
+      isCameraOff: false,
+      isSpeaking: false,
+    });
+  }
+
+  const meetingState = {
+    meetingId: "active-session",
+    participants,
+    messages: [],
     viewMode: "grid",
-  });
+    isRecording: false,
+    status: callStatus, 
+  };
 
-  const [localState, setLocalState] = useState({
-    isMuted: false,
-    isCameraOff: false,
-    isScreenSharing: false,
+  const localState = {
+    isMuted,
+    isCameraOff,
+    isScreenSharing,
     hasRaisedHand: false,
-  });
+  };
 
-  const toggleMute = useCallback(() => {
-    setLocalState((prev) => ({ ...prev, isMuted: !prev.isMuted }));
-  }, []);
-
-  const toggleCamera = useCallback(() => {
-    setLocalState((prev) => ({ ...prev, isCameraOff: !prev.isCameraOff }));
-  }, []);
-
-  const toggleScreenShare = useCallback(() => {
-    setLocalState((prev) => ({
-      ...prev,
-      isScreenSharing: !prev.isScreenSharing,
-    }));
-  }, []);
-
-  const toggleRaiseHand = useCallback(() => {
-    setLocalState((prev) => ({ ...prev, hasRaisedHand: !prev.hasRaisedHand }));
-  }, []);
-
-  const toggleRecording = useCallback(() => {
-    setMeetingState((prev) => ({ ...prev, isRecording: !prev.isRecording }));
-  }, []);
-
-  const setViewMode = useCallback((mode) => {
-    setMeetingState((prev) => ({ ...prev, viewMode: mode }));
-  }, []);
-
-  const sendMessage = useCallback((content) => {
-    const newMessage = {
-      id: Date.now().toString(),
-      senderId: "1",
-      senderName: "You",
-      content,
-      timestamp: new Date(),
-    };
-    setMeetingState((prev) => ({
-      ...prev,
-      messages: [...prev.messages, newMessage],
-    }));
-  }, []);
-
-  const leaveMeeting = useCallback(() => {
-    console.log("Leaving meeting...");
-  }, []);
+  // Stub functions
+  const toggleRecording = () => console.log("Recording not implemented");
+  const toggleRaiseHand = () => console.log("Raise hand not implemented");
+  const setViewMode = (mode) => console.log("View mode set to:", mode);
+  const sendMessage = (text) => console.log("Message:", text);
 
   return {
     meetingState,
@@ -110,10 +72,10 @@ export function useMeeting() {
     toggleMute,
     toggleCamera,
     toggleScreenShare,
-    toggleRaiseHand,
     toggleRecording,
+    toggleRaiseHand,
     setViewMode,
     sendMessage,
     leaveMeeting,
   };
-}
+};

@@ -31,4 +31,11 @@ router.get(
   paymentController.getMentorOrders
 );
 
+//------------------------  session verify route-------------------
+router.get(
+  "/verify/:meetingId",
+  // Allow both Learners and Mentors to verify sessions
+  auth(USER_ROLES.LEARNER, USER_ROLES.MENTOR),
+  paymentController.verifySession
+);
 export const PaymentRoutes = router;

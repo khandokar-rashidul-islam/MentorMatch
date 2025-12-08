@@ -4,62 +4,47 @@ import { Types } from "mongoose";
 import config from "../../config";
 import { getPlanMeta } from "./payment.utils";
 import { GigModel } from "../mentor/mentor.model";
-import { OrderModel } from "./order.model";
+import { OrderModel, SessionModel } from "./order.model";
+import { v4 as uuidv4 } from "uuid";
 
-/**
- * Payload uses PROFILE ids and gig id as strings.
- */
+// Initiate Payment
 export const initiatePaymentService = async (payload: {
-  learnerProfileId: string; // LearnerProfile._id (not User._id)
-  mentorProfileId: string; // MentorProfile._id (not User._id)
-  gigId: string; // Gig._id
+  learnerUserId: string;
+  mentorUserId: string;  
+  gigId: string;
   planType: string;
   packageType?: string;
   learnerName?: string;
   email?: string;
   phone?: string;
 }) => {
-  const {
-    learnerProfileId,
-    mentorProfileId,
-    gigId,
-    planType,
-    packageType,
-    learnerName,
-    email,
-    phone,
-  } = payload;
+  const { learnerUserId, mentorUserId, gigId, planType, packageType, learnerName, email, phone } = payload;
 
-  // validate gig exists
-  const gigDoc = await GigModel.findById(gigId).populate("user");
+  const gigDoc = await GigModel.findById(gigId);
   if (!gigDoc) throw new Error("Gig not found");
 
-  // determine price
+  // Calculate Price (Same logic as before)
   let price = 0;
   let planName = "";
-
   if (planType === "instant") {
     price = gigDoc.plans?.instant?.price ?? 0;
     planName = "Instant Session";
   } else {
-    if (!packageType)
-      throw new Error("packageType is required for weekly/monthly plans");
+    if (!packageType) throw new Error("packageType required");
     const p = (gigDoc.plans as any)[planType]?.[packageType];
-    if (!p) throw new Error("Selected package not found in gig");
     price = p.price ?? 0;
     planName = `${planType}-${packageType}`;
   }
 
-  if (price <= 0) throw new Error("Invalid price. Cannot process payment.");
+  if (price <= 0) throw new Error("Invalid price");
 
-  const { durationPerSessionMinutes, durationSessions, endDate } =
-    getPlanMeta(planType);
+  const { durationPerSessionMinutes, durationSessions, endDate } = getPlanMeta(planType);
   const transactionId = `TXN-${Date.now()}`;
 
-  // create order using PROFILE ObjectIds (convert strings to ObjectId)
+  // Create Order with USER IDs
   const order = await OrderModel.create({
-    learner: new Types.ObjectId(learnerProfileId),
-    mentor: new Types.ObjectId(mentorProfileId),
+    learner: new Types.ObjectId(learnerUserId),
+    mentor: new Types.ObjectId(mentorUserId),
     gig: new Types.ObjectId(gigId),
     planType,
     packageType,
@@ -75,8 +60,8 @@ export const initiatePaymentService = async (payload: {
     orderStatus: "pending",
   });
 
-  // SSLCommerz payload
-  const sslData: Record<string, any> = {
+  // SSL Payload (Same as before)
+  const sslData = {
     total_amount: price,
     currency: "BDT",
     tran_id: transactionId,
@@ -85,26 +70,15 @@ export const initiatePaymentService = async (payload: {
     cancel_url: `${config.backEnd_url}/api/v1/payment/cancel/${transactionId}`,
     ipn_url: `${config.backEnd_url}/api/v1/payment/ipn`,
     product_name: planName,
-    product_category: "Online Tuition",
-    product_profile: "service",
+    product_category: "Education",
+    product_profile: "general",
     cus_name: learnerName || "Learner",
-    cus_email: email || "noreply@example.com",
-    cus_phone: phone || "01700000000",
+    cus_email: email || "user@example.com",
     cus_add1: "Dhaka",
-    cus_add2: "Dhaka",
-    cus_city: "Dhaka",
-    cus_state: "Dhaka",
-    cus_postcode: "1207",
     cus_country: "Bangladesh",
-    shipping_method: "NO",
-    ship_name: learnerName || "Learner",
-    ship_add1: "Dhaka",
-    ship_city: "Dhaka",
-    ship_postcode: "1207",
-    ship_country: "Bangladesh",
+    cus_phone: phone || "01700000000",
+    shipping_method: "NO"
   };
-
-  console.log("🔹 SSL Payload Sent:", sslData);
 
   const sslcz = new SSLCommerzPayment(
     config.sslcmz_store_id as string,
@@ -113,25 +87,20 @@ export const initiatePaymentService = async (payload: {
   );
 
   const apiResponse = await sslcz.init(sslData);
-  console.log("🔹 SSLCommerz API Response:", apiResponse);
 
-  // persist SSL response on order
   await OrderModel.findByIdAndUpdate(order._id, {
-    sslSessionKey: apiResponse?.sessionkey || apiResponse?.session_key || null,
-    paymentGatewayResponse: apiResponse || {},
+    sslSessionKey: apiResponse?.sessionkey,
+    paymentGatewayResponse: apiResponse
   });
 
   return {
-    redirectUrl: apiResponse?.GatewayPageURL || "",
-    transactionId,
+    redirectUrl: apiResponse?.GatewayPageURL,
+    transactionId
   };
 };
 
-// ---------- success/fail handlers ----------
-export const handlePaymentSuccess = async (
-  transactionId: string,
-  rawBody: Record<string, unknown>
-) => {
+// Handle Success (Create Session)
+export const handlePaymentSuccess = async (transactionId: string, rawBody: any) => {
   const order = await OrderModel.findOneAndUpdate(
     { transactionId },
     {
@@ -141,6 +110,28 @@ export const handlePaymentSuccess = async (
     },
     { new: true }
   );
+
+  if (!order) return null;
+
+  // Create Session
+  const startTime = new Date(order.startDate);
+  const endTime = new Date(startTime.getTime() + order.durationPerSessionMinutes * 60000);
+
+  const existingSession = await SessionModel.findOne({ order: order._id });
+
+  if (!existingSession) {
+    await SessionModel.create({
+      order: order._id,
+      gig: order.gig,
+      learner: order.learner, // This is User ID now
+      mentor: order.mentor,   // This is User ID now
+      meetingId: uuidv4(),
+      startTime: startTime,
+      endTime: endTime,
+      durationMinutes: order.durationPerSessionMinutes,
+      status: "scheduled",
+    });
+  }
   return order;
 };
 
@@ -160,46 +151,48 @@ export const handlePaymentFail = async (
   return order;
 };
 
-// =========== order listing helpers with nested populate ===========
-export const getLearnerOrdersService = async (learnerProfileId: string) => {
-  return await OrderModel.find({ learner: learnerProfileId })
+// ===================== GET LEARNER ORDERS =====================
+export const getLearnerOrdersService = async (userId: string) => {
+  // Querying by 'learner' field which now holds the User ID
+  const orders = await OrderModel.find({ learner: userId })
     .populate({
       path: "gig",
-      model: "Gig",
       select: "gigTitle aboutGig",
     })
     .populate({
-      path: "mentor",
-      model: "MentorProfile",
-      select: "name phone profileImage user",
+      path: "mentor", // Populates the User model
+      select: "email",
       populate: {
-        path: "user",
-        model: "User",
-        select: "email activeRole",
+        path: "mentorProfile", // Populates the Virtual 'mentorProfile' from User
+        select: "name profileImage profession",
       },
     })
+    .populate("session") // <--- CRITICAL: Populates the Virtual 'session' for WebRTC
     .select({ __v: 0, paymentGatewayResponse: 0 })
     .sort({ createdAt: -1 });
+
+  return orders;
 };
 
-export const getMentorOrdersService = async (mentorProfileId: string) => {
-  return await OrderModel.find({ mentor: mentorProfileId })
+// ===================== GET MENTOR ORDERS =====================
+export const getMentorOrdersService = async (userId: string) => {
+  // Querying by 'mentor' field which now holds the User ID
+  const orders = await OrderModel.find({ mentor: userId })
     .populate({
       path: "gig",
-      model: "Gig",
-      select: "gigTitle aboutGig",
+      select: "gigTitle",
     })
     .populate({
-      path: "learner",
-      model: "LearnerProfile",
-      select: "name phone profileImage user",
+      path: "learner", // Populates the User model
+      select: "email",
       populate: {
-        path: "user",
-        model: "User",
-        select: "email activeRole",
+        path: "learnerProfile", // Populates the Virtual 'learnerProfile' from User
+        select: "name profileImage",
       },
     })
+    .populate("session") // <--- CRITICAL: Populates the Virtual 'session' for WebRTC
     .select({ __v: 0, paymentGatewayResponse: 0 })
     .sort({ createdAt: -1 });
-};
 
+  return orders;
+};

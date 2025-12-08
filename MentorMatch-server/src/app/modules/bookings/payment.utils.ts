@@ -1,30 +1,33 @@
-import { addDays } from "date-fns";
 
-/**
- * Calculate endDate and sessions depending on plan
- * returns { durationMinutes, totalSessions, endDate }
- */
+// Helper function
+const addDays = (date: Date, days: number): Date => {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+};
+
 export const getPlanMeta = (planType: string) => {
-  // Default values — adapt if your gig stores different session counts
   if (planType === "instant") {
-    const durationPerSessionMinutes = 60;
+    // Instant sessions are usually valid for 24-48 hours until scheduled
     return {
-      durationPerSessionMinutes,
+      durationPerSessionMinutes: 60,
       durationSessions: 1,
-      endDate: null, // instant is single session; you might set expiry to +7 days
+      endDate: addDays(new Date(), 2),
     };
   }
 
   if (planType === "weekly") {
-    const durationPerSessionMinutes = 60;
-    const durationSessions = 3; // example: 3 sessions per week
-    const endDate = addDays(new Date(), 7);
-    return { durationPerSessionMinutes, durationSessions, endDate };
+    return {
+      durationPerSessionMinutes: 60,
+      durationSessions: 3,
+      endDate: addDays(new Date(), 7),
+    };
   }
 
-  // monthly
-  const durationPerSessionMinutes = 60;
-  const durationSessions = 12; // 3 per week (example)
-  const endDate = addDays(new Date(), 30);
-  return { durationPerSessionMinutes, durationSessions, endDate };
+  // Monthly
+  return {
+    durationPerSessionMinutes: 60,
+    durationSessions: 12,
+    endDate: addDays(new Date(), 30),
+  };
 };

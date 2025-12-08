@@ -33,7 +33,6 @@ export const learnerApi = baseApi.injectEndpoints({
       providesTags: ["Mentors"],
     }),
 
-
     //* ============ Reviews Endpoints ==========
 
     // Submit a review for a gig
@@ -111,6 +110,7 @@ export const learnerApi = baseApi.injectEndpoints({
       invalidatesTags: () => [{ type: "MentorReviews" }],
     }),
   }),
+  overrideExisting: true,
 });
 
 export const {

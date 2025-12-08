@@ -129,6 +129,69 @@ export const initSocket = (io: SocketIOServer) => {
       socket.emit("presence:bulk", snapshot);
     });
 
+    // ================ MEETING ROOM EVENTS ---
+
+    // 1. Join Meeting Room
+    socket.on("join-meeting", ({ meetingId }) => {
+      const authSocket = socket as AuthenticatedSocket;
+
+      if (!authSocket.user) return;
+
+      authSocket.join(meetingId);
+
+      // Notify OTHERS that I joined (so they can call me)
+      socket
+        .to(meetingId)
+        .emit("user-joined", { userId: authSocket.user.userId });
+      socket.emit("me-joined", { userId: authSocket.user.userId });
+
+      console.log(`User ${authSocket.user.userId} joined meeting ${meetingId}`);
+    });
+
+    // 2. Call User
+    socket.on("call-user", (data) => {
+      const authSocket = socket as AuthenticatedSocket;
+
+      socket.to(data.meetingId).emit("call-made", {
+        signal: data.signalData,
+        from: authSocket.user.userId,
+        name: data.fromName,
+      });
+    });
+
+    // 3. Answer Call
+    socket.on("answer-call", (data) => {
+      const authSocket = socket as AuthenticatedSocket;
+
+      socket.to(data.meetingId).emit("call-answered", {
+        signal: data.signal,
+        from: authSocket.user.userId,
+      });
+    });
+
+    // 4. ICE Candidate
+    socket.on("ice-candidate", (data) => {
+      const authSocket = socket as AuthenticatedSocket;
+
+      socket.to(data.meetingId).emit("ice-candidate", {
+        candidate: data.candidate,
+        from: authSocket.user.userId,
+      });
+    });
+
+    // 5. Toggle Media State (Mic/Camera)
+    socket.on("toggle-media", ({ meetingId, type, status }) => {
+      // FIX: Cast socket to your custom interface
+      const authSocket = socket as AuthenticatedSocket;
+
+      // Broadcast to everyone else in the room (except sender)
+      socket.to(meetingId).emit("media-toggled", {
+        userId: authSocket.user.userId, // <--- Use authSocket here
+        type,
+        status,
+      });
+    });
+
     /** ------------------- Disconnect ------------------- **/
     socket.on("disconnect", () => {
       console.log(`Socket disconnected: ${socket.id} (user: ${userId})`);

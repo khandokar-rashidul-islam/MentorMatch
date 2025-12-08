@@ -17,6 +17,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
   Select,
@@ -37,183 +38,59 @@ import {
   CheckCircle,
   XCircle,
   Clock4,
+  Loader2,
 } from "lucide-react";
-
-
-const mockBookings = [
-  {
-    id: "1",
-    studentName: "Emma Johnson",
-    studentAvatar: "EJ",
-    planType: "Intensive Weekly",
-    subject: "Mathematics",
-    date: "2024-01-25",
-    time: "14:00",
-    duration: 60,
-    status: "upcoming",
-    amount: 50,
-    sessionType: "video",
-    notes: "Focus on calculus derivatives",
-  },
-  {
-    id: "2",
-    studentName: "Michael Chen",
-    studentAvatar: "MC",
-    planType: "Standard Monthly",
-    subject: "Physics",
-    date: "2024-01-24",
-    time: "16:30",
-    duration: 45,
-    status: "completed",
-    amount: 75,
-    sessionType: "video",
-  },
-  {
-    id: "3",
-    studentName: "Sarah Williams",
-    studentAvatar: "SW",
-    planType: "Instant Session",
-    subject: "Chemistry",
-    date: "2024-01-26",
-    time: "10:00",
-    duration: 30,
-    status: "pending",
-    amount: 25,
-    sessionType: "chat",
-    notes: "Quick question about organic compounds",
-  },
-  {
-    id: "4",
-    studentName: "David Brown",
-    studentAvatar: "DB",
-    planType: "Premium Monthly",
-    subject: "Biology",
-    date: "2024-01-23",
-    time: "15:00",
-    duration: 90,
-    status: "cancelled",
-    amount: 100,
-    sessionType: "video",
-  },
-  {
-    id: "5",
-    studentName: "Lisa Anderson",
-    studentAvatar: "LA",
-    planType: "Basic Weekly",
-    subject: "Mathematics",
-    date: "2024-01-27",
-    time: "13:00",
-    duration: 60,
-    status: "upcoming",
-    amount: 40,
-    sessionType: "video",
-  },
-  {
-    id: "6",
-    studentName: "John Smith",
-    studentAvatar: "JS",
-    planType: "Elite Monthly",
-    subject: "Computer Science",
-    date: "2024-01-28",
-    time: "11:00",
-    duration: 120,
-    status: "upcoming",
-    amount: 150,
-    sessionType: "video",
-    notes: "Data structures and algorithms",
-  },
-  {
-    id: "7",
-    studentName: "Maria Rodriguez",
-    studentAvatar: "MR",
-    planType: "Instant Session",
-    subject: "Spanish",
-    date: "2024-01-22",
-    time: "17:00",
-    duration: 30,
-    status: "completed",
-    amount: 25,
-    sessionType: "chat",
-  },
-  {
-    id: "8",
-    studentName: "James Wilson",
-    studentAvatar: "JW",
-    planType: "Intensive Weekly",
-    subject: "History",
-    date: "2024-01-29",
-    time: "09:00",
-    duration: 60,
-    status: "pending",
-    amount: 50,
-    sessionType: "video",
-    notes: "World War II analysis",
-  },
-  {
-    id: "9",
-    studentName: "Jennifer Lee",
-    studentAvatar: "JL",
-    planType: "Standard Monthly",
-    subject: "English Literature",
-    date: "2024-01-30",
-    time: "14:30",
-    duration: 75,
-    status: "upcoming",
-    amount: 60,
-    sessionType: "video",
-  },
-  {
-    id: "10",
-    studentName: "Robert Davis",
-    studentAvatar: "RD",
-    planType: "Premium Monthly",
-    subject: "Economics",
-    date: "2024-01-21",
-    time: "16:00",
-    duration: 90,
-    status: "completed",
-    amount: 100,
-    sessionType: "video",
-    notes: "Macroeconomic principles",
-  },
-  {
-    id: "11",
-    studentName: "Amanda Taylor",
-    studentAvatar: "AT",
-    planType: "Basic Weekly",
-    subject: "Art History",
-    date: "2024-01-31",
-    time: "12:00",
-    duration: 45,
-    status: "upcoming",
-    amount: 35,
-    sessionType: "chat",
-  },
-  {
-    id: "12",
-    studentName: "Kevin Zhang",
-    studentAvatar: "KZ",
-    planType: "Instant Session",
-    subject: "Statistics",
-    date: "2024-01-20",
-    time: "19:00",
-    duration: 30,
-    status: "completed",
-    amount: 25,
-    sessionType: "video",
-  },
-];
+import { useGetMentorOrdersQuery } from "@/redux/features/bookings/payment.api";
+import { useNavigate } from "react-router";
+import { format } from "date-fns"; // Make sure you have date-fns or use native Intl
 
 const Orders = () => {
-  const [bookings, setBookings] = useState(mockBookings);
+  const navigate = useNavigate();
+  const { data: apiData, isLoading } = useGetMentorOrdersQuery();
+
+  // State
+  const [bookings, setBookings] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [activeTab, setActiveTab] = useState("all");
   const [itemsToShow, setItemsToShow] = useState(5);
 
-
   const ITEMS_PER_LOAD = 5;
 
+  // --- 1. Map API Data to UI Structure ---
+  useEffect(() => {
+    if (apiData?.data) {
+      const mappedBookings = apiData.data.map((order) => {
+        const student = order.learner; // User object populated
+        const profile = student?.learnerProfile || {};
+        const dateObj = new Date(order.startDate);
+
+        return {
+          id: order._id,
+          // UI specific fields
+          studentName: profile.name || student.email || "Unknown",
+          studentAvatar: (profile.name || student.email || "U")
+            .charAt(0)
+            .toUpperCase(),
+          studentImage: profile.profileImage, // Add if you want to show real image
+          planType: order.planType, // "instant", "weekly"
+          subject: order.gig?.gigTitle || "Untitled Gig",
+          date: format(dateObj, "yyyy-MM-dd"), // "2024-01-25"
+          time: format(dateObj, "HH:mm"), // "14:00"
+          duration: order.durationPerSessionMinutes,
+          // Map backend status to UI status (pending, upcoming, completed, cancelled)
+          status: order.orderStatus || "pending",
+          amount: order.price,
+          sessionType: "video", // Default for your app
+          meetingId: order.session?.meetingId, // Important for joining
+          originalOrder: order, // Keep ref to full object if needed
+        };
+      });
+      setBookings(mappedBookings);
+    }
+  }, [apiData]);
+
+  // --- 2. Client Side Filters (Existing Logic Intact) ---
   const filteredBookings = bookings.filter((booking) => {
     const matchesSearch =
       booking.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -242,16 +119,22 @@ const Orders = () => {
     resetPagination();
   }, [searchTerm, statusFilter, activeTab]);
 
+  // --- 3. Actions ---
+  const handleJoinSession = (meetingId) => {
+    if (meetingId) {
+      navigate(`/meeting/${meetingId}`);
+    } else {
+      alert("Session hasn't been generated yet.");
+    }
+  };
+
+  // Only updates local state for UI demo purposes
   const updateBookingStatus = (id, newStatus) => {
     setBookings((prev) =>
       prev.map((booking) =>
         booking.id === id ? { ...booking, status: newStatus } : booking
       )
     );
-    // toast({
-    //   title: "Booking Updated",
-    //   description: `Booking status changed to ${newStatus}`,
-    // });
   };
 
   const getStatusBadge = (status) => {
@@ -269,12 +152,13 @@ const Orders = () => {
       pending: Clock,
     };
 
-    const Icon = icons[status];
+    const Icon = icons[status] || Clock;
+    const variant = variants[status] || variants.pending;
 
     return (
-      <Badge className={variants[status]}>
+      <Badge className={variant}>
         <Icon className="w-3 h-3 mr-1" />
-        {status.charAt(0).toUpperCase() + status.slice(1)}
+        {status ? status.charAt(0).toUpperCase() + status.slice(1) : "Pending"}
       </Badge>
     );
   };
@@ -292,6 +176,17 @@ const Orders = () => {
   };
 
   const stats = getBookingStats();
+
+  if (isLoading) {
+    return (
+      <div className="pt-20 w-11/12 mx-auto flex justify-center">
+        <div className="flex items-center gap-2">
+          <Loader2 className="animate-spin" /> Loading orders...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="pt-20 mb-4 w-11/12 mx-auto">
       <div className="space-y-6">
@@ -436,10 +331,18 @@ const Orders = () => {
                           >
                             <TableCell>
                               <div className="flex items-center space-x-3">
-                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                  <span className="text-sm font-medium text-primary">
-                                    {booking.studentAvatar}
-                                  </span>
+                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                                  {booking.studentImage ? (
+                                    <img
+                                      src={booking.studentImage}
+                                      alt=""
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <span className="text-sm font-medium text-primary">
+                                      {booking.studentAvatar}
+                                    </span>
+                                  )}
                                 </div>
                                 <div>
                                   <p className="font-medium text-foreground">
@@ -493,7 +396,7 @@ const Orders = () => {
                             </TableCell>
                             <TableCell>
                               <span className="font-medium text-foreground">
-                                ${booking.amount}
+                                {booking.amount} ৳
                               </span>
                             </TableCell>
                             <TableCell className="text-right">
@@ -507,6 +410,22 @@ const Orders = () => {
                                   align="end"
                                   className="w-48"
                                 >
+                                  {/* --- NEW: Video Call Action --- */}
+                                  {booking.status === "upcoming" && (
+                                    <>
+                                      <DropdownMenuItem
+                                        onClick={() =>
+                                          handleJoinSession(booking.meetingId)
+                                        }
+                                        className="text-blue-600 focus:text-blue-700 focus:bg-blue-50"
+                                      >
+                                        <Video className="w-4 h-4 mr-2" />
+                                        Join Video Call
+                                      </DropdownMenuItem>
+                                      <DropdownMenuSeparator />
+                                    </>
+                                  )}
+
                                   {booking.status === "pending" && (
                                     <>
                                       <DropdownMenuItem
@@ -559,13 +478,9 @@ const Orders = () => {
                                       </DropdownMenuItem>
                                     </>
                                   )}
-                                  {booking.sessionType === "video" &&
-                                    booking.status === "upcoming" && (
-                                      <DropdownMenuItem>
-                                        <Video className="w-4 h-4 mr-2" />
-                                        Join Video Call
-                                      </DropdownMenuItem>
-                                    )}
+
+                                  <DropdownMenuSeparator />
+
                                   <DropdownMenuItem>
                                     <MessageSquare className="w-4 h-4 mr-2" />
                                     Message Student

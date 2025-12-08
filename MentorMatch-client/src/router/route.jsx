@@ -41,7 +41,7 @@ import Payment from "@/pages/payement/Payment";
 import PaymentSucess from "@/pages/payement/PaymentSucess";
 import PaymentFailed from "@/pages/payement/PaymentFailed";
 import Community from "@/pages/community/Community";
-import { MeetingRoom } from "@/pages/TeachRoom/MeetingRoom";
+import MeetingPage from "@/pages/TeachRoom/MeetingPage";
 
 const router = createBrowserRouter([
   {
@@ -195,7 +195,10 @@ const router = createBrowserRouter([
       },
     ],
   },
-  { path: "tech-room", element: <MeetingRoom /> },
+  {
+    path: "/meeting/:meetingId",
+    element: <MeetingPage />,
+  },
   { path: "/*", Component: Error404 },
 ]);
 

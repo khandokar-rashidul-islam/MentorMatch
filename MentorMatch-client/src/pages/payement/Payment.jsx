@@ -58,10 +58,12 @@ const Payment = () => {
     );
   }
 
-  const planData =
-    type === "instant"
-      ? gigData?.data.plans?.instant
-      : gigData?.data.plans[type][packageType];
+const planData =
+  type === "instant"
+    ? gigData?.data?.plans?.instant 
+    : gigData?.data?.plans?.[type]?.[packageType];
+
+if (!planData) return <div>Plan not found</div>;
 
   const handlePayNow = async () => {
     try {

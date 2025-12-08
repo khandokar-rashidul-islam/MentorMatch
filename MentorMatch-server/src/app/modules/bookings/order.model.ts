@@ -1,47 +1,80 @@
 import { Schema, model } from "mongoose";
 
+// --- ORDER SCHEMA ---
 const OrderSchema = new Schema(
   {
+    // Crucial: These store User._id (the login ID), NOT Profile._id
     learner: { type: Schema.Types.ObjectId, ref: "User", required: true },
     mentor: { type: Schema.Types.ObjectId, ref: "User", required: true },
     gig: { type: Schema.Types.ObjectId, ref: "Gig", required: true },
 
-    planType: { type: String, required: true }, // instant | weekly | monthly
-    packageType: { type: String }, // basic | intensive | premium | elite
-    planName: { type: String }, // e.g., "instant", "weekly - basic", "monthly - premium"
+    planType: { type: String, required: true },
+    packageType: { type: String },
+    planName: { type: String },
 
     price: { type: Number, required: true },
     currency: { type: String, default: "BDT" },
 
-    // SESSION / DURATION MANAGEMENT
-    durationPerSessionMinutes: { type: Number, required: true }, // e.g., 60 min per session
-    durationSessions: { type: Number, default: 1 }, // instant = 1, weekly = e.g., 3, monthly = e.g., 12
-    completedSessions: { type: Number, default: 0 },
+    durationPerSessionMinutes: { type: Number, required: true },
+    durationSessions: { type: Number, default: 1 },
 
-    // ACCESS VALIDITY
     startDate: { type: Date, default: Date.now },
-    endDate: { type: Date }, // auto-calculated for weekly/monthly plans
+    endDate: { type: Date },
 
-    // PAYMENT TRACKING (SSLCommerz)
     paymentStatus: {
       type: String,
       enum: ["pending", "success", "failed", "cancelled", "refunded"],
       default: "pending",
     },
-    transactionId: { type: String }, // sslcommerz trans_id
-    sslSessionKey: { type: String }, // returned by init API
-    paymentGatewayResponse: { type: Schema.Types.Mixed }, // raw SSLCommerz response JSON
+    transactionId: { type: String },
+    sslSessionKey: { type: String },
+    paymentGatewayResponse: { type: Schema.Types.Mixed },
 
     orderStatus: {
       type: String,
       enum: ["pending", "upcoming", "completed", "cancelled"],
       default: "pending",
     },
-
-    // optional: metadata for scheduling
-    timezone: { type: String, default: "Asia/Dhaka" },
   },
   { timestamps: true }
 );
 
+// Virtual to link Order -> Session easily
+OrderSchema.virtual("session", {
+  ref: "Session",
+  localField: "_id",
+  foreignField: "order",
+  justOne: true,
+});
+
+OrderSchema.set("toObject", { virtuals: true });
+OrderSchema.set("toJSON", { virtuals: true });
+
 export const OrderModel = model("Order", OrderSchema);
+
+// --- SESSION SCHEMA ---
+const SessionSchema = new Schema(
+  {
+    order: { type: Schema.Types.ObjectId, ref: "Order", required: true },
+    gig: { type: Schema.Types.ObjectId, ref: "Gig", required: true },
+
+    // Store User IDs. This allows auth checks to pass regardless of activeRole.
+    learner: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    mentor: { type: Schema.Types.ObjectId, ref: "User", required: true },
+
+    meetingId: { type: String, unique: true, required: true },
+
+    startTime: { type: Date, required: true },
+    endTime: { type: Date, required: true },
+    durationMinutes: { type: Number, required: true },
+
+    status: {
+      type: String,
+      enum: ["scheduled", "ongoing", "completed", "cancelled"],
+      default: "scheduled",
+    },
+  },
+  { timestamps: true }
+);
+
+export const SessionModel = model("Session", SessionSchema);

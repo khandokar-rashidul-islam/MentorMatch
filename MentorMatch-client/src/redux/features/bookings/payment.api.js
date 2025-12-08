@@ -34,8 +34,18 @@ export const paymentApi = baseApi.injectEndpoints({
       }),
       providesTags: ["MentorOrders"],
     }),
+    // ===================== (5) session verify =====================
+    verifySession: builder.query({
+      query: (meetingId) => ({
+        url: `/payment/verify/${meetingId}`,
+        method: "GET",
+      }),
+      // Don't cache for too long, as session status might change (e.g. cancelled)
+      keepUnusedDataFor: 0,
+    }),
+
   }),
-  overrideExisting: false,
+  overrideExisting: true,
 });
 
 export const {
@@ -43,4 +53,5 @@ export const {
   useGetOrderByTransactionQuery,
   useGetLearnerOrdersQuery,
   useGetMentorOrdersQuery,
+  useVerifySessionQuery,
 } = paymentApi;

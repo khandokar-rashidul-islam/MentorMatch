@@ -43,7 +43,7 @@ export const mentorApi = baseApi.injectEndpoints({
       providesTags: ["MyGigs"],
     }),
   }),
-  overrideExisting: false,
+  overrideExisting: true,
 });
 
 export const {

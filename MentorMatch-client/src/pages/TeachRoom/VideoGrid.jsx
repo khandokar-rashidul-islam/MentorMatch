@@ -37,8 +37,8 @@ export function VideoGrid({ participants, viewMode, localState }) {
             className={cn(
               "absolute z-10 transition-all duration-300 ease-in-out",
               selfViewMinimized
-                ? "bottom-24 sm:bottom-28 right-2 sm:right-4 md:right-8 w-10 h-10 sm:w-12 sm:h-12 rounded-lg cursor-pointer"
-                : "bottom-24 sm:bottom-28 right-2 sm:right-4 md:right-8 w-24 h-18 sm:w-36 sm:h-27 md:w-48 md:h-36 rounded-xl sm:rounded-2xl"
+                ? "bottom-22 sm:bottom-22 right-2 sm:right-4 md:right-8 w-10 h-10 sm:w-12 sm:h-12 rounded-lg cursor-pointer"
+                : "bottom-22 sm:bottom-22 right-2 sm:right-4 md:right-8 w-24 h-18 sm:w-36 sm:h-27 md:w-48 md:h-36 rounded-xl sm:rounded-2xl"
             )}
           >
             {selfViewMinimized ? (

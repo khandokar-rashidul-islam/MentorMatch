@@ -7,39 +7,36 @@ import * as paymentService from "./payment.service";
 import { GigModel } from "../mentor/mentor.model";
 import { LearnerProfileModel } from "../learner/learner.model";
 import { MentorProfileModel } from "../mentor/mentor.model";
+import AppError from "../../errors/AppError";
+import { SessionModel } from "./order.model";
 
 export const initiatePayment = catchAsync(
   async (req: Request, res: Response) => {
     const data = req.body;
-    const userId = (req as any).user?.id;
+    const userId = (req as any).user?.id; // Logged in User ID
     if (!userId) throw new Error("Unauthorized");
 
-    if (!data.gig) throw new Error("Gig id (gig) is required in body");
-    if (!data.planType) throw new Error("planType is required in body");
-
-    // 1) find learner profile by logged-in user
+    // 1. Validate Learner Profile exists (just a check)
     const learnerProfile = await LearnerProfileModel.findOne({ user: userId });
     if (!learnerProfile)
-      throw new Error("Learner profile not found for current user");
+      throw new Error("Please complete your learner profile first");
 
-    // 2) find gig and its owner (user)
+    // 2. Validate Gig & Mentor
     const gig = await GigModel.findById(data.gig).populate("user");
     if (!gig) throw new Error("Gig not found");
 
-    const gigOwnerUserId = (gig.user as any)?._id;
-    if (!gigOwnerUserId) throw new Error("Gig owner (user) not found");
+    const gigOwnerUserId = (gig.user as any)?._id; // Mentor's User ID
 
-    // 3) find mentor profile for that gig owner user
+    // Check if mentor profile exists
     const mentorProfile = await MentorProfileModel.findOne({
       user: gigOwnerUserId,
     });
-    if (!mentorProfile)
-      throw new Error("Mentor profile not found for gig owner");
+    if (!mentorProfile) throw new Error("Mentor profile unavailable");
 
-    // 4) call service with PROFILE ids (strings)
+    // 3. Initiate Service with USER IDs
     const result = await paymentService.initiatePaymentService({
-      learnerProfileId: learnerProfile._id.toString(),
-      mentorProfileId: mentorProfile._id.toString(),
+      learnerUserId: userId, 
+      mentorUserId: gigOwnerUserId.toString(), 
       gigId: gig._id.toString(),
       planType: data.planType,
       packageType: data.packageType,
@@ -104,16 +101,12 @@ export const ipn = catchAsync(async (req: Request, res: Response) => {
 });
 
 
-
 // ===================== LEARNER ORDERS =====================
 export const getLearnerOrders = catchAsync(async (req, res) => {
   const userId = (req as any).user?.id;
-
-  // fetch learner profile id
-  const learner = await LearnerProfileModel.findOne({ user: userId });
-  if (!learner) throw new Error("Learner profile not found");
-
-  const orders = await paymentService.getLearnerOrdersService(learner._id.toString());
+  
+  // FIX: Don't look up LearnerProfile. Pass userId directly.
+  const orders = await paymentService.getLearnerOrdersService(userId);
 
   sendResponse(res, {
     success: true,
@@ -127,16 +120,63 @@ export const getLearnerOrders = catchAsync(async (req, res) => {
 export const getMentorOrders = catchAsync(async (req, res) => {
   const userId = (req as any).user?.id;
 
-  // fetch mentor profile id
-  const mentor = await MentorProfileModel.findOne({ user: userId });
-  if (!mentor) throw new Error("Mentor profile not found");
-
-  const orders = await paymentService.getMentorOrdersService(mentor._id.toString());
+  // FIX: Don't look up MentorProfile. Pass userId directly.
+  const orders = await paymentService.getMentorOrdersService(userId);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Mentor orders retrieved successfully",
     data: orders,
+  });
+});
+
+// ====================== session =============================
+
+export const verifySession = catchAsync(async (req, res) => {
+  const { meetingId } = req.params;
+  const userId = (req as any).user?.id;
+  if (!userId) throw new Error("Unauthorized");
+
+  const session = await SessionModel.findOne({ meetingId });
+  if (!session) throw new AppError(httpStatus.NOT_FOUND, "Session not found");
+
+  // 1. Check if user is a participant
+  if (
+    session.learner.toString() !== userId &&
+    session.mentor.toString() !== userId
+  ) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You are not authorized for this session"
+    );
+  }
+
+  // 2. Check Time window (Join allowed 15 mins before start)
+  const now = new Date();
+  const startBuffer = new Date(session.startTime.getTime() - 15 * 60000);
+
+  if (now < startBuffer) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      `Session starts at ${session.startTime.toLocaleTimeString()}`
+    );
+  }
+
+  if (session.status === "cancelled") {
+    throw new AppError(httpStatus.FORBIDDEN, "Session was cancelled");
+  }
+
+  // 3. Update Status to 'ongoing' if it's the first person joining
+  if (session.status === "scheduled") {
+    session.status = "ongoing";
+    await session.save();
+  }
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Access granted",
+    data: session,
   });
 });

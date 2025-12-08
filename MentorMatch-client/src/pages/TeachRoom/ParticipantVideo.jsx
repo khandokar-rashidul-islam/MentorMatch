@@ -1,7 +1,25 @@
+import { useEffect, useRef } from "react";
 import { Mic, MicOff, VideoOff, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function ParticipantVideo({ participant, isLocal, size = "large" }) {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const videoEl = videoRef.current;
+
+    if (videoEl && participant.stream) {
+      videoEl.srcObject = participant.stream;
+
+      // Handle the play() promise to ignore AbortErrors (caused by rapid toggling)
+      videoEl.play().catch((error) => {
+        if (error.name !== "AbortError") {
+          console.error("Video play failed:", error);
+        }
+      });
+    }
+  }, [participant.stream, participant.isCameraOff]);
+
   const initials = participant.name
     .split(" ")
     .map((n) => n[0])
@@ -18,8 +36,9 @@ export function ParticipantVideo({ participant, isLocal, size = "large" }) {
         size === "large" && "shadow-soft-lg"
       )}
     >
-      {/* Video or Avatar */}
+      {/* --- VIDEO LAYER --- */}
       {participant.isCameraOff ? (
+        // Avatar View (Camera Off)
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900">
           <div
             className={cn(
@@ -33,21 +52,20 @@ export function ParticipantVideo({ participant, isLocal, size = "large" }) {
           </div>
         </div>
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-2 sm:gap-3 text-slate-400">
-            <User
-              className={cn(
-                size === "large"
-                  ? "w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20"
-                  : "w-8 h-8 sm:w-10 sm:h-10"
-              )}
-            />
-            {size === "large" && (
-              <span className="text-xs sm:text-sm opacity-60 hidden sm:block">
-                Camera Preview
-              </span>
+        // Video View (Camera On)
+        <div className="absolute inset-0 bg-black">
+          <video
+            // The 'key' forces React to re-mount the video element
+            // whenever the stream ID changes. This prevents frozen black screens.
+            key={participant.stream?.id || "no-stream"}
+            ref={videoRef}
+            playsInline // Important for mobile browsers
+            muted={isLocal} // Mute local to avoid feedback loop
+            className={cn(
+              "w-full h-full object-cover",
+              isLocal && "transform scale-x-[-1]" // Mirror local video
             )}
-          </div>
+          />
         </div>
       )}
 
@@ -82,19 +100,10 @@ export function ParticipantVideo({ participant, isLocal, size = "large" }) {
               <div
                 className={cn(
                   "rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center",
-                  size === "large"
-                    ? "w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7"
-                    : "w-4 h-4 sm:w-5 sm:h-5"
+                  size === "large" ? "w-5 h-5" : "w-4 h-4"
                 )}
               >
-                <VideoOff
-                  className={cn(
-                    size === "large"
-                      ? "w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5"
-                      : "w-2 h-2 sm:w-2.5 sm:h-2.5",
-                    "text-white"
-                  )}
-                />
+                <VideoOff className="w-2.5 h-2.5 text-white" />
               </div>
             )}
 
@@ -102,37 +111,19 @@ export function ParticipantVideo({ participant, isLocal, size = "large" }) {
               <div
                 className={cn(
                   "rounded-full bg-destructive/90 flex items-center justify-center",
-                  size === "large"
-                    ? "w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7"
-                    : "w-4 h-4 sm:w-5 sm:h-5"
+                  size === "large" ? "w-5 h-5" : "w-4 h-4"
                 )}
               >
-                <MicOff
-                  className={cn(
-                    size === "large"
-                      ? "w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5"
-                      : "w-2 h-2 sm:w-2.5 sm:h-2.5",
-                    "text-white"
-                  )}
-                />
+                <MicOff className="w-2.5 h-2.5 text-white" />
               </div>
             ) : (
               <div
                 className={cn(
                   "rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center",
-                  size === "large"
-                    ? "w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7"
-                    : "w-4 h-4 sm:w-5 sm:h-5"
+                  size === "large" ? "w-5 h-5" : "w-4 h-4"
                 )}
               >
-                <Mic
-                  className={cn(
-                    size === "large"
-                      ? "w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5"
-                      : "w-2 h-2 sm:w-2.5 sm:h-2.5",
-                    "text-white"
-                  )}
-                />
+                <Mic className="w-2.5 h-2.5 text-white" />
               </div>
             )}
           </div>
